@@ -1,5 +1,6 @@
 /** @format */
 
+import "@/styles/swiper-custom.css";
 import ProductListSec from "@/components/common/ProductListSec";
 import Brands from "@/components/homepage/Brands";
 import DressStyle from "@/components/homepage/DressStyle";
@@ -7,6 +8,9 @@ import Header from "@/components/homepage/Header";
 import Reviews from "@/components/homepage/Reviews";
 import { Product } from "@/types/product.types";
 import { Review } from "@/types/review.types";
+import FloatingToolbar from "../components/FloatingToolbar";
+import ProductSection from "../components/ProductSection";
+import BannerSlider from "../components/layout/Banner/BannerSlider";
 
 export const newArrivalsData: Product[] = [
   {
@@ -209,7 +213,17 @@ export const reviewsData: Review[] = [
 export default function Home() {
   return (
     <>
+      <FloatingToolbar />
+      <BannerSlider />
+
       <Header />
+
+      {/* Product Sections */}
+      <ProductSection
+        id="iphone-section"
+        title="iPhone"
+        backgroundImage="/images/home-bg-2.png"
+      />
       {/* <Brands /> */}
       <main className="my-[50px] sm:my-[72px]">
         <ProductListSec

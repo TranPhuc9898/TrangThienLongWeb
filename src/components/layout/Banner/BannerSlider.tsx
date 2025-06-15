@@ -28,25 +28,25 @@ const banners = [
 
 export default function BannerSlider() {
   return (
-    <div className="w-full flex justify-center py-4">
-      <div className="w-full max-w-[1440px] px-2 relative">
+    <div className="w-full">
+      <div className="relative w-full">
         <Swiper
           modules={[Navigation, Autoplay]}
           navigation
           autoplay={{ delay: 10000, disableOnInteraction: false }}
           loop
-          className="rounded-2xl shadow-2xl"
+          className="w-full"
         >
           {banners.map((banner, idx) => (
             <SwiperSlide key={idx}>
-              <div className="relative w-full h-[260px] md:h-[340px] rounded-2xl overflow-hidden">
+              <div className="relative w-full h-[200px] sm:h-[300px] md:h-[300px] lg:h-[300px] xl:h-[400px]">
                 <Image
                   src={banner.image}
                   alt={banner.alt}
                   fill
-                  className="object-cover rounded-2xl"
+                  className="object-cover w-full h-full"
                   priority={idx === 0}
-                  sizes="(max-width: 768px) 100vw, 1440px"
+                  sizes="100vw"
                 />
               </div>
             </SwiperSlide>
@@ -54,7 +54,7 @@ export default function BannerSlider() {
         </Swiper>
         {/* Overlay absolute */}
         <div className="absolute top-60 left-0 right-0 z-10 pointer-events-none">
-          <BannerSliderAbsolute />
+          {/* <BannerSliderAbsolute /> */}
         </div>
       </div>
     </div>

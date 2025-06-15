@@ -1,3 +1,5 @@
+/** @format */
+
 import React from "react";
 import {
   Breadcrumb,
@@ -9,7 +11,11 @@ import {
 } from "@/components/ui/breadcrumb";
 import Link from "next/link";
 
-const BreadcrumbShop = () => {
+interface BreadcrumbShopProps {
+  productName?: string;
+}
+
+const BreadcrumbShop: React.FC<BreadcrumbShopProps> = ({ productName }) => {
   return (
     <Breadcrumb className="mb-5 sm:mb-9">
       <BreadcrumbList>
@@ -20,8 +26,18 @@ const BreadcrumbShop = () => {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbPage>Shop</BreadcrumbPage>
+          <BreadcrumbLink asChild>
+            <Link href="/shop">Shop</Link>
+          </BreadcrumbLink>
         </BreadcrumbItem>
+        {productName && (
+          <>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{productName}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </>
+        )}
       </BreadcrumbList>
     </Breadcrumb>
   );

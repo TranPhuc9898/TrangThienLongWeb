@@ -1,2 +1,8 @@
+# Next.js
+.next/
 node_modules/
-next.zip
+out/
+*.log
+*.zip
+.env
+.DS_Store

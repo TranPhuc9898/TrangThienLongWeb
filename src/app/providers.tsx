@@ -1,10 +1,14 @@
+/** @format */
+
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Provider } from "react-redux";
 import { makeStore } from "../lib/store";
 import { PersistGate } from "redux-persist/integration/react";
 import SpinnerbLoader from "@/components/ui/SpinnerbLoader";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 type Props = {
   children: React.ReactNode;
@@ -12,6 +16,17 @@ type Props = {
 
 const Providers = ({ children }: Props) => {
   const { store, persistor } = makeStore();
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 1000 * 60 * 5,
+            refetchOnWindowFocus: false,
+          },
+        },
+      })
+  );
 
   return (
     <Provider store={store}>
@@ -23,7 +38,10 @@ const Providers = ({ children }: Props) => {
         }
         persistor={persistor}
       >
-        {children}
+        <QueryClientProvider client={queryClient}>
+          {children}
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
       </PersistGate>
     </Provider>
   );

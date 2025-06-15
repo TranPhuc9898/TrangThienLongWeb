@@ -36,7 +36,7 @@ export default function RootLayout({
           <div className="hidden  lg:block">
             <RedBanner />
           </div>
-          <BannerSlider />
+
           {children}
         </Providers>
         <Footer />
