@@ -1,7 +1,7 @@
 /** @format */
 "use client";
 import React from "react";
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { mockProductsIphone } from "@/data/index";
 import BreadcrumbShop from "@/components/shop-page/BreadcrumbShop";
 import Product3DViewer from "@/components/threejs/Product3DViewer";
@@ -13,6 +13,7 @@ interface ProductDetailPageProps {
 const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
   const productId = Number(params.id);
   const product = mockProductsIphone.find((p) => p.id === productId);
+  const router = useRouter();
 
   if (!product) return notFound();
 
@@ -20,6 +21,25 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
   const discountedPrice = hasDiscount
     ? Math.round(product.price * (1 - product.discount.percentage / 100))
     : product.price;
+
+  const handleBuyNow = () => {
+    const productData = {
+      id: product.id,
+      title: product.title,
+      price: discountedPrice,
+      originalPrice: product.price,
+      image: product.gallery[0] || "/images/iphone13.png",
+      storage: product.storages[0]?.label || "",
+      discount: hasDiscount ? product.discount.percentage : 0,
+    };
+
+    // Encode product data to URL
+    const params = new URLSearchParams({
+      product: JSON.stringify(productData),
+    });
+
+    router.push(`/thanh-toan?${params.toString()}`);
+  };
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-8 py-6">
@@ -84,7 +104,10 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
             <span className="text-gray-700">{product.description}</span>
           </div>
           <div className="flex flex-col gap-2 mt-4">
-            <button className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg text-lg transition">
+            <button
+              onClick={handleBuyNow}
+              className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg text-lg transition"
+            >
               Mua ngay
             </button>
             <button className="bg-white border border-red-600 text-red-600 font-bold py-3 rounded-lg text-lg transition hover:bg-red-50">

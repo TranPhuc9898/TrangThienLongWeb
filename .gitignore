@@ -6,3 +6,4 @@ out/
 *.zip
 .env
 .DS_Store
+.env.local
