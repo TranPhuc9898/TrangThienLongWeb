@@ -4,7 +4,19 @@ import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
+  let body;
+  try {
+    body = await req.json();
+  } catch (err) {
+    const errorMsg =
+      err && typeof err === "object" && "message" in err
+        ? (err as any).message
+        : String(err);
+    return NextResponse.json(
+      { message: "Invalid JSON body", error: errorMsg },
+      { status: 400 }
+    );
+  }
 
   const {
     fullName,
@@ -18,7 +30,30 @@ export async function POST(req: NextRequest) {
     product,
   } = body;
 
-  // Sử dụng biến môi trường thay vì hardcode
+  // Kiểm tra các trường bắt buộc
+  if (
+    !fullName ||
+    !phone ||
+    !province ||
+    !district ||
+    !ward ||
+    !address ||
+    !product
+  ) {
+    return NextResponse.json(
+      { message: "Thiếu thông tin bắt buộc" },
+      { status: 400 }
+    );
+  }
+
+  // Kiểm tra các trường sản phẩm cần thiết
+  if (!product.title || !product.storage || !product.price) {
+    return NextResponse.json(
+      { message: "Thiếu thông tin sản phẩm" },
+      { status: 400 }
+    );
+  }
+
   const SLACK_TOKEN = process.env.SLACK_TOKEN;
 
   if (!SLACK_TOKEN) {
@@ -31,18 +66,16 @@ export async function POST(req: NextRequest) {
   // Build compact message
   let productInfo = "";
   if (product) {
-    productInfo = `\n\n*📱 THÔNG TIN SẢN PHẨM:*
-*Tên:* ${product.title}
-*Dung lượng:* ${product.storage}
-*Giá:* ${product.price.toLocaleString()}đ`;
+    productInfo = `\n\n*📱 THÔNG TIN SẢN PHẨM:*\n*Tên:* ${
+      product.title
+    }\n*Dung lượng:* ${
+      product.storage
+    }\n*Giá:* ${product.price.toLocaleString()}đ`;
   }
 
-  const slackMessage = `*🛒 ĐƠN HÀNG MỚI VỪA VỀ!*
-
-*👤 Tên khách hàng:* ${fullName}
-*📞 Số điện thoại:* ${phone}
-*� Địa chỉ:* ${province}, ${district}, ${address}${productInfo}
-*📝 Ghi chú:* ${note || "Không có ghi chú"}`;
+  const slackMessage = `*🛒 ĐƠN HÀNG MỚI VỪA VỀ!*\n\n*👤 Tên khách hàng:* ${fullName}\n*📞 Số điện thoại:* ${phone}\n*🏠 Địa chỉ:* ${province}, ${district}, ${ward}, ${address}${productInfo}\n*📝 Ghi chú:* ${
+    note || "Không có ghi chú"
+  }`;
 
   try {
     const response = await axios.post(
@@ -67,9 +100,28 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (err: any) {
+  } catch (err) {
+    let errorMsg = "";
+    if (err && typeof err === "object") {
+      if (
+        "response" in err &&
+        err.response &&
+        typeof err.response === "object" &&
+        "data" in err.response
+      ) {
+        errorMsg = JSON.stringify((err as any).response.data);
+      } else if ("message" in err) {
+        errorMsg = (err as any).message;
+      } else {
+        errorMsg = JSON.stringify(err);
+      }
+    } else {
+      errorMsg = String(err);
+    }
+    // Log lỗi chi tiết để debug trên Vercel
+    console.error("Slack send error:", errorMsg);
     return NextResponse.json(
-      { message: "Internal error", error: err.message },
+      { message: "Internal error", error: errorMsg },
       { status: 500 }
     );
   }
