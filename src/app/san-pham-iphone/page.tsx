@@ -6,13 +6,12 @@ import { Product } from "../../components/ProductSection/types";
 import { mockProducts } from "../../data";
 import FeaturedProducts from "../../components/ProductSection/components/FeaturedProducts";
 
-export const mockProductsIphone: (Product & { iphone: boolean })[] =
-  mockProducts.map((item) => ({
-    ...item,
-    iphone: true,
-  }));
-
 export default function SanPhamIphonePage() {
+  const mockProductsIphone: (Product & { iphone: boolean })[] =
+    mockProducts.map((item) => ({
+      ...item,
+      iphone: true,
+    }));
   return (
     <main className="container mx-auto py-8">
       <BreadcrumbProduct title="iPhone" />

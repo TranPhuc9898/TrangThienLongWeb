@@ -1,3 +1,5 @@
+/** @format */
+
 "use client";
 
 import { addToCart } from "@/lib/features/carts/cartsSlice";
@@ -21,7 +23,7 @@ const AddToCartBtn = ({ data }: { data: Product & { quantity: number } }) => {
           addToCart({
             id: data.id,
             name: data.title,
-            srcUrl: data.srcUrl,
+            srcUrl: data.gallery[0],
             price: data.price,
             attributes: [sizeSelection, colorSelection.name],
             discount: data.discount,
