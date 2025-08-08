@@ -3,7 +3,6 @@
 // /** @format */
 
 // import { cn } from "@/lib/utils";
-// import { integralCF } from "@/styles/fonts";
 // import Link from "next/link";
 // import React from "react";
 // import { NavMenu } from "../navbar.types";
@@ -83,7 +82,7 @@
 //           </div>
 //           <Link
 //             href="/"
-//             className={cn([integralCF.className, "mb-2 whitespace-nowrap"])}
+//             className="font-bold "mb-2 whitespace-nowrap"])}
 //             style={{
 //               marginRight: "clamp(0.5rem, 4vw, 2.5rem)",
 //               marginTop: "clamp(0.3rem, 1vw, 2.5rem)",
@@ -163,7 +162,6 @@
 /** @format */
 
 import { cn } from "@/lib/utils";
-import { integralCF } from "@/styles/fonts";
 import Link from "next/link";
 import React, { useState } from "react";
 import { NavMenu } from "../navbar.types";
@@ -246,7 +244,7 @@ const TopNavbar = () => {
           </div>
           <Link
             href="/"
-            className={cn([integralCF.className, "whitespace-nowrap"])}
+            className={cn(["whitespace-nowrap"])}
           >
             <Image
               src="/images/ttl.png"

@@ -2,16 +2,10 @@
 "use client";
 import React from "react";
 import BreadcrumbProduct from "../../components/product-page/BreadcrumbProduct";
-import { Product } from "../../components/ProductSection/types";
-import { mockProducts } from "../../data";
+import { mockProductsIphone } from "../../data";
 import FeaturedProducts from "../../components/ProductSection/components/FeaturedProducts";
 
 export default function SanPhamIphonePage() {
-  const mockProductsIphone: (Product & { iphone: boolean })[] =
-    mockProducts.map((item) => ({
-      ...item,
-      iphone: true,
-    }));
   return (
     <main className="container mx-auto py-8">
       <BreadcrumbProduct title="iPhone" />

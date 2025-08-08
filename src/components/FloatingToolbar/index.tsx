@@ -4,12 +4,14 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import { Tablet, Watch, Headphones, Laptop } from "lucide-react";
 
 interface ToolbarItem {
   id: string;
   label: string;
-  icon: string;
+  icon: any;
   sectionId: string;
+  isImage?: boolean;
 }
 
 const toolbarItems: ToolbarItem[] = [
@@ -18,24 +20,31 @@ const toolbarItems: ToolbarItem[] = [
     label: "iPhone",
     icon: "/icons/iphone_black.svg",
     sectionId: "iphone-section",
+    isImage: true,
   },
   {
     id: "ipad",
     label: "iPad",
-    icon: "/icons/ipad.svg",
+    icon: Tablet,
     sectionId: "ipad-section",
   },
   {
     id: "watch",
     label: "Watch",
-    icon: "/icons/watch.svg",
+    icon: Watch,
     sectionId: "watch-section",
   },
   {
     id: "airpods",
     label: "AirPods",
-    icon: "/icons/airpods.svg",
+    icon: Headphones,
     sectionId: "airpods-section",
+  },
+  {
+    id: "mac",
+    label: "Mac",
+    icon: Laptop,
+    sectionId: "mac-section",
   },
 ];
 
@@ -68,13 +77,19 @@ const FloatingToolbar = () => {
                 hoveredItem === item.id ? "bg-blue-50 scale-110" : ""
               }`}
             >
-              <Image
-                src={item.icon}
-                alt={item.label}
-                width={24}
-                height={24}
-                className="w-6 h-6"
-              />
+              {item.isImage ? (
+                <Image
+                  src={item.icon as string}
+                  alt={item.label}
+                  width={24}
+                  height={24}
+                  className="w-6 h-6"
+                />
+              ) : (
+                React.createElement(item.icon, {
+                  className: "w-6 h-6 text-gray-700"
+                })
+              )}
             </button>
 
             {/* Tooltip khi hover */}

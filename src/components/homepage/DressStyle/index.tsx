@@ -1,7 +1,6 @@
 /** @format */
 
 import { cn } from "@/lib/utils";
-import { integralCF } from "@/styles/fonts";
 import React from "react";
 import * as motion from "framer-motion/client";
 import DressStyleCard from "./DressStyleCard";
@@ -16,8 +15,7 @@ const DressStyle = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
           className={cn([
-            integralCF.className,
-            "text-[32px] leading-[36px] md:text-5xl mb-8 md:mb-14 capitalize",
+            "font-bold text-[32px] leading-[36px] md:text-5xl mb-8 md:mb-14 capitalize",
           ])}
         ></motion.h2>
         <motion.div

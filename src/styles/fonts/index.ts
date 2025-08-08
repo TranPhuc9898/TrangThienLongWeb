@@ -1,17 +1,5 @@
 import localFont from "next/font/local";
 
-const integralCF = localFont({
-  src: [
-    {
-      path: "./integralcf-bold.woff",
-      weight: "700",
-      style: "normal",
-    },
-  ],
-  fallback: ["sans-serif"],
-  variable: "--font-integralCF",
-});
-
 const satoshi = localFont({
   src: [
     {
@@ -30,8 +18,9 @@ const satoshi = localFont({
       style: "normal",
     },
   ],
-  fallback: ["sans-serif"],
+  fallback: ["-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
   variable: "--font-satoshi",
+  display: "swap",
 });
 
-export { integralCF, satoshi };
+export { satoshi };
