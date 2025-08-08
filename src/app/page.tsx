@@ -5,6 +5,7 @@ import ProductListSec from "@/components/common/ProductListSec";
 import DressStyle from "@/components/homepage/DressStyle";
 import Reviews from "@/components/homepage/Reviews";
 import HeroSection from "@/components/homepage/HeroSection";
+import VideoHeroSection from "@/components/homepage/VideoHeroSection";
 import CategoriesGrid from "@/components/homepage/CategoriesGrid";
 import { Product } from "@/types/product.types";
 import { Review } from "@/types/review.types";
@@ -67,8 +68,11 @@ export default function Home() {
     <>
       <FloatingToolbar />
       
-      {/* Hero Section */}
+      {/* Hero Section - Banners only */}
       <HeroSection />
+      
+      {/* Video Hero Section - Separate video with animations */}
+      <VideoHeroSection />
       
       {/* Categories Grid */}
       <CategoriesGrid />

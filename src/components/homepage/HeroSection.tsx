@@ -1,107 +1,77 @@
 /** @format */
-
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination, Autoplay } from "swiper/modules";
 import Image from "next/image";
-import Link from "next/link";
-import EnhancedOrbitingCards from "./EnhancedOrbitingCards";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/autoplay";
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-black overflow-hidden">
-      {/* Background Video/Image */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src="/images/header-homepage.png"
-          alt="Trang Thiên Long Mobile - Apple Products"
-          fill
-          className="object-cover opacity-40"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
-      </div>
-
-      {/* Hero Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="max-w-4xl mx-auto"
-        >
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-5xl md:text-7xl font-bold text-white mb-6 font-bold"
-          >
-            Khám Phá
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">
-              Apple
-            </span>
-            Thế Giới
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl md:text-2xl text-gray-200 mb-8 max-w-2xl mx-auto"
-          >
-            iPhone, iPad, MacBook, Apple Watch & AirPods chính hãng
-            <br />
-            <span className="text-blue-400 font-semibold">Giá tốt nhất thị trường</span>
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-          >
-            <Link
-              href="/shop"
-              className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-full hover:shadow-xl transform hover:scale-105 transition-all duration-300 min-w-[200px]"
-            >
-              <span className="relative z-10">Khám Phá Ngay</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </Link>
-
-            <Link
-              href="/iphone"
-              className="px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-full hover:bg-white/10 hover:border-white/50 transition-all duration-300 min-w-[200px]"
-            >
-              iPhone Mới Nhất
-            </Link>
-          </motion.div>
-        </motion.div>
-
-        {/* Enhanced Orbiting Product Cards */}
-        <EnhancedOrbitingCards />
-
-        {/* Scroll Indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1.5 }}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-        >
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center"
-          >
-            <motion.div
-              animate={{ y: [0, 12, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="w-1 h-3 bg-white/70 rounded-full mt-2"
+    <div className="w-full overflow-hidden relative">
+      <Swiper
+        modules={[Pagination, Autoplay]}
+        pagination={{ clickable: true }}
+        loop={true}
+        autoplay={{ delay: 5000, disableOnInteraction: false }}
+        className="w-full overflow-hidden"
+        style={{
+          width: "100%",
+          height: "auto",
+        }}
+      >
+        {/* Slide 1 */}
+        <SwiperSlide>
+          <div className="relative w-full h-[36vw] max-h-[420px] min-h-[200px]">
+            <Image
+              src="/images/banner/backtoschool-02.png"
+              alt="Back to School Banner"
+              fill
+              priority
+              className="object-cover object-center select-none pointer-events-none"
+              sizes="100vw"
             />
-          </motion.div>
-        </motion.div>
-      </div>
-    </section>
+          </div>
+        </SwiperSlide>
+        {/* Slide 2 */}
+        <SwiperSlide>
+          <div className="relative w-full h-[36vw] max-h-[420px] min-h-[200px]">
+            <Image
+              src="/images/banner/Trả góp toàn quốc-02.png"
+              alt="Trả góp toàn quốc Banner"
+              fill
+              className="object-cover object-center select-none pointer-events-none"
+              sizes="100vw"
+            />
+          </div>
+        </SwiperSlide>
+      </Swiper>
+      {/* Swiper pagination bullets style */}
+      <style jsx global>{`
+        .swiper-pagination-bullets {
+          opacity: 0.7;
+          transition: opacity 0.2s;
+        }
+        .swiper:hover .swiper-pagination-bullets {
+          opacity: 1;
+        }
+      `}</style>
+      {/* Đảm bảo toàn trang không bị tràn ngang */}
+      <style jsx global>{`
+        html,
+        body,
+        #__next {
+          overflow-x: hidden !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          width: 100% !important;
+          max-width: 100vw !important;
+        }
+      `}</style>
+    </div>
   );
 };
 
