@@ -38,10 +38,7 @@ export default function ShopPage() {
           </div>
           <div className="flex flex-col w-full space-y-5">
             <div className="flex flex-col lg:flex-row lg:justify-between">
-              <div className="flex items-center justify-between">
-                <h1 className="font-bold text-2xl md:text-[32px]">Casual</h1>
-                <MobileFilters />
-              </div>
+              <div className="flex items-center justify-between"></div>
               <div className="flex flex-col sm:items-center sm:flex-row">
                 <span className="text-sm md:text-base text-black/60 mr-3">
                   Showing 1-10 of 100 Products

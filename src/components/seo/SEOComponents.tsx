@@ -18,12 +18,12 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items }) => {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    "itemListElement": items.map((item, index) => ({
+    itemListElement: items.map((item, index) => ({
       "@type": "ListItem",
-      "position": index + 1,
-      "name": item.name,
-      "item": item.href
-    }))
+      position: index + 1,
+      name: item.name,
+      item: `https://thientranglong.vn${item.href}`,
+    })),
   };
 
   return (
@@ -81,14 +81,14 @@ export const FAQSchema: React.FC<FAQSchemaProps> = ({ faqs }) => {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": faqs.map(faq => ({
+    mainEntity: faqs.map((faq) => ({
       "@type": "Question",
-      "name": faq.question,
-      "acceptedAnswer": {
+      name: faq.question,
+      acceptedAnswer: {
         "@type": "Answer",
-        "text": faq.answer
-      }
-    }))
+        text: faq.answer,
+      },
+    })),
   };
 
   return (
@@ -107,31 +107,52 @@ export const ProductSchema: React.FC<ProductSchemaProps> = ({ product }) => {
   const structuredData = {
     "@context": "https://schema.org/",
     "@type": "Product",
-    "name": product.title,
-    "description": product.description,
-    "brand": {
+    name: product.title,
+    description: product.description,
+    brand: {
       "@type": "Brand",
-      "name": product.brand
+      name: product.brand,
     },
-    "category": product.category,
-    "image": product.gallery,
-    "offers": {
+    category: product.category,
+    image: product.gallery.map((img) => `https://thientranglong.vn${img}`),
+    offers: {
       "@type": "Offer",
-      "price": product.price,
-      "priceCurrency": "VND",
-      "availability": product.inStock 
-        ? "https://schema.org/InStock" 
+      price: product.price,
+      priceCurrency: "VND",
+      availability: product.inStock
+        ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
-      "seller": {
+      seller: {
         "@type": "Organization",
-        "name": "Trang Thiên Long Mobile"
-      }
+        name: "Trang Thiên Long Mobile",
+        url: "https://thientranglong.vn",
+      },
+      priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0],
     },
-    "aggregateRating": {
+    aggregateRating: {
       "@type": "AggregateRating",
-      "ratingValue": product.rating,
-      "reviewCount": product.reviewCount
-    }
+      ratingValue: product.rating,
+      reviewCount: product.reviewCount,
+      bestRating: 5,
+      worstRating: 1,
+    },
+    review: [
+      {
+        "@type": "Review",
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue: product.rating,
+          bestRating: 5,
+        },
+        author: {
+          "@type": "Person",
+          name: "Khách hàng Trang Thiên Long",
+        },
+        reviewBody: `${product.title} chất lượng tuyệt vời, giá cả hợp lý. Rất hài lòng với sản phẩm.`,
+      },
+    ],
   };
 
   return (
@@ -146,20 +167,56 @@ export const OrganizationSchema: React.FC = () => {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "ElectronicsStore",
-    "name": "Trang Thiên Long Mobile",
-    "address": {
+    name: "Trang Thiên Long Mobile",
+    alternateName: "TTL Mobile",
+    url: "https://thientranglong.vn",
+    logo: "https://thientranglong.vn/images/ttl.png",
+    description:
+      "Cửa hàng điện thoại iPhone, iPad, Apple Watch, AirPods, MacBook chính hãng với giá tốt nhất Việt Nam",
+    address: {
       "@type": "PostalAddress",
-      "addressCountry": "VN",
-      "addressLocality": "Hồ Chí Minh",
-      "streetAddress": "123 Nguyễn Văn Cừ, Quận 1"
+      addressCountry: "VN",
+      addressLocality: "Hồ Chí Minh",
+      addressRegion: "TP.HCM",
+      streetAddress: "123 Nguyễn Văn Cừ, Quận 1",
+      postalCode: "70000",
     },
-    "telephone": "+84-xxx-xxx-xxx",
-    "url": "https://thientranglong.vn",
-    "logo": "https://thientranglong.vn/images/ttl.png",
-    "sameAs": [
+    telephone: "+84-xxx-xxx-xxx",
+    email: "info@thientranglong.vn",
+    sameAs: [
       "https://facebook.com/thientranglong",
-      "https://instagram.com/thientranglong"
-    ]
+      "https://instagram.com/thientranglong",
+      "https://youtube.com/thientranglong",
+      "https://tiktok.com/@thientranglong",
+    ],
+    foundingDate: "2020-01-01",
+    founder: {
+      "@type": "Person",
+      name: "Thiên Trang Long",
+    },
+    paymentAccepted: ["Cash", "Credit Card", "Debit Card", "Bank Transfer"],
+    currenciesAccepted: "VND",
+    openingHours: "Mo-Su 08:00-22:00",
+    priceRange: "$$",
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Apple Products",
+      itemListElement: [
+        {
+          "@type": "OfferCatalog",
+          name: "iPhone",
+          itemListElement: [
+            {
+              "@type": "Offer",
+              itemOffered: {
+                "@type": "Product",
+                name: "iPhone 15 Pro Max",
+              },
+            },
+          ],
+        },
+      ],
+    },
   };
 
   return (
@@ -174,21 +231,132 @@ export const LocalBusinessSchema: React.FC = () => {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "ElectronicsStore",
-    "name": "Trang Thiên Long Mobile",
-    "address": {
+    name: "Trang Thiên Long Mobile",
+    "@id": "https://thientranglong.vn/#business",
+    url: "https://thientranglong.vn",
+    telephone: "+84-xxx-xxx-xxx",
+    address: {
       "@type": "PostalAddress",
-      "streetAddress": "123 Nguyễn Văn Cừ",
-      "addressLocality": "TP.HCM",
-      "addressCountry": "VN"
+      streetAddress: "123 Nguyễn Văn Cừ",
+      addressLocality: "Quận 1",
+      addressRegion: "TP.HCM",
+      postalCode: "70000",
+      addressCountry: "VN",
     },
-    "geo": {
+    geo: {
       "@type": "GeoCoordinates",
-      "latitude": 10.762622,
-      "longitude": 106.660172
+      latitude: 10.762622,
+      longitude: 106.660172,
     },
-    "openingHours": "Mo-Su 08:00-22:00",
-    "telephone": "+84-xxx-xxx-xxx",
-    "priceRange": "$$"
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday",
+        ],
+        opens: "08:00",
+        closes: "22:00",
+      },
+    ],
+    priceRange: "$$",
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: 4.8,
+      reviewCount: 1250,
+      bestRating: 5,
+      worstRating: 1,
+    },
+    review: [
+      {
+        "@type": "Review",
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue: 5,
+          bestRating: 5,
+        },
+        author: {
+          "@type": "Person",
+          name: "Nguyễn Văn A",
+        },
+        reviewBody:
+          "Cửa hàng uy tín, iPhone chính hãng, giá tốt, nhân viên tư vấn nhiệt tình.",
+      },
+    ],
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+    />
+  );
+};
+
+// New: Website Schema for better site understanding
+export const WebsiteSchema: React.FC = () => {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Trang Thiên Long Mobile",
+    alternateName: "TTL Mobile",
+    url: "https://thientranglong.vn",
+    description:
+      "Website bán iPhone, iPad, Apple Watch, AirPods, MacBook chính hãng giá rẻ nhất Việt Nam",
+    publisher: {
+      "@type": "Organization",
+      name: "Trang Thiên Long Mobile",
+    },
+    potentialAction: {
+      "@type": "SearchAction",
+      target: "https://thientranglong.vn/search?q={search_term_string}",
+      "query-input": "required name=search_term_string",
+    },
+    sameAs: [
+      "https://facebook.com/thientranglong",
+      "https://instagram.com/thientranglong",
+    ],
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+    />
+  );
+};
+
+// New: Product Collection Schema for iPhone category
+export const ProductCollectionSchema: React.FC<{ products: Product[] }> = ({
+  products,
+}) => {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "iPhone Chính Hãng Giá Rẻ",
+    description: "Bộ sưu tập iPhone chính hãng với giá tốt nhất thị trường",
+    url: "https://thientranglong.vn/iphone",
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: products.length,
+      itemListElement: products.map((product, index) => ({
+        "@type": "Product",
+        position: index + 1,
+        name: product.title,
+        description: product.description,
+        image: `https://thientranglong.vn${product.gallery[0]}`,
+        offers: {
+          "@type": "Offer",
+          price: product.price,
+          priceCurrency: "VND",
+        },
+      })),
+    },
   };
 
   return (

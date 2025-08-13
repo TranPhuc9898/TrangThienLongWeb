@@ -7,23 +7,29 @@ import CleanShopDunkNavbar from "@/components/layout/Navbar/CleanShopDunkNavbar"
 import Footer from "@/components/layout/Footer";
 import HolyLoader from "holy-loader";
 import Providers from "./providers";
-import { OrganizationSchema, LocalBusinessSchema } from "@/components/seo/SEOComponents";
+import {
+  OrganizationSchema,
+  LocalBusinessSchema,
+} from "@/components/seo/SEOComponents";
 
 export const metadata: Metadata = {
-  title: "Trang Thiên Long Mobile - Điện Thoại iPhone, iPad Chính Hãng Giá Rẻ",
-  description: "Mua iPhone, iPad, Apple Watch, AirPods, MacBook chính hãng giá tốt nhất. Bảo hành 12 tháng, trả góp 0%, giao hàng toàn quốc. Showroom tại TP.HCM.",
+  title:
+    "Trang Thiên Long Mobile - iPhone, iPad, MacBook Chính Hãng Giá Tốt Nhất",
+  description:
+    "⭐ Cửa hàng Apple uy tín hàng đầu Việt Nam ⭐ iPhone 15, iPad, MacBook, Apple Watch chính hãng ⭐ Giá tốt nhất ⭐ Bảo hành 12 tháng ⭐ Trả góp 0%",
   keywords: [
     "iphone giá rẻ",
-    "ipad chính hãng", 
+    "ipad chính hãng",
     "apple watch vietnam",
     "airpods pro",
     "macbook air m2",
     "điện thoại cũ like new",
-    "trang thiên long mobile"
+    "trang thiên long mobile",
   ],
   openGraph: {
     title: "Trang Thiên Long Mobile - Chuyên Apple Products",
-    description: "Điện thoại iPhone, iPad, Apple Watch chính hãng với giá cạnh tranh nhất thị trường",
+    description:
+      "Điện thoại iPhone, iPad, Apple Watch chính hãng với giá cạnh tranh nhất thị trường",
     url: "https://thientranglong.vn",
     siteName: "Trang Thiên Long Mobile",
     images: [
@@ -32,7 +38,7 @@ export const metadata: Metadata = {
         width: 1200,
         height: 630,
         alt: "Trang Thiên Long Mobile - Apple Store",
-      }
+      },
     ],
     type: "website",
     locale: "vi_VN",
@@ -41,7 +47,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Trang Thiên Long Mobile",
     description: "Apple Products chính hãng giá tốt",
-    images: ["/images/ttl.png"]
+    images: ["/images/ttl.png"],
   },
   robots: {
     index: true,
@@ -50,13 +56,13 @@ export const metadata: Metadata = {
       index: true,
       follow: true,
       "max-video-preview": -1,
-      "max-image-preview": "large", 
-      "max-snippet": -1
-    }
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
   alternates: {
-    canonical: "https://thientranglong.vn"
-  }
+    canonical: "https://thientranglong.vn",
+  },
 };
 
 export const viewport: Viewport = {

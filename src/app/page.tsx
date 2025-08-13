@@ -1,19 +1,25 @@
 /** @format */
 
 import "@/styles/swiper-custom.css";
-import ProductListSec from "@/components/common/ProductListSec";
-import DressStyle from "@/components/homepage/DressStyle";
-import Reviews from "@/components/homepage/Reviews";
+import ModernHeroSection from "@/components/homepage/ModernHeroSection";
 import HeroSection from "@/components/homepage/HeroSection";
 import VideoHeroSection from "@/components/homepage/VideoHeroSection";
-import CategoriesGrid from "@/components/homepage/CategoriesGrid";
+import EnhancedFeaturedProductsCarousel from "@/components/homepage/EnhancedFeaturedProductsCarousel";
+import ModernProductSection from "@/components/homepage/ModernProductSection";
+import StatsSection from "@/components/homepage/StatsSection";
+import NewsletterSection from "@/components/homepage/NewsletterSection";
+import FloatingToolbar from "../components/FloatingToolbar";
+import {
+  mockProductsIphone,
+  mockProductsIpad,
+  mockProductsWatch,
+  mockProductsAirPods,
+  mockProductsMac,
+} from "@/data";
 import { Product } from "@/types/product.types";
 import { Review } from "@/types/review.types";
-import FloatingToolbar from "../components/FloatingToolbar";
-import ProductSection from "../components/ProductSection";
-import { mockProductsIphone } from "@/data";
 
-// Legacy data - now replaced by data from /data/index.ts
+// Legacy exports for backward compatibility
 export const newArrivalsData: Product[] = mockProductsIphone.slice(0, 2);
 export const topSellingData: Product[] = mockProductsIphone.slice(1, 3);
 export const relatedProductData: Product[] = mockProductsIphone;
@@ -21,46 +27,34 @@ export const relatedProductData: Product[] = mockProductsIphone;
 export const reviewsData: Review[] = [
   {
     id: 1,
-    user: "",
-    content: '"”',
+    user: "Nguyễn Văn A",
+    content: "Sản phẩm chất lượng, giao hàng nhanh!",
     rating: 5,
-    date: "",
+    date: "2024-01-15",
   },
   {
     id: 2,
-    user: "",
-    content: `"”`,
+    user: "Trần Thị B",
+    content: "iPhone mới 99%, giống như mới tinh!",
     rating: 5,
-    date: "",
+    date: "2024-01-16",
   },
   {
     id: 3,
-    user: "",
-    content: `""`,
+    user: "Lê Văn C",
+    content: "Dịch vụ tốt, nhân viên tư vấn nhiệt tình",
     rating: 5,
-    date: "August 16, 2023",
+    date: "2024-01-17",
   },
-  {
-    id: 4,
-    user: "",
-    content: `""`,
-    rating: 5,
-    date: "August 17, 2023",
-  },
-  {
-    id: 5,
-    user: "",
-    content: `""`,
-    rating: 5,
-    date: "August 18, 2023",
-  },
-  {
-    id: 6,
-    user: "",
-    content: `""`,
-    rating: 5,
-    date: "August 19, 2023",
-  },
+];
+
+// Combine all products for carousel
+const allProducts = [
+  ...mockProductsIphone,
+  ...mockProductsIpad,
+  ...mockProductsWatch,
+  ...mockProductsAirPods,
+  ...mockProductsMac,
 ];
 
 export default function Home() {
@@ -68,66 +62,54 @@ export default function Home() {
     <>
       <FloatingToolbar />
       
-      {/* Hero Section - Banners only */}
+      {/* 🎯 NEW: Modern Hero Section with 3D iPhone */}
+      <ModernHeroSection />
+      
+      {/* 📸 ORIGINAL: Banner Carousel */}
       <HeroSection />
       
-      {/* Video Hero Section - Separate video with animations */}
+      {/* 🎬 ORIGINAL: Video Hero Section with Apple World */}
       <VideoHeroSection />
       
-      {/* Categories Grid */}
-      <CategoriesGrid />
-
-      {/* Product Sections for each category */}
-      <ProductSection
+      {/* 🎠 NEW: Enhanced Carousel với ALL products */}
+      <EnhancedFeaturedProductsCarousel products={allProducts} />
+      
+      {/* 📱 REDESIGNED: Product Sections cho FloatingToolbar */}
+      <ModernProductSection
         id="iphone-section"
         title="iPhone"
         backgroundImage="/images/home-bg-2.png"
       />
       
-      <ProductSection
+      <ModernProductSection
         id="ipad-section"
         title="iPad"
         backgroundImage="/images/home-bg-2.png"
       />
       
-      <ProductSection
+      <ModernProductSection
         id="watch-section"
         title="Apple Watch"
         backgroundImage="/images/home-bg-2.png"
       />
       
-      <ProductSection
+      <ModernProductSection
         id="airpods-section"
         title="AirPods"
         backgroundImage="/images/home-bg-2.png"
       />
       
-      <ProductSection
+      <ModernProductSection
         id="mac-section"
         title="Mac"
         backgroundImage="/images/home-bg-2.png"
       />
-
-      <main className="my-[50px] sm:my-[72px]">
-        {/* Featured iPhone Products */}
-        <ProductListSec
-          title="iPhone Nổi Bật"
-          data={mockProductsIphone.slice(0, 4)}
-          viewAllLink="/iphone"
-        />
-        
-        <div className="max-w-frame mx-auto px-4 xl:px-0">
-          <hr className="h-[1px] border-t-black/10 my-10 sm:my-16" />
-        </div>
-        
-        
-        
-        <div className="mb-[50px] sm:mb-20">
-          <DressStyle />
-        </div>
-        
-        <Reviews data={reviewsData} />
-      </main>
+      
+      {/* 📊 NEW: Stats Section */}
+      <StatsSection />
+      
+      {/* 📧 NEW: Newsletter Signup */}
+      <NewsletterSection />
     </>
   );
 }

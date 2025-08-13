@@ -56,27 +56,6 @@ const Reviews = ({ data }: ReviewsProps) => {
           }}
           className="relative w-full mb-6 md:mb-9"
         >
-          <div className="relative flex items-end sm:items-center max-w-frame mx-auto mb-6 md:mb-10 px-4 xl:px-0">
-            <motion.h2
-              initial={{ y: "100px", opacity: 0 }}
-              whileInView={{ y: "0", opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.6, duration: 0.6 }}
-              className={cn([
-                "font-bold text-[32px] leading-[36px] md:text-5xl capitalize mr-auto",
-              ])}
-            >
-              OUR HAPPY CUSTOMERS
-            </motion.h2>
-            <div className="flex items-center space-x-1 ml-2">
-              <CarouselPrevious variant="ghost" className="text-2xl">
-                <FaArrowLeft />
-              </CarouselPrevious>
-              <CarouselNext variant="ghost" className="text-2xl">
-                <FaArrowRight />
-              </CarouselNext>
-            </div>
-          </div>
           <CarouselContent>
             {data.map((review, index) => (
               <CarouselItem

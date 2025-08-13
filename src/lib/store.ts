@@ -24,7 +24,16 @@ export const makeStore = () => {
     devTools: process.env.NODE_ENV !== "production",
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
-        serializableCheck: false,
+        serializableCheck: {
+          ignoredActions: [
+            "persist/FLUSH",
+            "persist/REHYDRATE",
+            "persist/PAUSE",
+            "persist/PERSIST",
+            "persist/PURGE",
+            "persist/REGISTER",
+          ],
+        },
       }),
   });
 
@@ -32,12 +41,13 @@ export const makeStore = () => {
   return { store, persistor };
 };
 
-const store = makeStore().store;
+// Create a temporary store for type inference only
+const tempStore = configureStore({
+  reducer: rootReducer,
+});
 
 // Infer the type of the store
-export type AppStore = typeof store;
+export type AppStore = ReturnType<typeof makeStore>["store"];
 // Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
-
-export { store };
+export type RootState = ReturnType<typeof tempStore.getState>;
+export type AppDispatch = typeof tempStore.dispatch;

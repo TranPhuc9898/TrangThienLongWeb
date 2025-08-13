@@ -2,7 +2,7 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Provider } from "react-redux";
 import { makeStore } from "../lib/store";
 import { PersistGate } from "redux-persist/integration/react";
@@ -15,7 +15,10 @@ type Props = {
 };
 
 const Providers = ({ children }: Props) => {
-  const { store, persistor } = makeStore();
+  const [isClient, setIsClient] = useState(false);
+  const [storeConfig, setStoreConfig] = useState<ReturnType<
+    typeof makeStore
+  > | null>(null);
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -28,19 +31,34 @@ const Providers = ({ children }: Props) => {
       })
   );
 
+  useEffect(() => {
+    setIsClient(true);
+    setStoreConfig(makeStore());
+  }, []);
+
+  if (!isClient || !storeConfig) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <SpinnerbLoader className="w-10 border-2 border-gray-300 border-r-gray-600" />
+      </div>
+    );
+  }
+
   return (
-    <Provider store={store}>
+    <Provider store={storeConfig.store}>
       <PersistGate
         loading={
           <div className="flex items-center justify-center h-96">
             <SpinnerbLoader className="w-10 border-2 border-gray-300 border-r-gray-600" />
           </div>
         }
-        persistor={persistor}
+        persistor={storeConfig.persistor}
       >
         <QueryClientProvider client={queryClient}>
           {children}
-          <ReactQueryDevtools initialIsOpen={false} />
+          {process.env.NODE_ENV === "development" && (
+            <ReactQueryDevtools initialIsOpen={false} />
+          )}
         </QueryClientProvider>
       </PersistGate>
     </Provider>

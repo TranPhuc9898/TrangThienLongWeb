@@ -4,7 +4,13 @@ import React from "react";
 import Image from "next/image";
 import FeaturedProducts from "./components/FeaturedProducts";
 import ProductCarousel from "./components/ProductCarousel";
-import { mockProductsIphone } from "../../data";
+import {
+  mockProductsIphone,
+  mockProductsIpad,
+  mockProductsWatch,
+  mockProductsAirPods,
+  mockProductsMac,
+} from "../../data";
 
 interface ProductSectionProps {
   id: string;
@@ -19,66 +25,110 @@ const ProductSection = ({
   backgroundImage = "/images/home-bg-2.png",
   className = "",
 }: ProductSectionProps) => {
+  // Get products based on section type
+  const getProductsForSection = () => {
+    switch (id) {
+      case "iphone-section":
+        return mockProductsIphone;
+      case "ipad-section":
+        return mockProductsIpad;
+      case "watch-section":
+        return mockProductsWatch;
+      case "airpods-section":
+        return mockProductsAirPods;
+      case "mac-section":
+        return mockProductsMac;
+      default:
+        return mockProductsIphone;
+    }
+  };
+
+  const products = getProductsForSection();
+
   return (
     <section
       id={id}
-      className={`relative h-auto py-8 flex items-center justify-center overflow-hidden ${className}`}
+      className={`relative h-auto py-10 sm:py-12 flex items-center justify-center overflow-hidden animate-fadeInUp ${className}`}
       style={{
         marginTop: 20,
-        // Responsive margins - mobile sẽ có margin nhỏ hơn
         marginLeft: "clamp(16px, 5vw, 100px)",
         marginRight: "clamp(16px, 5vw, 100px)",
-        // Responsive max width
         maxWidth: "calc(100vw - clamp(32px, 10vw, 200px))",
+        animationDelay: "0.2s",
       }}
     >
-      {/* Background Image: full width, blurred, not boxed */}
+      {/* Clean animated background */}
       <div
-        className="absolute inset-0 -z-10 w-full h-full"
+        className="absolute inset-0 -z-10 w-full h-full animate-scaleIn"
         style={{
           borderTopLeftRadius: 24,
           borderTopRightRadius: 24,
           overflow: "hidden",
+          background: "white",
+          border: "1px solid rgba(0,0,0,0.06)",
+          animationDelay: "0.1s",
         }}
       >
         <Image
           src={backgroundImage}
           alt={`${title} background`}
           fill
-          className="object-cover w-full h-full"
+          className="object-cover w-full h-full opacity-[0.06]"
           priority={id === "iphone-section"}
           style={{
             borderTopLeftRadius: 24,
             borderTopRightRadius: 24,
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#FF6B2C]/80 via-[#FF6B2C]/40 to-white/80 backdrop-blur-[2px]" />
       </div>
 
       {/* Content */}
       <div className="relative z-10 w-full max-w-[1700px] mx-auto px-2 sm:px-4 lg:px-12">
-        <div className="text-center text-white mb-8">
-          <h2 className="text-2xl md:text-4xl font-bold mb-2">{title}</h2>
-          <p className="text-sm md:text-lg max-w-xl mx-auto px-4 mb-4">
-            Khám phá bộ sưu tập {title.toLowerCase()} mới nhất với công nghệ
-            tiên tiến
+        <div
+          className="text-center mb-8 animate-fadeInUp"
+          style={{ animationDelay: "0.4s" }}
+        >
+          <h2
+            className="text-2xl md:text-4xl font-bold mb-2 text-gray-900 animate-scaleIn"
+            style={{ animationDelay: "0.5s" }}
+          >
+            {title}
+          </h2>
+          <p
+            className="text-sm md:text-lg max-w-xl mx-auto px-4 mb-4 text-gray-600 animate-fadeIn"
+            style={{ animationDelay: "0.6s" }}
+          >
+            Khám phá {title} chính hãng, giá tốt, giao nhanh. Chọn dung lượng
+            phù hợp và ưu đãi hấp dẫn.
           </p>
         </div>
 
         {/* Grid responsive - mobile sẽ stack vertical */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
-          <div className="lg:col-span-3 w-full">
-            <FeaturedProducts products={mockProductsIphone} />
+        <div
+          className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6 animate-slideInUp"
+          style={{ animationDelay: "0.7s" }}
+        >
+          <div
+            className="lg:col-span-3 w-full animate-slideInLeft"
+            style={{ animationDelay: "0.8s" }}
+          >
+            <FeaturedProducts products={products} />
           </div>
-          <div className="lg:col-span-1 w-full flex flex-col gap-4">
+          <div
+            className="lg:col-span-1 w-full flex flex-col gap-4 animate-slideInRight"
+            style={{ animationDelay: "0.9s" }}
+          >
             <ProductCarousel />
-            {/* Khung ảnh old.png */}
           </div>
         </div>
 
-        <div className="text-center mt-6 sm:mt-8">
-          <button className="bg-white text-black px-4 sm:px-6 py-2 rounded-full font-semibold hover:bg-gray-100 transition-colors text-sm md:text-base">
-            Xem Ngay
+        <div
+          className="text-center mt-6 sm:mt-8 animate-fadeInUp"
+          style={{ animationDelay: "1s" }}
+        >
+          <button className="bg-gray-900 text-white px-5 sm:px-7 py-3 rounded-full font-semibold hover:bg-black transition-all duration-200 shadow-sm relative overflow-hidden hover:scale-105 hover:shadow-lg hover-lift">
+            <span className="relative z-10">Xem ngay {title}</span>
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 transform -translate-x-full transition-transform duration-300 hover:translate-x-0" />
           </button>
         </div>
       </div>
