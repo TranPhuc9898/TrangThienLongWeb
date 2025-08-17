@@ -11,35 +11,60 @@ interface EnhancedFeaturedProductsCarouselProps {
   products: Product[];
 }
 
-const EnhancedFeaturedProductsCarousel: React.FC<EnhancedFeaturedProductsCarouselProps> = ({ 
-  products 
-}) => {
+const EnhancedFeaturedProductsCarousel: React.FC<
+  EnhancedFeaturedProductsCarouselProps
+> = ({ products }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Auto scroll chậm và mượt
+  // Auto scroll mượt và rõ ràng
   useEffect(() => {
     const scrollContainer = scrollRef.current;
     if (!scrollContainer) return;
 
-    let scrollPosition = 0;
-    const scrollSpeed = 0.5; // Rất chậm
+    let isPaused = false;
+    const scrollSpeed = 1.5; // Tăng tốc độ lên để thấy rõ hơn
 
     const autoScroll = () => {
-      scrollPosition += scrollSpeed;
-      
-      if (scrollPosition >= scrollContainer.scrollWidth / 3) {
-        scrollPosition = 0;
+      if (isPaused) return;
+
+      const currentScroll = scrollContainer.scrollLeft;
+      const maxScroll =
+        scrollContainer.scrollWidth - scrollContainer.clientWidth;
+      const cardWidth = 320 + 24; // 320px card width + 24px gap
+
+      if (currentScroll >= maxScroll * 0.6) {
+        // Reset về đầu khi scroll đến 60%
+        scrollContainer.scrollTo({
+          left: 0,
+          behavior: "smooth",
+        });
+      } else {
+        // Scroll từ từ
+        scrollContainer.scrollTo({
+          left: currentScroll + scrollSpeed,
+          behavior: "auto",
+        });
       }
-      
-      scrollContainer.scrollTo({
-        left: scrollPosition,
-        behavior: 'auto'
-      });
     };
 
-    const interval = setInterval(autoScroll, 16); // 60fps smooth
+    // Pause khi hover
+    const handleMouseEnter = () => {
+      isPaused = true;
+    };
+    const handleMouseLeave = () => {
+      isPaused = false;
+    };
 
-    return () => clearInterval(interval);
+    scrollContainer.addEventListener("mouseenter", handleMouseEnter);
+    scrollContainer.addEventListener("mouseleave", handleMouseLeave);
+
+    const interval = setInterval(autoScroll, 30); // Chạy mượt hơn
+
+    return () => {
+      clearInterval(interval);
+      scrollContainer.removeEventListener("mouseenter", handleMouseEnter);
+      scrollContainer.removeEventListener("mouseleave", handleMouseLeave);
+    };
   }, []);
 
   // Triple products for infinite effect
@@ -59,7 +84,8 @@ const EnhancedFeaturedProductsCarousel: React.FC<EnhancedFeaturedProductsCarouse
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
               Sản Phẩm
-            </span>{" "}Nổi Bật
+            </span>{" "}
+            Nổi Bật
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Khám phá toàn bộ hệ sinh thái Apple với carousel tự động
@@ -71,7 +97,7 @@ const EnhancedFeaturedProductsCarousel: React.FC<EnhancedFeaturedProductsCarouse
           <div
             ref={scrollRef}
             className="flex gap-6 overflow-x-hidden scrollbar-hide"
-            style={{ scrollbarWidth: 'none' }}
+            style={{ scrollbarWidth: "none" }}
           >
             {infiniteProducts.map((product, index) => (
               <motion.div
@@ -83,12 +109,16 @@ const EnhancedFeaturedProductsCarousel: React.FC<EnhancedFeaturedProductsCarouse
                   {/* Product Image với hover effects */}
                   <div className="relative aspect-square p-6 bg-gradient-to-br from-gray-50 to-gray-100 group-hover:from-blue-50 group-hover:to-purple-50 transition-all duration-500">
                     <Image
-                      src={product.gallery[0]}
-                      alt={product.title}
+                      src={product.thumbnail || "/images/iphone14.png"}
+                      alt={
+                        product.productName ||
+                        product.productName ||
+                        product.title
+                      }
                       fill
                       className="object-contain group-hover:scale-110 transition-transform duration-500"
                     />
-                    
+
                     {/* Overlay Actions */}
                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
                       <motion.button
@@ -108,18 +138,22 @@ const EnhancedFeaturedProductsCarousel: React.FC<EnhancedFeaturedProductsCarouse
                     </div>
 
                     {/* Discount Badge */}
-                    {product.discount && (
-                      <div className="absolute top-4 left-4 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                        -{product.discount.percentage}%
-                      </div>
-                    )}
+                    {product.discount &&
+                      (product.discount.percentage > 0 ||
+                        product.discount.amount > 0) && (
+                        <div className="absolute top-4 left-4 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                          {product.discount.percentage > 0
+                            ? `-${product.discount.percentage}%`
+                            : `-${product.discount.amount}đ`}
+                        </div>
+                      )}
                   </div>
 
                   {/* Product Info */}
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
-                        {product.brand}
+                        {product.brand || "Apple"}
                       </span>
                       <div className="flex items-center gap-1">
                         <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
@@ -130,22 +164,66 @@ const EnhancedFeaturedProductsCarousel: React.FC<EnhancedFeaturedProductsCarouse
                     </div>
 
                     <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                      {product.title}
+                      {product.productName ||
+                        product.productName ||
+                        product.title}
                     </h3>
 
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="text-2xl font-bold text-gray-900">
-                        {product.price.toLocaleString()}đ
+                    {product.condition && (
+                      <span className="inline-block px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full mb-2">
+                        {product.condition}
                       </span>
-                      {product.discount && (
-                        <span className="text-sm text-gray-400 line-through">
-                          {(product.price + product.discount.amount).toLocaleString()}đ
+                    )}
+
+                    <div className="flex items-center gap-2 mb-4">
+                      {product.discount ? (
+                        <>
+                          <span className="text-2xl font-bold text-red-600">
+                            {(() => {
+                              const basePrice = Number(
+                                product.basePrice || product.price
+                              );
+                              const discountMatch =
+                                product.discount.match(/-(\d+)%/);
+                              const discountPercent = discountMatch
+                                ? parseInt(discountMatch[1])
+                                : 0;
+                              const discountedPrice =
+                                basePrice - (basePrice * discountPercent) / 100;
+                              return Math.round(
+                                discountedPrice
+                              ).toLocaleString();
+                            })()}
+                            đ
+                          </span>
+                          <span className="text-lg text-gray-400 line-through">
+                            {Number(
+                              product.basePrice || product.price
+                            ).toLocaleString()}
+                            đ
+                          </span>
+                          <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs">
+                            {product.discount}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-2xl font-bold text-gray-900">
+                          {Number(
+                            product.basePrice || product.price
+                          ).toLocaleString()}
+                          đ
                         </span>
                       )}
                     </div>
 
                     <Link
-                      href={`/shop/product/${product.slug}`}
+                      href={`/shop/product/${product.id}/${(
+                        product.productName ||
+                        product.productName ||
+                        product.title
+                      )
+                        .split(" ")
+                        .join("-")}`}
                       className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
                     >
                       <ShoppingCart className="w-4 h-4" />
@@ -161,29 +239,6 @@ const EnhancedFeaturedProductsCarousel: React.FC<EnhancedFeaturedProductsCarouse
           <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-gray-50 to-transparent pointer-events-none z-10" />
           <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-gray-50 to-transparent pointer-events-none z-10" />
         </div>
-
-        {/* Auto-scroll Indicator */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          viewport={{ once: true }}
-          className="text-center mt-8"
-        >
-          <p className="text-gray-500 text-sm mb-4">
-            Carousel tự động • Hover để tạm dừng
-          </p>
-          <div className="flex justify-center space-x-2">
-            {[...Array(3)].map((_, i) => (
-              <motion.div
-                key={i}
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.3 }}
-                className="w-2 h-2 bg-blue-500 rounded-full opacity-60"
-              />
-            ))}
-          </div>
-        </motion.div>
       </div>
 
       <style jsx>{`

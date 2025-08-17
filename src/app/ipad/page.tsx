@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     title: "iPad Chính Hãng - iPad Pro M2, iPad Air | Trang Thiên Long",
     description: "iPad Pro M2 với chip mạnh mẽ, iPad Air mỏng nhẹ, giá cạnh tranh nhất thị trường",
     url: "https://thientranglong.vn/ipad",
-    images: ["/images/pic1.png"]
+    images: ["/images/iphone14.png"]
   },
   alternates: {
     canonical: "https://thientranglong.vn/ipad"

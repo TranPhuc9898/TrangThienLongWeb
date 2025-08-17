@@ -13,7 +13,7 @@ const testimonials = [
     content:
       "iPhone 15 Pro Max tại đây chất lượng tuyệt vời, giá cả hợp lý. Nhân viên tư vấn nhiệt tình, giao hàng nhanh chóng. Tôi rất hài lòng!",
     rating: 5,
-    avatar: "/images/avatar-1.jpg",
+    avatar: "/images/iphone14.png",
   },
   {
     id: 2,
@@ -22,7 +22,7 @@ const testimonials = [
     content:
       "Mua iPad Air M2 cho công việc giảng dạy. Sản phẩm like new 99% nhưng chất lượng như mới. Bảo hành đầy đủ, rất uy tín!",
     rating: 5,
-    avatar: "/images/avatar-2.jpg",
+    avatar: "/images/iphone14.png",
   },
   {
     id: 3,
@@ -31,7 +31,7 @@ const testimonials = [
     content:
       "MacBook Air M2 phục vụ học tập tốt. Trả góp 0% rất thuận tiện cho sinh viên như mình. Cảm ơn team tư vấn!",
     rating: 5,
-    avatar: "/images/avatar-3.jpg",
+    avatar: "/images/iphone14.png",
   },
   {
     id: 4,
@@ -40,7 +40,7 @@ const testimonials = [
     content:
       "Apple Watch Series 9 đẹp và tiện lợi. Theo dõi sức khỏe rất chính xác. Giao hàng trong 2h như cam kết. Sẽ giới thiệu bạn bè!",
     rating: 5,
-    avatar: "/images/avatar-4.jpg",
+    avatar: "/images/iphone14.png",
   },
 ];
 

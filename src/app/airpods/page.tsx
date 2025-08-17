@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     title: "AirPods Chính Hãng - Pro 2, AirPods 3, Max | Trang Thiên Long",
     description: "Tai nghe không dây Apple AirPods với chất lượng âm thanh tuyệt vời, giá cạnh tranh",
     url: "https://thientranglong.vn/airpods",
-    images: ["/images/pic7.png"]
+    images: ["/images/iphone14.png"]
   },
   alternates: {
     canonical: "https://thientranglong.vn/airpods"

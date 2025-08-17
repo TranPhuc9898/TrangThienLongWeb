@@ -2,7 +2,6 @@
 
 import { Metadata } from "next";
 import ProductListSec from "@/components/common/ProductListSec";
-import { mockProductsIphone } from "@/data";
 import {
   Breadcrumbs,
   FAQSchema,
@@ -37,7 +36,7 @@ export const metadata: Metadata = {
     url: "https://thientranglong.vn/iphone",
     images: [
       {
-        url: "/images/iphone-collection-2024.jpg",
+        url: "/images/iphone14.png",
         width: 1200,
         height: 630,
         alt: "iPhone chính hãng giá rẻ tại Trang Thiên Long",
@@ -86,11 +85,44 @@ const iphoneFAQs = [
   },
 ];
 
-export default function iPhonePage() {
+// Fetch iPhone products from API
+async function getIphoneProducts() {
+  try {
+    const response = await fetch(
+      `${
+        process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+      }/api/products`,
+      {
+        cache: "no-store", // Always fetch fresh data
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch products");
+    }
+
+    const products = await response.json();
+
+    // Filter products by iPhone category (case insensitive)
+    const iphoneProducts = products.filter((product: any) =>
+      product.category?.toLowerCase().includes("iphone")
+    );
+
+    return iphoneProducts;
+  } catch (error) {
+    console.error("Error fetching iPhone products:", error);
+    return []; // Return empty array on error
+  }
+}
+
+export default async function iPhonePage() {
   const breadcrumbItems = [
     { name: "Trang chủ", href: "/" },
     { name: "iPhone", href: "/iphone" },
   ];
+
+  // Fetch iPhone products from API
+  const iphoneProducts = await getIphoneProducts();
 
   return (
     <>
@@ -309,7 +341,7 @@ export default function iPhonePage() {
           {/* Products Section */}
           <ProductListSec
             title="Tất Cả iPhone Chính Hãng"
-            data={mockProductsIphone}
+            data={iphoneProducts}
             viewAllLink="/shop"
           />
 

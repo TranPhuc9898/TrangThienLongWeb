@@ -403,3 +403,136 @@ img {
   background-position: -9999px -9999px;
   background-repeat: no-repeat;
 }
+
+/* 🎯 HERO SECTION BLOB ANIMATIONS - QUAY MÃI MÃI VỚI TỐC ĐỘ NHANH HỠN */
+@keyframes blob {
+  0%,
+  100% {
+    transform: translate(0px, 0px) scale(1) rotate(0deg);
+  }
+  25% {
+    transform: translate(40px, -60px) scale(1.2) rotate(90deg);
+  }
+  50% {
+    transform: translate(-30px, 30px) scale(0.8) rotate(180deg);
+  }
+  75% {
+    transform: translate(50px, 20px) scale(1.1) rotate(270deg);
+  }
+}
+
+@keyframes blobSpin {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.1);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+/* TỐC ĐỘ NHANH - QUAY MÃI MÃI */
+.animate-blob {
+  animation: blob 4s ease-in-out infinite;
+}
+
+.animate-blob-spin {
+  animation: blobSpin 3s linear infinite;
+}
+
+.animation-delay-1000 {
+  animation-delay: 1s;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-3000 {
+  animation-delay: 3s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* PULSE ANIMATION CHO BACKGROUND */
+@keyframes backgroundPulse {
+  0%,
+  100% {
+    opacity: 0.1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(1.05);
+  }
+}
+
+.animate-pulse-bg {
+  animation: backgroundPulse 2s ease-in-out infinite;
+}
+
+/* 🛒 TOAST NOTIFICATIONS */
+@keyframes toastSlideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toastSlideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.animate-toast-in {
+  animation: toastSlideIn 0.3s ease-out forwards;
+}
+
+.animate-toast-out {
+  animation: toastSlideOut 0.3s ease-in forwards;
+}
+
+/* 📌 STICKY HEADER BACKDROP BLUR SUPPORT */
+.backdrop-blur-md {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* 🏪 PRODUCT CARD HOVER ANIMATIONS */
+.product-hover-effect {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.product-hover-effect:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+}
+
+/* 🛒 CART COUNTER ANIMATION */
+@keyframes cartBounce {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+.animate-cart-bounce {
+  animation: cartBounce 0.3s ease-in-out;
+}

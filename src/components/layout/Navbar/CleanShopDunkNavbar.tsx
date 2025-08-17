@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Search, ShoppingCart, User, ChevronDown, Menu, X } from "lucide-react";
+import CartBtn from "./TopNavbar/CartBtn";
 
 interface DropdownItem {
   label: string;
@@ -33,7 +34,7 @@ const navigationData: NavItem[] = [
       { label: "iPhone 14", href: "/iphone/14" },
       { label: "iPhone 13", href: "/iphone/13" },
       { label: "Tất cả iPhone", href: "/iphone" },
-    ]
+    ],
   },
   {
     label: "iPad",
@@ -44,7 +45,7 @@ const navigationData: NavItem[] = [
       { label: "iPad Gen 10", href: "/ipad/gen-10" },
       { label: "iPad Mini", href: "/ipad/mini" },
       { label: "Tất cả iPad", href: "/ipad" },
-    ]
+    ],
   },
   {
     label: "Mac",
@@ -52,9 +53,9 @@ const navigationData: NavItem[] = [
     dropdownItems: [
       { label: "MacBook Air M2", href: "/mac/air-m2", isNew: true },
       { label: "MacBook Pro", href: "/mac/pro", isNew: true },
-      { label: "iMac 24\"", href: "/mac/imac-24", isHot: true },
+      { label: 'iMac 24"', href: "/mac/imac-24", isHot: true },
       { label: "Tất cả Mac", href: "/macbook" },
-    ]
+    ],
   },
   {
     label: "Watch",
@@ -64,7 +65,7 @@ const navigationData: NavItem[] = [
       { label: "Apple Watch Ultra 2", href: "/watch/ultra-2", isNew: true },
       { label: "Apple Watch SE", href: "/watch/se", isHot: true },
       { label: "Tất cả Watch", href: "/apple-watch" },
-    ]
+    ],
   },
   {
     label: "AirPods",
@@ -74,7 +75,7 @@ const navigationData: NavItem[] = [
       { label: "AirPods 3", href: "/airpods/3rd", isHot: true },
       { label: "AirPods Max", href: "/airpods/max" },
       { label: "Tất cả AirPods", href: "/airpods" },
-    ]
+    ],
   },
   {
     label: "Phụ kiện",
@@ -84,7 +85,7 @@ const navigationData: NavItem[] = [
       { label: "Sạc & Cable", href: "/phu-kien/sac-cable" },
       { label: "Dây Watch", href: "/phu-kien/day-watch" },
       { label: "Tất cả", href: "/phu-kien" },
-    ]
+    ],
   },
 ];
 
@@ -94,7 +95,7 @@ const CleanShopDunkNavbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
-    <header className="sticky top-0 bg-white border-b border-gray-100 z-50">
+    <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md border-b border-gray-100 z-50 shadow-sm">
       <div className="max-w-[1200px] mx-auto px-4">
         <div className="flex items-center justify-between h-14">
           {/* Logo */}
@@ -192,22 +193,18 @@ const CleanShopDunkNavbar = () => {
             </div>
 
             {/* Cart */}
-            <Link
-              href="/cart"
-              className="relative p-1.5 text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <ShoppingCart className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center text-[10px] font-medium">
-                0
-              </span>
-            </Link>
+            <CartBtn className="p-1.5" />
 
             {/* Mobile Menu */}
             <button
               className="lg:hidden p-1.5 text-gray-600 hover:text-gray-900"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
-              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {isMobileMenuOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
             </button>
           </div>
         </div>

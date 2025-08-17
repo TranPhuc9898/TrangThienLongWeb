@@ -31,7 +31,7 @@ const orbitingCards: OrbitingCard[] = [
     id: "ipad",
     title: "iPad Pro M2",
     price: "Từ 26.990.000đ", 
-    image: "/images/pic1.png",
+    image: "/images/iphone14.png",
     href: "/ipad",
     startAngle: 120,
     color: "#FF9500", // iPad orange
@@ -40,7 +40,7 @@ const orbitingCards: OrbitingCard[] = [
     id: "macbook", 
     title: "MacBook Air M2",
     price: "Từ 27.990.000đ",
-    image: "/images/pic10.png",
+    image: "/images/iphone14.png",
     href: "/macbook",
     startAngle: 240,
     color: "#8E8E93", // MacBook gray

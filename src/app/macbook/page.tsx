@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     title: "MacBook & iMac Chính Hãng - MacBook Air M2, Pro | Trang Thiên Long",
     description: "Máy tính Apple MacBook và iMac với chip M-series mạnh mẽ, thiết kế đẹp, giá cạnh tranh",
     url: "https://thientranglong.vn/macbook",
-    images: ["/images/pic10.png"]
+    images: ["/images/iphone14.png"]
   },
   alternates: {
     canonical: "https://thientranglong.vn/macbook"

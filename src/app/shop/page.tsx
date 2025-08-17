@@ -10,7 +10,7 @@ import {
 import MobileFilters from "@/components/shop-page/filters/MobileFilters";
 import Filters from "@/components/shop-page/filters";
 import { FiSliders } from "react-icons/fi";
-import { newArrivalsData, relatedProductData, topSellingData } from "../page";
+// Removed import - will use API data instead
 import ProductCard from "@/components/common/ProductCard";
 import {
   Pagination,
@@ -23,6 +23,11 @@ import {
 } from "@/components/ui/pagination";
 
 export default function ShopPage() {
+  // TODO: Replace with API fetch
+  const relatedProductData: any[] = [];
+  const newArrivalsData: any[] = [];
+  const topSellingData: any[] = [];
+
   return (
     <main className="pb-20">
       <div className="max-w-frame mx-auto px-4 xl:px-0">

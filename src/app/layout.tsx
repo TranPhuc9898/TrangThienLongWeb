@@ -11,6 +11,9 @@ import {
   OrganizationSchema,
   LocalBusinessSchema,
 } from "@/components/seo/SEOComponents";
+import { AdminEditProvider } from "@/contexts/AdminEditContext";
+import ToastProvider from "@/components/ui/toast";
+import { FlyToCartProvider } from "@/components/ui/FlyToCart";
 
 export const metadata: Metadata = {
   title:
@@ -81,12 +84,17 @@ export default function RootLayout({
         <LocalBusinessSchema />
         <HolyLoader color="#007AFF" />
 
-        <Providers>
-          <CleanShopDunkNavbar />
-
-          {children}
-        </Providers>
-        <Footer />
+        <AdminEditProvider>
+          <Providers>
+            <FlyToCartProvider>
+              <ToastProvider>
+                <CleanShopDunkNavbar />
+                <main className="pt-14">{children}</main>
+                <Footer />
+              </ToastProvider>
+            </FlyToCartProvider>
+          </Providers>
+        </AdminEditProvider>
       </body>
     </html>
   );

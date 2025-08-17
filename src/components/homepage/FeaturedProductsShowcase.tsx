@@ -51,8 +51,20 @@ const FeaturedProductsShowcase: React.FC<FeaturedProductsShowcaseProps> = ({
                 {/* Product Image */}
                 <div className="relative aspect-square p-6 bg-gradient-to-br from-gray-50 to-gray-100 group-hover:from-blue-50 group-hover:to-purple-50 transition-all duration-500">
                   <Image
-                    src={product.gallery[0]}
-                    alt={product.title}
+                    src={(() => {
+                      try {
+                        const gallery =
+                          typeof product.gallery === "string"
+                            ? JSON.parse(product.gallery)
+                            : product.gallery;
+                        return Array.isArray(gallery) && gallery[0]
+                          ? gallery[0]
+                          : "/images/iphone14.png";
+                      } catch {
+                        return "/images/iphone14.png";
+                      }
+                    })()}
+                    alt={product.productName || product.title}
                     fill
                     className="object-contain group-hover:scale-110 transition-transform duration-500"
                   />
@@ -98,17 +110,17 @@ const FeaturedProductsShowcase: React.FC<FeaturedProductsShowcaseProps> = ({
                   </div>
 
                   <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                    {product.title}
+                    {product.productName || product.title}
                   </h3>
 
                   <div className="flex items-center gap-2 mb-4">
                     <span className="text-2xl font-bold text-gray-900">
-                      {product.price.toLocaleString()}đ
+                      {Number(product.price).toLocaleString()}đ
                     </span>
                     {product.discount && (
                       <span className="text-sm text-gray-400 line-through">
                         {(
-                          product.price + product.discount.amount
+                          Number(product.price) + product.discount.amount
                         ).toLocaleString()}
                         đ
                       </span>

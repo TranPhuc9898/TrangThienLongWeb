@@ -33,7 +33,9 @@ const Providers = ({ children }: Props) => {
 
   useEffect(() => {
     setIsClient(true);
-    setStoreConfig(makeStore());
+    const store = makeStore();
+    console.log("🏪 Store created:", store);
+    setStoreConfig(store);
   }, []);
 
   if (!isClient || !storeConfig) {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
@@ -27,6 +27,10 @@ const ModernHeroSection = () => {
         <div className="absolute top-0 left-1/4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob" />
         <div className="absolute top-0 right-1/4 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000" />
         <div className="absolute bottom-0 left-1/3 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000" />
+
+        {/* Additional blob animations */}
+        <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-cyan-500 rounded-full mix-blend-multiply filter blur-2xl opacity-10 animate-blob-spin" />
+        <div className="absolute top-1/4 right-1/3 w-64 h-64 bg-yellow-500 rounded-full mix-blend-multiply filter blur-xl opacity-15 animate-pulse-bg animation-delay-1000" />
       </div>
 
       <motion.div style={{ y, opacity }} className="relative z-10">
@@ -127,9 +131,10 @@ const ModernHeroSection = () => {
                   animate={{
                     y: [0, -20, 0],
                     rotateY: [0, 5, 0],
+                    rotateZ: [0, 2, 0],
                   }}
                   transition={{
-                    duration: 6,
+                    duration: 3,
                     repeat: Infinity,
                     ease: "easeInOut",
                   }}
@@ -144,7 +149,18 @@ const ModernHeroSection = () => {
                   />
 
                   {/* Glow Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 blur-3xl transform scale-110" />
+                  <motion.div
+                    animate={{
+                      scale: [1, 1.1, 1],
+                      opacity: [0.2, 0.4, 0.2],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                    className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 blur-3xl transform scale-110"
+                  />
                 </motion.div>
 
                 {/* Floating Elements */}
@@ -152,13 +168,13 @@ const ModernHeroSection = () => {
                   animate={{
                     y: [0, -30, 0],
                     x: [0, 20, 0],
-                    rotate: [0, 10, 0],
+                    rotate: [0, 360, 0],
                   }}
                   transition={{
-                    duration: 8,
+                    duration: 4,
                     repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 1,
+                    ease: "linear",
+                    delay: 0.5,
                   }}
                   className="absolute top-20 -left-20 w-24 h-24 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl opacity-20 blur-xl"
                 />
@@ -167,15 +183,32 @@ const ModernHeroSection = () => {
                   animate={{
                     y: [0, 25, 0],
                     x: [0, -15, 0],
-                    rotate: [0, -10, 0],
+                    rotate: [0, -360, 0],
                   }}
                   transition={{
-                    duration: 7,
+                    duration: 3.5,
                     repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 2,
+                    ease: "linear",
+                    delay: 1,
                   }}
                   className="absolute bottom-20 -right-20 w-32 h-32 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full opacity-20 blur-xl"
+                />
+
+                {/* Additional floating element */}
+                <motion.div
+                  animate={{
+                    y: [0, -40, 0],
+                    x: [0, 30, 0],
+                    rotate: [0, 180, 0],
+                    scale: [1, 1.2, 1],
+                  }}
+                  transition={{
+                    duration: 5,
+                    repeat: Infinity,
+                    ease: "linear",
+                    delay: 2,
+                  }}
+                  className="absolute top-1/2 -right-32 w-20 h-20 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full opacity-25 blur-lg"
                 />
 
                 {/* Feature Badges */}
@@ -217,12 +250,12 @@ const ModernHeroSection = () => {
           <span className="text-sm mb-2">Scroll to explore</span>
           <motion.div
             animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
+            transition={{ duration: 1, repeat: Infinity }}
             className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center"
           >
             <motion.div
               animate={{ y: [0, 16, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
+              transition={{ duration: 1, repeat: Infinity }}
               className="w-1 h-3 bg-white/60 rounded-full mt-2"
             />
           </motion.div>

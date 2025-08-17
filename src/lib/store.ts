@@ -9,6 +9,7 @@ const persistConfig = {
   storage,
   version: 1,
   whitelist: ["carts"],
+  debug: true, // Enable debug
 };
 
 const rootReducer = combineReducers({

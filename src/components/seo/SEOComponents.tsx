@@ -107,7 +107,7 @@ export const ProductSchema: React.FC<ProductSchemaProps> = ({ product }) => {
   const structuredData = {
     "@context": "https://schema.org/",
     "@type": "Product",
-    name: product.title,
+    name: product.productName || product.title,
     description: product.description,
     brand: {
       "@type": "Brand",
@@ -150,7 +150,9 @@ export const ProductSchema: React.FC<ProductSchemaProps> = ({ product }) => {
           "@type": "Person",
           name: "Khách hàng Trang Thiên Long",
         },
-        reviewBody: `${product.title} chất lượng tuyệt vời, giá cả hợp lý. Rất hài lòng với sản phẩm.`,
+        reviewBody: `${
+          product.productName || product.title
+        } chất lượng tuyệt vời, giá cả hợp lý. Rất hài lòng với sản phẩm.`,
       },
     ],
   };
@@ -347,7 +349,7 @@ export const ProductCollectionSchema: React.FC<{ products: Product[] }> = ({
       itemListElement: products.map((product, index) => ({
         "@type": "Product",
         position: index + 1,
-        name: product.title,
+        name: product.productName || product.title,
         description: product.description,
         image: `https://thientranglong.vn${product.gallery[0]}`,
         offers: {

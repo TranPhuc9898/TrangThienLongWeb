@@ -19,7 +19,7 @@ const categories = [
     id: 2,
     title: "iPad",
     description: "Máy tính bảng đa năng",
-    image: "/images/pic1.png",
+    image: "/images/iphone14.png",
     href: "/ipad",
     color: "from-purple-500 to-pink-500",
     stats: "30+ sản phẩm",
@@ -28,7 +28,7 @@ const categories = [
     id: 3,
     title: "MacBook",
     description: "Laptop hiệu năng cao",
-    image: "/images/pic10.png",
+    image: "/images/iphone14.png",
     href: "/macbook",
     color: "from-gray-600 to-gray-800",
     stats: "25+ sản phẩm",
@@ -37,7 +37,7 @@ const categories = [
     id: 4,
     title: "Apple Watch",
     description: "Đồng hồ thông minh",
-    image: "/images/pic4.png",
+    image: "/images/iphone14.png",
     href: "/apple-watch",
     color: "from-red-500 to-orange-500",
     stats: "20+ sản phẩm",
@@ -46,7 +46,7 @@ const categories = [
     id: 5,
     title: "AirPods",
     description: "Tai nghe không dây",
-    image: "/images/pic7.png",
+    image: "/images/iphone14.png",
     href: "/airpods",
     color: "from-green-500 to-emerald-500",
     stats: "15+ sản phẩm",
@@ -180,7 +180,7 @@ const CategoryHighlights = () => {
 
                 <div className="absolute right-4 top-1/2 transform -translate-y-1/2 group-hover:scale-110 transition-transform duration-500">
                   <Image
-                    src="/images/pic1.png"
+                    src="/images/iphone14.png"
                     alt="iPad"
                     width={120}
                     height={160}

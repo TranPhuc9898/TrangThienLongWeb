@@ -47,7 +47,12 @@ export async function POST(req: NextRequest) {
   }
 
   // Kiểm tra các trường sản phẩm cần thiết
-  if (!product.title || !product.storage || !product.price) {
+  if (
+    !product.productName ||
+    product.title ||
+    !product.storage ||
+    !product.price
+  ) {
     return NextResponse.json(
       { message: "Thiếu thông tin sản phẩm" },
       { status: 400 }
@@ -67,7 +72,7 @@ export async function POST(req: NextRequest) {
   let productInfo = "";
   if (product) {
     productInfo = `\n\n*📱 THÔNG TIN SẢN PHẨM:*\n*Tên:* ${
-      product.title
+      product.productName || product.title
     }\n*Dung lượng:* ${
       product.storage
     }\n*Giá:* ${product.price.toLocaleString()}đ`;

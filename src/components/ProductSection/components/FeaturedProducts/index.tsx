@@ -6,6 +6,8 @@ import Link from "next/link";
 import { ShoppingCart, Plus } from "lucide-react";
 import { useAppDispatch } from "@/lib/hooks/redux";
 import { addToCart } from "@/lib/features/carts/cartsSlice";
+import { useToast } from "@/components/ui/toast";
+import { useFlyToCart } from "@/components/ui/FlyToCart";
 
 interface FeaturedProductsProps {
   products: (Product & { iphone?: boolean })[];
@@ -13,6 +15,8 @@ interface FeaturedProductsProps {
 
 const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
   const dispatch = useAppDispatch();
+  const { addToast } = useToast();
+  const { triggerFlight } = useFlyToCart();
   const [selectedStorageById, setSelectedStorageById] = useState<
     Record<number, number>
   >({});
@@ -27,17 +31,41 @@ const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
     e.preventDefault();
     e.stopPropagation();
 
-    const selectedStorage = product.storages?.[storageIndex];
-    const cartItem: any = {
-      id: product.id,
-      title: product.title,
-      price: selectedStorage?.price || product.price,
-      storage: selectedStorage?.label || "Default",
-      image: product.gallery?.[0] || "",
-      quantity: 1,
-    };
+    try {
+      const selectedStorage = product.storages?.[storageIndex];
 
-    dispatch(addToCart(cartItem));
+      // Find the product image for animation
+      const productCard = (e.currentTarget as HTMLElement).closest(
+        "[data-product-card]"
+      );
+      if (productCard) {
+        const productImage = productCard.querySelector("img");
+        if (productImage) {
+          triggerFlight(productImage, product.gallery?.[0] || "");
+        }
+      }
+
+      dispatch(
+        addToCart({
+          id: product.id,
+          name: product.productName || product.title,
+          srcUrl: product.gallery?.[0] || "",
+          price: selectedStorage?.price || product.price,
+          attributes: [selectedStorage?.label || "Default", "Mặc định"],
+          discount: product.discount,
+          quantity: 1,
+        })
+      );
+
+      // Toast disabled - using fly animation instead
+    } catch (error) {
+      addToast({
+        type: "error",
+        title: "Có lỗi xảy ra!",
+        description: "Không thể thêm sản phẩm vào giỏ hàng",
+        duration: 3000,
+      });
+    }
   };
 
   return (
@@ -86,7 +114,7 @@ const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
                   <div className="flex justify-center items-center mb-6 h-40 w-full group-hover:scale-105 transition-transform duration-300">
                     <img
                       src={product.gallery?.[0]}
-                      alt={product.title}
+                      alt={product.productName || product.title}
                       className="h-full object-contain rounded-lg mx-auto animate-scaleIn"
                       style={{
                         maxWidth: "80%",
@@ -99,7 +127,7 @@ const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
                   <div className="flex flex-col flex-1 w-full justify-between">
                     <div>
                       <h3 className="font-semibold text-base sm:text-lg text-gray-900 mb-3 text-center whitespace-normal break-words">
-                        {product.title}
+                        {product.productName || product.title}
                       </h3>
 
                       {/* Interactive Dung lượng */}

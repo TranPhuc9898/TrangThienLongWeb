@@ -1,0 +1,96 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id               String           @id @default(cuid())
+  // Basic Info
+  productName      String           // "iPhone 15 Pro Max"
+  brand            String           // "Apple"
+  condition        String           @default("99%") // "99%", "Like New", etc.
+  slug             String           @unique
+  
+  // Pricing & Currency
+  basePrice        BigInt           // Base price in smallest unit
+  currency         String           @default("VND")
+  discount         String?          // Discount percentage like "-5%"
+  
+  // Media
+  thumbnail        String           // Default/main product image
+  description      String?          // Product description
+  
+  // Promotions
+  promotionGeneral String?          // "Ưu đãi giảm thêm đến 200.000đ"
+  promotionStudent String?          // "Sinh viên/Học sinh giảm thêm đến 300.000đ"
+  installment      String?          // "Không phí chuyển đổi khi trả góp 0%..."
+  
+  // Metadata
+  category         String
+  rating           Float            @default(4.9)
+  reviewCount      Int              @default(0)
+  featured         Boolean          @default(false)
+  inStock          Boolean          @default(true)
+  
+  // Relationships
+  variants         ProductVariant[]
+  
+  // Timestamps
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@map("products")
+}
+
+model ProductVariant {
+  id        String   @id @default(cuid())
+  
+  // Variant Details
+  storage   String   // "128GB", "256GB", "512GB", "1TB"
+  color     String   // "Black Titanium", "Blue Titanium", etc.
+  price     BigInt   // Specific price for this variant
+  image     String   // Specific image for this color/storage combo
+  
+  // Stock Management
+  inStock   Boolean  @default(true)
+  quantity  Int      @default(0) // Available quantity
+  
+  // Relationship
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([productId, storage, color]) // Prevent duplicate combinations
+  @@map("product_variants")
+}
+
+model AdminSession {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@map("admin_sessions")
+}
+model Banner {
+  id        String   @id @default(cuid())
+  title     String
+  imageUrl  String
+  link      String?
+  order     Int
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("banners")
+}

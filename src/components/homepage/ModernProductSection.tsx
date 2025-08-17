@@ -5,19 +5,15 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
-import FeaturedProducts from "@/components/ProductSection/components/FeaturedProducts";
+import ShopDunkProductGrid from "@/components/ProductSection/components/ShopDunkProductGrid";
 import ProductCarousel from "@/components/ProductSection/components/ProductCarousel";
-import {
-  mockProductsIphone,
-  mockProductsIpad,
-  mockProductsWatch,
-  mockProductsAirPods,
-  mockProductsMac,
-} from "@/data";
+import EditButton from "@/components/admin/EditButton";
+import { Product } from "@/types/product.types";
 
 interface ModernProductSectionProps {
   id: string;
   title: string;
+  products: Product[];
   backgroundImage?: string;
   className?: string;
 }
@@ -25,28 +21,11 @@ interface ModernProductSectionProps {
 const ModernProductSection = ({
   id,
   title,
+  products,
   backgroundImage = "/images/home-bg-2.png",
   className = "",
 }: ModernProductSectionProps) => {
-  // Get products based on section type
-  const getProductsForSection = () => {
-    switch (id) {
-      case "iphone-section":
-        return mockProductsIphone;
-      case "ipad-section":
-        return mockProductsIpad;
-      case "watch-section":
-        return mockProductsWatch;
-      case "airpods-section":
-        return mockProductsAirPods;
-      case "mac-section":
-        return mockProductsMac;
-      default:
-        return mockProductsIphone;
-    }
-  };
-
-  const products = getProductsForSection();
+  // Use products from props (real data from API)
 
   // Dynamic colors based on section
   const getSectionTheme = () => {
@@ -55,42 +34,46 @@ const ModernProductSection = ({
         return {
           gradient: "from-blue-600 to-purple-600",
           bgGradient: "from-blue-50 to-purple-50",
-          accentColor: "blue-600"
+          accentColor: "blue-600",
         };
       case "ipad-section":
         return {
           gradient: "from-purple-600 to-pink-600",
           bgGradient: "from-purple-50 to-pink-50",
-          accentColor: "purple-600"
+          accentColor: "purple-600",
         };
       case "watch-section":
         return {
           gradient: "from-green-600 to-teal-600",
           bgGradient: "from-green-50 to-teal-50",
-          accentColor: "green-600"
+          accentColor: "green-600",
         };
       case "airpods-section":
         return {
           gradient: "from-orange-600 to-red-600",
           bgGradient: "from-orange-50 to-red-50",
-          accentColor: "orange-600"
+          accentColor: "orange-600",
         };
       case "mac-section":
         return {
           gradient: "from-gray-700 to-gray-900",
           bgGradient: "from-gray-50 to-gray-100",
-          accentColor: "gray-700"
+          accentColor: "gray-700",
         };
       default:
         return {
           gradient: "from-blue-600 to-purple-600",
           bgGradient: "from-blue-50 to-purple-50",
-          accentColor: "blue-600"
+          accentColor: "blue-600",
         };
     }
   };
 
   const theme = getSectionTheme();
+
+  const handleEditComponent = () => {
+    window.open(`/admin-admin/dashboard/edit-product?section=${id}`, "_blank");
+  };
 
   return (
     <motion.section
@@ -101,9 +84,17 @@ const ModernProductSection = ({
       viewport={{ once: true }}
       className={`relative py-20 overflow-hidden ${className}`}
     >
+      {/* Edit Button */}
+      <EditButton
+        componentName={`${title} Section`}
+        onEdit={handleEditComponent}
+      />
+
       {/* Modern Background với Glassmorphism */}
       <div className="absolute inset-0 -z-10">
-        <div className={`absolute inset-0 bg-gradient-to-br ${theme.bgGradient} opacity-60`} />
+        <div
+          className={`absolute inset-0 bg-gradient-to-br ${theme.bgGradient} opacity-60`}
+        />
         <Image
           src={backgroundImage}
           alt={`${title} background`}
@@ -136,37 +127,27 @@ const ModernProductSection = ({
           </motion.div>
 
           {/* Title với Gradient Text */}
-          <h2 className={`text-5xl md:text-6xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r ${theme.gradient}`}>
+          <h2
+            className={`text-5xl md:text-6xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r ${theme.gradient}`}
+          >
             {title}
           </h2>
-          
+
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Khám phá {title} chính hãng với công nghệ tiên tiến nhất. 
-            Thiết kế đột phá, hiệu năng vượt trội, giá cả cạnh tranh.
+            Khám phá {title} chính hãng với công nghệ tiên tiến nhất. Thiết kế
+            đột phá, hiệu năng vượt trội, giá cả cạnh tranh.
           </p>
         </motion.div>
 
-        {/* Modern Grid Layout */}
+        {/* Modern Grid Layout with ShopDunk Style */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           viewport={{ once: true }}
-          className="grid grid-cols-1 lg:grid-cols-4 gap-8"
+          className="bg-white/80 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl p-8"
         >
-          {/* Main Products - Glassmorphism Card */}
-          <div className="lg:col-span-3">
-            <div className="bg-white/80 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl p-8">
-              <FeaturedProducts products={products} />
-            </div>
-          </div>
-
-          {/* Side Carousel - Glassmorphism Card */}
-          <div className="lg:col-span-1">
-            <div className="bg-white/80 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl p-6 h-full">
-              <ProductCarousel />
-            </div>
-          </div>
+          <ShopDunkProductGrid products={products} sectionId={id} />
         </motion.div>
 
         {/* Modern CTA Button */}
@@ -190,28 +171,28 @@ const ModernProductSection = ({
 
       {/* Floating Elements for visual appeal */}
       <motion.div
-        animate={{ 
+        animate={{
           y: [0, -20, 0],
-          rotate: [0, 5, 0]
+          rotate: [0, 5, 0],
         }}
-        transition={{ 
+        transition={{
           duration: 6,
           repeat: Infinity,
-          ease: "easeInOut"
+          ease: "easeInOut",
         }}
         className={`absolute top-20 right-20 w-20 h-20 bg-gradient-to-r ${theme.gradient} rounded-full opacity-10 blur-xl`}
       />
-      
+
       <motion.div
-        animate={{ 
+        animate={{
           y: [0, 20, 0],
-          rotate: [0, -5, 0]
+          rotate: [0, -5, 0],
         }}
-        transition={{ 
+        transition={{
           duration: 8,
           repeat: Infinity,
           ease: "easeInOut",
-          delay: 2
+          delay: 2,
         }}
         className={`absolute bottom-20 left-20 w-32 h-32 bg-gradient-to-r ${theme.gradient} rounded-full opacity-5 blur-2xl`}
       />

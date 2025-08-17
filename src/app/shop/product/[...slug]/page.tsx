@@ -1,8 +1,7 @@
-import {
-  newArrivalsData,
-  relatedProductData,
-  topSellingData,
-} from "@/app/page";
+// TODO: Replace with API fetch
+const newArrivalsData: any[] = [];
+const relatedProductData: any[] = [];
+const topSellingData: any[] = [];
 import ProductListSec from "@/components/common/ProductListSec";
 import BreadcrumbProduct from "@/components/product-page/BreadcrumbProduct";
 import Header from "@/components/product-page/Header";

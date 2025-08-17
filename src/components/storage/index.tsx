@@ -19,4 +19,7 @@ const storage =
     ? createWebStorage("local")
     : createNoopStorage();
 
+// Debug storage
+console.log("🗄️ Storage initialized:", storage);
+
 export default storage;
