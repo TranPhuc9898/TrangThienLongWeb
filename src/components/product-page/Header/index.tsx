@@ -37,39 +37,61 @@ const Header = ({ data }: { data: Product }) => {
             </span>
           </div>
           <div className="flex items-center space-x-2.5 sm:space-x-3 mb-5">
-            {data.discount.percentage > 0 ? (
+            {(() => {
+              const match = String(data.discount || "").match(/-?(\d+)\s*%/);
+              return match ? parseInt(match[1], 10) : 0;
+            })() > 0 ? (
               <span className="font-bold text-black text-2xl sm:text-[32px]">
                 {`$${Math.round(
-                  data.price - (data.price * data.discount.percentage) / 100
+                  Number(data.price || data.basePrice || 0) -
+                    (Number(data.price || data.basePrice || 0) *
+                      (() => {
+                        const match = String(data.discount || "").match(
+                          /-?(\d+)\s*%/
+                        );
+                        return match ? parseInt(match[1], 10) : 0;
+                      })()) /
+                      100
                 )}`}
               </span>
-            ) : data.discount.amount > 0 ? (
+            ) : 0 > 0 ? (
               <span className="font-bold text-black text-2xl sm:text-[32px]">
-                {`$${data.price - data.discount.amount}`}
+                {`$${Number(data.price || data.basePrice || 0) - 0}`}
               </span>
             ) : (
               <span className="font-bold text-black text-2xl sm:text-[32px]">
-                ${data.price}
+                ${data.price || data.basePrice || 0}
               </span>
             )}
-            {data.discount.percentage > 0 && (
+            {(() => {
+              const match = String(data.discount || "").match(/-?(\d+)\s*%/);
+              return match ? parseInt(match[1], 10) : 0;
+            })() > 0 && (
               <span className="font-bold text-black/40 line-through text-2xl sm:text-[32px]">
-                ${data.price}
+                ${data.price || data.basePrice || 0}
               </span>
             )}
-            {data.discount.amount > 0 && (
+            {0 > 0 && (
               <span className="font-bold text-black/40 line-through text-2xl sm:text-[32px]">
-                ${data.price}
+                ${data.price || data.basePrice || 0}
               </span>
             )}
-            {data.discount.percentage > 0 ? (
+            {(() => {
+              const match = String(data.discount || "").match(/-?(\d+)\s*%/);
+              return match ? parseInt(match[1], 10) : 0;
+            })() > 0 ? (
               <span className="font-medium text-[10px] sm:text-xs py-1.5 px-3.5 rounded-full bg-[#FF3333]/10 text-[#FF3333]">
-                {`-${data.discount.percentage}%`}
+                {`-${(() => {
+                  const match = String(data.discount || "").match(
+                    /-?(\d+)\s*%/
+                  );
+                  return match ? parseInt(match[1], 10) : 0;
+                })()}%`}
               </span>
             ) : (
-              data.discount.amount > 0 && (
+              0 > 0 && (
                 <span className="font-medium text-[10px] sm:text-xs py-1.5 px-3.5 rounded-full bg-[#FF3333]/10 text-[#FF3333]">
-                  {`-$${data.discount.amount}`}
+                  {`-$${0}`}
                 </span>
               )
             )}

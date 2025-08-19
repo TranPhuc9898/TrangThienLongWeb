@@ -63,7 +63,7 @@ export const useFlyToCart = () => {
         cartIcon = defaultCartRect as any;
       }
 
-      const cartRect = cartIcon.getBoundingClientRect();
+      const cartRect = cartIcon?.getBoundingClientRect();
       console.log("🛒 Cart position:", cartRect);
 
       // Trigger flight animation
@@ -122,13 +122,13 @@ export const FlyToCartProvider: React.FC<FlyToCartProps> = ({ children }) => {
         cartIcon = defaultRect as any;
       }
 
-      const cartRect = cartIcon.getBoundingClientRect();
+      const cartRect = cartIcon?.getBoundingClientRect();
 
       const fullItem: FlyToCartItem = {
         ...item,
         endPosition: {
-          x: cartRect.left + cartRect.width / 2,
-          y: cartRect.top + cartRect.height / 2,
+          x: (cartRect?.left || 0) + (cartRect?.width || 0) / 2,
+          y: (cartRect?.top || 0) + (cartRect?.height || 0) / 2,
         },
       };
 

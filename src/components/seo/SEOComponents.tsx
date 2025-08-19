@@ -114,7 +114,9 @@ export const ProductSchema: React.FC<ProductSchemaProps> = ({ product }) => {
       name: product.brand,
     },
     category: product.category,
-    image: product.gallery.map((img) => `https://thientranglong.vn${img}`),
+    image: (product.gallery || []).map(
+      (img) => `https://thientranglong.vn${img}`
+    ),
     offers: {
       "@type": "Offer",
       price: product.price,
@@ -351,7 +353,9 @@ export const ProductCollectionSchema: React.FC<{ products: Product[] }> = ({
         position: index + 1,
         name: product.productName || product.title,
         description: product.description,
-        image: `https://thientranglong.vn${product.gallery[0]}`,
+        image: `https://thientranglong.vn${
+          (product.gallery && product.gallery[0]) || "/images/iphone14.png"
+        }`,
         offers: {
           "@type": "Offer",
           price: product.price,

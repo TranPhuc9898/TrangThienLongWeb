@@ -4,13 +4,7 @@ import React from "react";
 import Image from "next/image";
 import FeaturedProducts from "./components/FeaturedProducts";
 import ProductCarousel from "./components/ProductCarousel";
-import {
-  mockProductsIphone,
-  mockProductsIpad,
-  mockProductsWatch,
-  mockProductsAirPods,
-  mockProductsMac,
-} from "../../data";
+// Removed mock data imports
 
 interface ProductSectionProps {
   id: string;
@@ -29,17 +23,17 @@ const ProductSection = ({
   const getProductsForSection = () => {
     switch (id) {
       case "iphone-section":
-        return mockProductsIphone;
+        return [];
       case "ipad-section":
-        return mockProductsIpad;
+        return [];
       case "watch-section":
-        return mockProductsWatch;
+        return [];
       case "airpods-section":
-        return mockProductsAirPods;
+        return [];
       case "mac-section":
-        return mockProductsMac;
+        return [];
       default:
-        return mockProductsIphone;
+        return [];
     }
   };
 

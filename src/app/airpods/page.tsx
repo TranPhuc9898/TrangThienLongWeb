@@ -2,7 +2,7 @@
 
 import { Metadata } from "next";
 import ProductListSec from "@/components/common/ProductListSec";
-import { mockProductsAirPods } from "@/data";
+// import { mockProductsAirPods } from "@/data"; // Removed mock data
 import { Breadcrumbs } from "@/components/seo/SEOComponents";
 
 export const metadata: Metadata = {
@@ -53,11 +53,7 @@ export default function AirPodsPage() {
           </p>
         </div>
 
-        <ProductListSec
-          title="Tất cả AirPods"
-          data={mockProductsAirPods}
-          viewAllLink="#"
-        />
+        <ProductListSec title="Tất cả AirPods" data={[]} viewAllLink="#" />
       </div>
     </main>
   );

@@ -2,7 +2,7 @@
 
 import { Metadata } from "next";
 import ProductListSec from "@/components/common/ProductListSec";
-import { mockProductsWatch } from "@/data";
+// import { mockProductsWatch } from "@/data"; // Removed mock data
 import { Breadcrumbs } from "@/components/seo/SEOComponents";
 
 export const metadata: Metadata = {
@@ -66,11 +66,7 @@ export default function AppleWatchPage() {
           </p>
         </div>
 
-        <ProductListSec
-          title="Tất cả Apple Watch"
-          data={mockProductsWatch}
-          viewAllLink="#"
-        />
+        <ProductListSec title="Tất cả Apple Watch" data={[]} viewAllLink="#" />
       </div>
     </main>
   );

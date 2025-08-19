@@ -20,15 +20,18 @@ const AddToCartBtn = ({ data }: { data: Product & { quantity: number } }) => {
     try {
       dispatch(
         addToCart({
-          id: data.id,
-          name: data.title,
-          srcUrl: data.gallery[0],
-          price: data.price,
+          id: Number(data.id) || 0,
+          name: data.title || data.productName || "Product",
+          srcUrl:
+            (data.gallery && data.gallery[0]) ||
+            data.thumbnail ||
+            "/images/iphone14.png",
+          price: Number(data.price || data.basePrice || 0),
           attributes: [
             sizeSelection || "Mặc định",
             colorSelection?.name || "Mặc định",
           ],
-          discount: data.discount,
+          discount: { amount: 0, percentage: 0 },
           quantity: data.quantity,
         })
       );

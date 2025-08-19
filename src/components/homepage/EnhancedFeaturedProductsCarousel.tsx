@@ -111,9 +111,7 @@ const EnhancedFeaturedProductsCarousel: React.FC<
                     <Image
                       src={product.thumbnail || "/images/iphone14.png"}
                       alt={
-                        product.productName ||
-                        product.productName ||
-                        product.title
+                        product.productName || product.title || "Product Image"
                       }
                       fill
                       className="object-contain group-hover:scale-110 transition-transform duration-500"
@@ -139,12 +137,27 @@ const EnhancedFeaturedProductsCarousel: React.FC<
 
                     {/* Discount Badge */}
                     {product.discount &&
-                      (product.discount.percentage > 0 ||
-                        product.discount.amount > 0) && (
+                      ((() => {
+                        const match = String(product.discount || "").match(
+                          /-?(\d+)\s*%/
+                        );
+                        return match ? parseInt(match[1], 10) : 0;
+                      })() > 0 ||
+                        0 > 0) && (
                         <div className="absolute top-4 left-4 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                          {product.discount.percentage > 0
-                            ? `-${product.discount.percentage}%`
-                            : `-${product.discount.amount}đ`}
+                          {(() => {
+                            const match = String(product.discount || "").match(
+                              /-?(\d+)\s*%/
+                            );
+                            return match ? parseInt(match[1], 10) : 0;
+                          })() > 0
+                            ? `-${(() => {
+                                const match = String(
+                                  product.discount || ""
+                                ).match(/-?(\d+)\s*%/);
+                                return match ? parseInt(match[1], 10) : 0;
+                              })()}%`
+                            : `-${0}đ`}
                         </div>
                       )}
                   </div>

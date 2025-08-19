@@ -47,12 +47,14 @@ const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
 
       dispatch(
         addToCart({
-          id: product.id,
-          name: product.productName || product.title,
+          id: Number(product.id) || 0,
+          name: product.productName || product.title || "Product",
           srcUrl: product.gallery?.[0] || "",
-          price: selectedStorage?.price || product.price,
+          price: Number(
+            selectedStorage?.price || product.price || product.basePrice || 0
+          ),
           attributes: [selectedStorage?.label || "Default", "Mặc định"],
-          discount: product.discount,
+          discount: { amount: 0, percentage: 0 },
           quantity: 1,
         })
       );
@@ -77,13 +79,27 @@ const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
         }}
       >
         {products.map((product, index) => {
-          const storageIndex = selectedStorageById[product.id] ?? 0;
+          const storageIndex = selectedStorageById[product.id as any] ?? 0;
           const basePrice =
             product.storages?.[storageIndex]?.price ?? product.price;
           const hasDiscount =
-            !!product.discount && product.discount.percentage > 0;
+            !!product.discount &&
+            (() => {
+              const match = String(product.discount || "").match(/-?(\d+)\s*%/);
+              return match ? parseInt(match[1], 10) : 0;
+            })() > 0;
           const discountedPrice = hasDiscount
-            ? Math.round(basePrice * (1 - product.discount.percentage / 100))
+            ? Math.round(
+                (basePrice || 0) *
+                  (1 -
+                    (() => {
+                      const match = String(product.discount || "").match(
+                        /-?(\d+)\s*%/
+                      );
+                      return match ? parseInt(match[1], 10) : 0;
+                    })() /
+                      100)
+              )
             : basePrice;
 
           return (
@@ -106,7 +122,14 @@ const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
                   {/* Badge Sale */}
                   {hasDiscount && (
                     <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-tr-lg rounded-bl-lg shadow z-10 animate-bounce">
-                      -{product.discount.percentage}%
+                      -
+                      {(() => {
+                        const match = String(product.discount || "").match(
+                          /-?(\d+)\s*%/
+                        );
+                        return match ? parseInt(match[1], 10) : 0;
+                      })()}
+                      %
                     </span>
                   )}
 
@@ -114,7 +137,7 @@ const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
                   <div className="flex justify-center items-center mb-6 h-40 w-full group-hover:scale-105 transition-transform duration-300">
                     <img
                       src={product.gallery?.[0]}
-                      alt={product.productName || product.title}
+                      alt={product.productName || product.title || "Product"}
                       className="h-full object-contain rounded-lg mx-auto animate-scaleIn"
                       style={{
                         maxWidth: "80%",
@@ -178,14 +201,14 @@ const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
                             className="text-red-600 font-bold"
                             style={{ fontSize: 16, fontWeight: 700 }}
                           >
-                            {discountedPrice.toLocaleString()}đ
+                            {(discountedPrice || 0).toLocaleString()}đ
                           </span>
                           {hasDiscount && (
                             <span
                               className="text-gray-400 line-through"
                               style={{ fontSize: 16 }}
                             >
-                              {product.price.toLocaleString()}đ
+                              {(product.price || 0).toLocaleString()}đ
                             </span>
                           )}
                         </div>

@@ -37,18 +37,26 @@ const QuickAddToCart: React.FC<QuickAddToCartProps> = ({
       if (productCard) {
         const productImage = productCard.querySelector("img");
         if (productImage) {
-          triggerFlight(productImage, product.gallery[0]);
+          triggerFlight(
+            productImage,
+            (product.gallery && product.gallery[0]) ||
+              product.thumbnail ||
+              "/images/iphone14.png"
+          );
         }
       }
 
       dispatch(
         addToCart({
-          id: product.id,
-          name: product.productName || product.title,
-          srcUrl: product.gallery[0],
-          price: product.price,
+          id: Number(product.id) || 0,
+          name: product.productName || product.title || "Product",
+          srcUrl:
+            (product.gallery && product.gallery[0]) ||
+            product.thumbnail ||
+            "/images/iphone14.png",
+          price: Number(product.price || product.basePrice || 0),
           attributes: ["Mặc định", "Mặc định"],
-          discount: product.discount,
+          discount: { amount: 0, percentage: 0 },
           quantity: quantity,
         })
       );

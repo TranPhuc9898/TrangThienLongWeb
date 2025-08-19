@@ -1,28 +1,17 @@
 /** @format */
 
 import { MetadataRoute } from "next";
-import {
-  mockProductsIphone,
-  mockProductsIpad,
-  mockProductsWatch,
-  mockProductsAirPods,
-  mockProductsMac,
-} from "@/data";
+// Removed mock data imports
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://thientranglong.vn";
 
   // Combine all products
-  const allProducts = [
-    ...mockProductsIphone,
-    ...mockProductsIpad,
-    ...mockProductsWatch,
-    ...mockProductsAirPods,
-    ...mockProductsMac,
-  ];
+  // Return static sitemap for now
+  const allProducts: any[] = [];
 
   // Generate product URLs
-  const productUrls = allProducts.map((product) => ({
+  const productUrls = allProducts.map((product: any) => ({
     url: `${baseUrl}/${product.productType}/${product.slug}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,

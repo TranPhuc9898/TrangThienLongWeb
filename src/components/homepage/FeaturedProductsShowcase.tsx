@@ -64,7 +64,7 @@ const FeaturedProductsShowcase: React.FC<FeaturedProductsShowcaseProps> = ({
                         return "/images/iphone14.png";
                       }
                     })()}
-                    alt={product.productName || product.title}
+                    alt={product.productName || product.title || "Product"}
                     fill
                     className="object-contain group-hover:scale-110 transition-transform duration-500"
                   />
@@ -90,7 +90,7 @@ const FeaturedProductsShowcase: React.FC<FeaturedProductsShowcaseProps> = ({
                   {/* Badge */}
                   {product.discount && (
                     <div className="absolute top-4 left-4 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                      -{product.discount.percentage}%
+                      -{(() => { const match = String(product.discount || "").match(/-?(\d+)\s*%/); return match ? parseInt(match[1], 10) : 0; })()}%
                     </div>
                   )}
                 </div>
@@ -120,7 +120,7 @@ const FeaturedProductsShowcase: React.FC<FeaturedProductsShowcaseProps> = ({
                     {product.discount && (
                       <span className="text-sm text-gray-400 line-through">
                         {(
-                          Number(product.price) + product.discount.amount
+                          Number(product.price) + 0
                         ).toLocaleString()}
                         đ
                       </span>

@@ -86,11 +86,11 @@ const ShopDunkProductGrid: React.FC<ShopDunkProductGridProps> = ({
   // Get storage options for a product
   const getStorageOptions = (product: Product) => {
     // Mock storage options based on product type
-    if (product.productName.toLowerCase().includes("iphone")) {
+    if (product.productName?.toLowerCase().includes("iphone")) {
       return ["128GB", "256GB", "512GB", "1TB"];
-    } else if (product.productName.toLowerCase().includes("ipad")) {
+    } else if (product.productName?.toLowerCase().includes("ipad")) {
       return ["64GB", "256GB", "512GB"];
-    } else if (product.productName.toLowerCase().includes("mac")) {
+    } else if (product.productName?.toLowerCase().includes("mac")) {
       return ["256GB", "512GB", "1TB", "2TB"];
     }
     return ["128GB", "256GB"];
@@ -143,7 +143,7 @@ const ShopDunkProductGrid: React.FC<ShopDunkProductGridProps> = ({
       dispatch(
         addToCart({
           id: product.id as unknown as number,
-          name: product.productName,
+          name: product.productName || "Product",
           srcUrl:
             product.thumbnail || product.gallery?.[0] || "/images/iphone14.png",
           price: priceNumber,
@@ -220,7 +220,7 @@ const ShopDunkProductGrid: React.FC<ShopDunkProductGridProps> = ({
                         product.gallery?.[0] ||
                         "/images/iphone14.png"
                       }
-                      alt={product.productName}
+                      alt={product.productName || "Product"}
                       fill
                       className="object-contain hover:scale-105 transition-transform duration-300"
                     />

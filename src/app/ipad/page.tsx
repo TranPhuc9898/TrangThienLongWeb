@@ -2,7 +2,7 @@
 
 import { Metadata } from "next";
 import ProductListSec from "@/components/common/ProductListSec";
-import { mockProductsIpad } from "@/data";
+// import { mockProductsIpad } from "@/data"; // Removed mock data
 import { Breadcrumbs } from "@/components/seo/SEOComponents";
 
 export const metadata: Metadata = {
@@ -66,11 +66,7 @@ export default function iPadPage() {
           </p>
         </div>
 
-        <ProductListSec
-          title="Tất cả iPad"
-          data={mockProductsIpad}
-          viewAllLink="#"
-        />
+        <ProductListSec title="Tất cả iPad" data={[]} viewAllLink="#" />
       </div>
     </main>
   );

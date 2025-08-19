@@ -2,7 +2,7 @@
 
 import { Metadata } from "next";
 import ProductListSec from "@/components/common/ProductListSec";
-import { mockProductsMac } from "@/data";
+// import { mockProductsMac } from "@/data"; // Removed mock data
 import { Breadcrumbs } from "@/components/seo/SEOComponents";
 
 export const metadata: Metadata = {
@@ -55,7 +55,7 @@ export default function MacBookPage() {
 
         <ProductListSec
           title="Tất cả MacBook & iMac"
-          data={mockProductsMac}
+          data={[]}
           viewAllLink="#"
         />
       </div>

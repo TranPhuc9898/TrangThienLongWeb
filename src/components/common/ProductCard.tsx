@@ -36,7 +36,7 @@ const ProductCard = ({ data }: ProductCardProps) => {
             width={295}
             height={298}
             className="rounded-md w-full h-full object-contain hover:scale-110 transition-all duration-500"
-            alt={data.title}
+            alt={data.title || data.productName || "Product"}
             priority
           />
 
@@ -73,47 +73,43 @@ const ProductCard = ({ data }: ProductCardProps) => {
             readonly
           />
           <span className="text-black text-xs xl:text-sm ml-[11px] xl:ml-[13px] pb-0.5 xl:pb-0">
-            {data.rating.toFixed(1)}
+            {(data.rating || 0).toFixed(1)}
             <span className="text-black/60">/5</span>
           </span>
         </div>
         <div className="flex items-center space-x-[5px] xl:space-x-2.5">
-          {data.discount.percentage > 0 ? (
-            <span className="font-bold text-black text-xl xl:text-2xl">
-              {`$${Math.round(
-                data.price - (data.price * data.discount.percentage) / 100
-              )}`}
-            </span>
-          ) : data.discount.amount > 0 ? (
-            <span className="font-bold text-black text-xl xl:text-2xl">
-              {`$${data.price - data.discount.amount}`}
-            </span>
-          ) : (
-            <span className="font-bold text-black text-xl xl:text-2xl">
-              ${data.price}
-            </span>
-          )}
-          {data.discount.percentage > 0 && (
-            <span className="font-bold text-black/40 line-through text-xl xl:text-2xl">
-              ${data.price}
-            </span>
-          )}
-          {data.discount.amount > 0 && (
-            <span className="font-bold text-black/40 line-through text-xl xl:text-2xl">
-              ${data.price}
-            </span>
-          )}
-          {data.discount.percentage > 0 ? (
-            <span className="font-medium text-[10px] xl:text-xs py-1.5 px-3.5 rounded-full bg-[#FF3333]/10 text-[#FF3333]">
-              {`-${data.discount.percentage}%`}
-            </span>
-          ) : (
-            data.discount.amount > 0 && (
-              <span className="font-medium text-[10px] xl:text-xs py-1.5 px-3.5 rounded-full bg-[#FF3333]/10 text-[#FF3333]">
-                {`-$${data.discount.amount}`}
-              </span>
-            )
-          )}
+          {(() => {
+            const match = data.discount
+              ? String(data.discount).match(/-?(\d+)\s*%/)
+              : null;
+            const percent = match ? parseInt(match[1], 10) : 0;
+            const basePrice =
+              Number(
+                String(data.basePrice || data.price || 0).replace(/\D/g, "")
+              ) || 0;
+            const discountedPrice =
+              percent > 0
+                ? Math.round(basePrice * (1 - percent / 100))
+                : basePrice;
+
+            return (
+              <>
+                <span className="font-bold text-red-600 text-xl xl:text-2xl">
+                  {discountedPrice.toLocaleString("vi-VN")}đ
+                </span>
+                {percent > 0 && (
+                  <span className="font-bold text-black/40 line-through text-xl xl:text-2xl">
+                    {basePrice.toLocaleString("vi-VN")}đ
+                  </span>
+                )}
+                {percent > 0 && (
+                  <span className="font-medium text-[10px] xl:text-xs py-1.5 px-3.5 rounded-full bg-[#FF3333]/10 text-[#FF3333]">
+                    -{percent}%
+                  </span>
+                )}
+              </>
+            );
+          })()}
         </div>
       </Link>
     </div>

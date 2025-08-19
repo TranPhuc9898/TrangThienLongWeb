@@ -21,7 +21,7 @@ export default function ProductPage({
   params: { slug: string[] };
 }) {
   const productData = data.find(
-    (product) => product.id === Number(params.slug[0])
+    (product) => String(product.id) === params.slug[0]
   );
 
   if (!productData?.title) {
