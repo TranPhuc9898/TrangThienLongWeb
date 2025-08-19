@@ -33,7 +33,7 @@ function getProducts() {
     });
 }
 
-export const reviewsData: Review[] = [
+const reviewsData: Review[] = [
   {
     id: 1,
     user: "Nguyễn Văn A",
