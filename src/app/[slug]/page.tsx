@@ -7,8 +7,9 @@ export default function SlugProductPage({
 }: {
   params: { slug: string };
 }) {
-  // Reuse existing page by passing slug in place of id
-  // The API already accepts id or slug
-  // @ts-expect-error reuse same component signature
-  return <ProductDetailPage params={{ id: params.slug }} />;
+  // Reuse existing page by passing slug in place of id (API accepts id or slug)
+  return (
+    // @ts-ignore - reusing component with same prop shape
+    <ProductDetailPage params={{ id: params.slug }} />
+  );
 }
