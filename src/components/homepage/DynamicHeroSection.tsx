@@ -109,7 +109,7 @@ const DynamicHeroSection = () => {
 
   if (loading) {
     return (
-      <div className="relative w-full h-[36vw] max-h-[420px] min-h-[200px] bg-gray-200 animate-pulse">
+      <div className="relative w-full h-[260px] sm:h-[360px] lg:h-[460px] bg-white animate-pulse">
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-gray-500">Loading banners...</div>
         </div>
@@ -119,7 +119,7 @@ const DynamicHeroSection = () => {
 
   if (banners.length === 0) {
     return (
-      <div className="relative w-full h-[36vw] max-h-[420px] min-h-[200px] bg-gray-100 flex items-center justify-center">
+      <div className="relative w-full h-[260px] sm:h-[360px] lg:h-[460px] bg-white flex items-center justify-center">
         <div className="text-center">
           <p className="text-gray-500 mb-4">No banners available</p>
           {isAdminLoggedIn && (
@@ -166,7 +166,7 @@ const DynamicHeroSection = () => {
       >
         {banners.map((banner) => (
           <SwiperSlide key={banner.id}>
-            <div className="relative w-full h-[36vw] max-h-[420px] min-h-[200px]">
+            <div className="relative w-full h-[260px] sm:h-[360px] lg:h-[460px] bg-white">
               {banner.link ? (
                 <a href={banner.link} target="_blank" rel="noopener noreferrer">
                   <Image
@@ -174,7 +174,7 @@ const DynamicHeroSection = () => {
                     alt={banner.title}
                     fill
                     priority
-                    className="object-cover object-center select-none pointer-events-none"
+                    className="object-contain object-center select-none pointer-events-none"
                     sizes="100vw"
                   />
                 </a>
@@ -184,7 +184,7 @@ const DynamicHeroSection = () => {
                   alt={banner.title}
                   fill
                   priority
-                  className="object-cover object-center select-none pointer-events-none"
+                  className="object-contain object-center select-none pointer-events-none"
                   sizes="100vw"
                 />
               )}

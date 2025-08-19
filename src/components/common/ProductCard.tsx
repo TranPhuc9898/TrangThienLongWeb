@@ -17,12 +17,7 @@ const ProductCard = ({ data }: ProductCardProps) => {
       data-product-card
       className="flex flex-col items-start aspect-auto group"
     >
-      <Link
-        href={`/shop/product/${data.id}/${(data.productName || data.title)
-          .split(" ")
-          .join("-")}`}
-        className="block w-full"
-      >
+      <Link href={`/${data.slug}`} className="block w-full">
         <div className="bg-[#F0EEED] rounded-[13px] lg:rounded-[20px] w-full lg:max-w-[295px] aspect-square mb-2.5 xl:mb-4 overflow-hidden relative">
           <Image
             src={(() => {
@@ -56,12 +51,7 @@ const ProductCard = ({ data }: ProductCardProps) => {
         </div>
       </Link>
 
-      <Link
-        href={`/shop/product/${data.id}/${(data.productName || data.title)
-          .split(" ")
-          .join("-")}`}
-        className="block w-full"
-      >
+      <Link href={`/${data.slug}`} className="block w-full">
         <strong className="text-black xl:text-xl hover:text-blue-600 transition-colors">
           {data.productName || data.title}
         </strong>

@@ -11,6 +11,12 @@ function serializeBigInt(obj: any): any {
   );
 }
 
+function onlyDigits(input: any): string {
+  if (typeof input === "number") return String(Math.trunc(input));
+  if (!input) return "0";
+  return String(input).replace(/\D/g, "");
+}
+
 // Generate unique slug
 async function generateSlug(
   productName: string,
@@ -51,6 +57,7 @@ export async function GET() {
         variants: {
           orderBy: [{ storage: "asc" }, { color: "asc" }],
         },
+        colors: true,
       },
       orderBy: {
         createdAt: "desc",
@@ -106,6 +113,8 @@ export async function POST(request: NextRequest) {
 
       // Variants
       variants = [],
+      // Colors galleries per color
+      colors = [],
     } = await request.json();
 
     // Validate required fields
@@ -122,47 +131,44 @@ export async function POST(request: NextRequest) {
     // Generate slug
     const slug = await generateSlug(productName);
 
-    // Validate and convert prices to BigInt
-    let basePriceValue: bigint;
-    try {
-      basePriceValue = BigInt(basePrice);
-    } catch (error) {
-      return NextResponse.json(
-        { error: "basePrice không hợp lệ" },
-        { status: 400 }
-      );
+    // Convert basePrice to BigInt (allow formatted input)
+    let basePriceValue: bigint = BigInt(onlyDigits(basePrice));
+
+    // Validate colors (gallery per color)
+    const processedColors = [] as { color: string; images: any }[];
+    for (const c of colors || []) {
+      if (!c.color) {
+        return NextResponse.json(
+          { error: "Thiếu tên màu trong colors[]" },
+          { status: 400 }
+        );
+      }
+      const imgs = Array.isArray(c.images)
+        ? (c.images as string[]).slice(0, 5)
+        : [];
+      processedColors.push({ color: c.color, images: imgs as any });
     }
 
     // Validate variants
     const processedVariants = [];
     for (const variant of variants) {
-      if (
-        !variant.storage ||
-        !variant.color ||
-        !variant.price ||
-        !variant.image
-      ) {
-        return NextResponse.json(
-          { error: "Variant thiếu thông tin: storage, color, price, image" },
-          { status: 400 }
-        );
+      if (!variant.storage || !variant.color) {
+        continue;
       }
 
-      try {
-        processedVariants.push({
-          ...variant,
-          price: BigInt(variant.price),
-          quantity: variant.quantity || 0,
-          inStock: variant.inStock !== false,
-        });
-      } catch (error) {
-        return NextResponse.json(
-          {
-            error: `Giá variant không hợp lệ: ${variant.storage} ${variant.color}`,
-          },
-          { status: 400 }
-        );
-      }
+      const colorGallery = processedColors.find(
+        (c) => c.color === variant.color
+      );
+      processedVariants.push({
+        ...variant,
+        price: BigInt(onlyDigits(variant.price)),
+        quantity: variant.quantity || 0,
+        inStock: variant.inStock !== false,
+        image:
+          variant.image ||
+          (colorGallery && (colorGallery.images as any[])[0]) ||
+          thumbnail,
+      });
     }
 
     // Create product with variants
@@ -185,12 +191,12 @@ export async function POST(request: NextRequest) {
         reviewCount,
         featured,
         inStock,
-        variants: {
-          create: processedVariants,
-        },
+        variants: { create: processedVariants },
+        colors: { create: processedColors },
       },
       include: {
         variants: true,
+        colors: true,
       },
     });
 
@@ -214,7 +220,12 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const { id, variants = [], ...productData } = await request.json();
+    const {
+      id,
+      variants = [],
+      colors = [],
+      ...productData
+    } = await request.json();
 
     if (!id) {
       return NextResponse.json({ error: "Thiếu ID sản phẩm" }, { status: 400 });
@@ -240,14 +251,9 @@ export async function PUT(request: NextRequest) {
     // Process variants
     const processedVariants = [];
     for (const variant of variants) {
-      if (
-        !variant.storage ||
-        !variant.color ||
-        !variant.price ||
-        !variant.image
-      ) {
+      if (!variant.storage || !variant.color || !variant.price) {
         return NextResponse.json(
-          { error: "Variant thiếu thông tin: storage, color, price, image" },
+          { error: "Variant thiếu thông tin: storage, color, price" },
           { status: 400 }
         );
       }
@@ -269,7 +275,13 @@ export async function PUT(request: NextRequest) {
       }
     }
 
-    // Update product and replace all variants
+    // Prepare colors
+    const processedColors = (colors || []).map((c: any) => ({
+      color: c.color,
+      images: Array.isArray(c.images) ? (c.images as string[]).slice(0, 5) : [],
+    }));
+
+    // Update product and replace all variants and colors
     const product = await prisma.product.update({
       where: { id },
       data: {
@@ -278,9 +290,14 @@ export async function PUT(request: NextRequest) {
           deleteMany: {}, // Delete all existing variants
           create: processedVariants, // Create new variants
         },
+        colors: {
+          deleteMany: {},
+          create: processedColors,
+        },
       },
       include: {
         variants: true,
+        colors: true,
       },
     });
 

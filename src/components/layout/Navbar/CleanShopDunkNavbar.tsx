@@ -6,7 +6,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Search, ShoppingCart, User, ChevronDown, Menu, X } from "lucide-react";
+import { Search, ShoppingCart, ChevronDown, Menu, X } from "lucide-react";
 import CartBtn from "./TopNavbar/CartBtn";
 
 interface DropdownItem {
@@ -185,12 +185,7 @@ const CleanShopDunkNavbar = () => {
               <Search className="h-5 w-5" />
             </button>
 
-            {/* Account */}
-            <div className="relative group">
-              <button className="p-1.5 text-gray-600 hover:text-gray-900 transition-colors">
-                <User className="h-5 w-5" />
-              </button>
-            </div>
+            {/* Account removed */}
 
             {/* Cart */}
             <CartBtn className="p-1.5" />

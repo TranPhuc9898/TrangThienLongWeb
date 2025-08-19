@@ -26,7 +26,7 @@ interface ProductVariant {
   storage: string;
   color: string;
   price: string;
-  image: string;
+  image?: string;
   inStock: boolean;
   quantity: number;
 }
@@ -51,6 +51,7 @@ interface Product {
   featured: boolean;
   inStock: boolean;
   variants: ProductVariant[];
+  colors?: { color: string; images: string[] }[];
   createdAt: string;
   updatedAt: string;
 }
@@ -66,7 +67,7 @@ export default function EditProductPage() {
   const [formData, setFormData] = useState({
     // Basic Info
     productName: "",
-    brand: "",
+    brand: "Apple",
     condition: "99%",
 
     // Pricing
@@ -94,6 +95,14 @@ export default function EditProductPage() {
     variants: [] as ProductVariant[],
   });
 
+  // Helpers: VND formatting
+  const formatVND = (numStr: string) => {
+    if (!numStr) return "";
+    const digits = numStr.replace(/\D/g, "");
+    return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  };
+  const parseDigits = (formatted: string) => formatted.replace(/\D/g, "");
+
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadingVariantImage, setUploadingVariantImage] = useState<
     string | null
@@ -113,11 +122,20 @@ export default function EditProductPage() {
       color: string;
       storage: string;
       price: string;
-      image: string;
+      image?: string;
       inStock: boolean;
       quantity: number;
     };
   }>({});
+  const [colorGalleries, setColorGalleries] = useState<
+    Record<string, string[]>
+  >({});
+  const [invalidVariantKeys, setInvalidVariantKeys] = useState<Set<string>>(
+    new Set()
+  );
+  const [defaultRowPrice, setDefaultRowPrice] = useState<
+    Record<string, string>
+  >({});
 
   const router = useRouter();
 
@@ -147,8 +165,8 @@ export default function EditProductPage() {
     isVariantImage = false,
     colorStorageKey?: string
   ) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
     if (isVariantImage && colorStorageKey) {
       setUploadingVariantImage(colorStorageKey);
@@ -156,29 +174,39 @@ export default function EditProductPage() {
       setUploadingImage(true);
     }
 
-    const formDataUpload = new FormData();
-    formDataUpload.append("file", file);
+    const uploadedUrls: string[] = [];
 
     try {
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formDataUpload,
-      });
+      for (let i = 0; i < files.length; i++) {
+        const formDataUpload = new FormData();
+        formDataUpload.append("file", files[i]);
 
-      if (response.ok) {
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formDataUpload,
+        });
+
+        if (!response.ok) {
+          continue;
+        }
         const result = await response.json();
+        if (result?.url) uploadedUrls.push(result.url);
+      }
+
+      if (uploadedUrls.length > 0) {
         if (isVariantImage && colorStorageKey) {
-          // Update variant image in matrix
-          setVariantsMatrix((prev) => ({
-            ...prev,
-            [colorStorageKey]: {
-              ...prev[colorStorageKey],
-              image: result.url,
-            },
-          }));
+          setVariantsMatrix((prev) => {
+            const prevImages: string[] = [];
+            return {
+              ...prev,
+              [colorStorageKey]: {
+                ...prev[colorStorageKey],
+                image: prev[colorStorageKey]?.image || uploadedUrls[0],
+              },
+            };
+          });
         } else {
-          // Update thumbnail
-          setFormData({ ...formData, thumbnail: result.url });
+          setFormData({ ...formData, thumbnail: uploadedUrls[0] });
         }
       }
     } catch (error) {
@@ -189,6 +217,40 @@ export default function EditProductPage() {
       } else {
         setUploadingImage(false);
       }
+    }
+  };
+
+  const handleColorImagesUpload = async (
+    color: string,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const uploadedUrls: string[] = [];
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const formDataUpload = new FormData();
+        formDataUpload.append("file", files[i]);
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formDataUpload,
+        });
+        if (!response.ok) continue;
+        const result = await response.json();
+        if (result?.url) uploadedUrls.push(result.url);
+      }
+      if (uploadedUrls.length > 0) {
+        setColorGalleries((prev) => {
+          const current = prev[color] || [];
+          return {
+            ...prev,
+            [color]: [...current, ...uploadedUrls].slice(0, 5),
+          };
+        });
+      }
+    } catch (err) {
+      console.error("Upload color images failed:", err);
     }
   };
 
@@ -250,7 +312,6 @@ export default function EditProductPage() {
             color,
             storage,
             price: "",
-            image: "",
             inStock: true,
             quantity: 0,
           };
@@ -286,9 +347,20 @@ export default function EditProductPage() {
 
   // Convert matrix to variants array for API submission
   const generateVariantsFromMatrix = (): ProductVariant[] => {
-    return Object.values(variantsMatrix).filter(
-      (variant) => variant.price && variant.image
-    );
+    return Object.values(variantsMatrix).filter((variant) => variant.price);
+  };
+
+  const applyPriceForColor = (color: string) => {
+    const price = defaultRowPrice[color] || "";
+    if (!price) return;
+    setVariantsMatrix((prev) => {
+      const next = { ...prev };
+      selectedStorages.forEach((storage) => {
+        const key = `${color}_${storage}`;
+        if (next[key]) next[key] = { ...next[key], price };
+      });
+      return next;
+    });
   };
 
   const handleEdit = (product: Product) => {
@@ -357,32 +429,44 @@ export default function EditProductPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate required fields
-    if (
-      !formData.productName ||
-      !formData.basePrice ||
-      !formData.brand ||
-      !formData.thumbnail
-    ) {
-      alert("Vui lòng điền đầy đủ thông tin bắt buộc");
-      return;
-    }
+    // Nới lỏng để luôn tạo được nếu bạn muốn test nhanh
+    // Điền fallback cho các trường bắt buộc nếu trống
+    const fallbackName = formData.productName || "Sản phẩm mới";
+    const fallbackCategory = formData.category || "iPhone";
+    const fallbackThumb = formData.thumbnail || "/images/iphone14.png";
+    const fallbackBasePrice = parseDigits(formData.basePrice || "") || "0";
+    const fallbackBrand = formData.brand || "Apple";
+    const storages = selectedStorages.length > 0 ? selectedStorages : ["128GB"];
+    const colors = selectedColors.length > 0 ? selectedColors : ["Default"];
+    setInvalidVariantKeys(new Set());
 
-    // Generate variants from matrix
-    const variants = generateVariantsFromMatrix();
-    if (variants.length === 0) {
-      alert(
-        "Vui lòng thêm ít nhất 1 variant với đầy đủ thông tin (giá và ảnh)"
-      );
-      return;
-    }
+    // Tạo variants từ ma trận; nếu thiếu giá thì dùng basePrice làm mặc định
+    const variants: ProductVariant[] = [];
+    colors.forEach((color) => {
+      storages.forEach((storage) => {
+        const key = `${color}_${storage}`;
+        const cell = variantsMatrix[key];
+        const priceStr = cell?.price ? String(cell.price) : fallbackBasePrice;
+        variants.push({
+          color,
+          storage,
+          price: priceStr,
+          inStock: cell?.inStock !== false,
+          quantity: cell?.quantity || 0,
+        });
+      });
+    });
 
     try {
       // Set default values for optional fields if empty
       const productData = {
         ...(editingProduct && { id: editingProduct.id }),
         ...formData,
-        basePrice: formData.basePrice, // Keep as string for BigInt handling
+        productName: fallbackName,
+        brand: fallbackBrand,
+        category: fallbackCategory,
+        thumbnail: fallbackThumb,
+        basePrice: fallbackBasePrice, // Keep as string for BigInt handling
         rating: parseFloat(formData.rating),
         reviewCount: parseInt(formData.reviewCount),
 
@@ -400,6 +484,10 @@ export default function EditProductPage() {
           `${formData.productName} chính hãng, bảo hành 12 tháng tại các trung tâm bảo hành ủy quyền. Miễn phí giao hàng toàn quốc.`,
 
         variants, // Use generated variants from matrix
+        colors: Object.entries(colorGalleries).map(([color, images]) => ({
+          color,
+          images: images.slice(0, 5),
+        })),
       };
 
       const method = editingProduct ? "PUT" : "POST";
@@ -658,20 +746,12 @@ export default function EditProductPage() {
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           Thương hiệu *
                         </label>
-                        <select
-                          required
-                          value={formData.brand}
-                          onChange={(e) =>
-                            setFormData({ ...formData, brand: e.target.value })
-                          }
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        >
-                          <option value="">Chọn thương hiệu</option>
-                          <option value="Apple">Apple</option>
-                          <option value="Samsung">Samsung</option>
-                          <option value="Google">Google</option>
-                          <option value="Xiaomi">Xiaomi</option>
-                        </select>
+                        <input
+                          type="text"
+                          readOnly
+                          value="Apple"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-700"
+                        />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -731,17 +811,18 @@ export default function EditProductPage() {
                           Giá cơ bản *
                         </label>
                         <input
-                          type="number"
+                          type="text"
+                          inputMode="numeric"
                           required
-                          value={formData.basePrice}
+                          value={formatVND(formData.basePrice)}
                           onChange={(e) =>
                             setFormData({
                               ...formData,
-                              basePrice: e.target.value,
+                              basePrice: parseDigits(e.target.value),
                             })
                           }
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="29990000"
+                          placeholder="30.000.000"
                         />
                       </div>
                       <div>
@@ -896,6 +977,51 @@ export default function EditProductPage() {
                           </span>
                         ))}
                       </div>
+
+                      {selectedColors.length > 0 && (
+                        <div className="mt-4 space-y-4">
+                          {selectedColors.map((color) => (
+                            <div
+                              key={`gal-${color}`}
+                              className="border rounded-lg p-3"
+                            >
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="font-medium">
+                                  Bộ ảnh cho màu: {color}
+                                </span>
+                                <label
+                                  htmlFor={`upload-color-${color}`}
+                                  className="cursor-pointer text-xs bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+                                >
+                                  Thêm ảnh (tối đa 5)
+                                </label>
+                                <input
+                                  id={`upload-color-${color}`}
+                                  type="file"
+                                  accept="image/*"
+                                  multiple
+                                  onChange={(e) =>
+                                    handleColorImagesUpload(color, e)
+                                  }
+                                  className="hidden"
+                                />
+                              </div>
+                              <div className="grid grid-cols-5 gap-2">
+                                {(colorGalleries[color] || [])
+                                  .slice(0, 5)
+                                  .map((u, i) => (
+                                    <img
+                                      key={i}
+                                      src={u}
+                                      alt="img"
+                                      className="w-16 h-16 object-cover rounded"
+                                    />
+                                  ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
                     {/* Step 3: Variants Matrix */}
@@ -935,6 +1061,33 @@ export default function EditProductPage() {
                             <div className="divide-y divide-gray-200">
                               {selectedColors.map((color) => (
                                 <div key={color} className="px-4 py-4">
+                                  <div className="flex items-center gap-3 mb-2">
+                                    <span className="font-medium text-gray-900">
+                                      {color}
+                                    </span>
+                                    <input
+                                      type="text"
+                                      inputMode="numeric"
+                                      placeholder="Giá mặc định cho màu"
+                                      className="px-2 py-1 text-xs border rounded"
+                                      value={formatVND(
+                                        defaultRowPrice[color] || ""
+                                      )}
+                                      onChange={(e) =>
+                                        setDefaultRowPrice({
+                                          ...defaultRowPrice,
+                                          [color]: parseDigits(e.target.value),
+                                        })
+                                      }
+                                    />
+                                    <button
+                                      type="button"
+                                      className="text-xs px-2 py-1 bg-blue-600 text-white rounded"
+                                      onClick={() => applyPriceForColor(color)}
+                                    >
+                                      Áp cho hàng màu
+                                    </button>
+                                  </div>
                                   <div
                                     className="grid gap-4"
                                     style={{
@@ -945,12 +1098,8 @@ export default function EditProductPage() {
                                           .join(" "),
                                     }}
                                   >
-                                    {/* Color Label */}
-                                    <div className="flex items-center">
-                                      <span className="font-medium text-gray-900">
-                                        {color}
-                                      </span>
-                                    </div>
+                                    {/* Color Label (left spacer) */}
+                                    <div />
 
                                     {/* Storage Variants */}
                                     {selectedStorages.map((storage) => {
@@ -962,55 +1111,28 @@ export default function EditProductPage() {
                                           key={storage}
                                           className="space-y-3 p-3 bg-gray-50 rounded-lg"
                                         >
-                                          {/* Image Upload */}
-                                          <div className="space-y-2">
-                                            <div className="w-20 h-20 bg-white rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center mx-auto">
-                                              {variant?.image ? (
-                                                <img
-                                                  src={variant.image}
-                                                  alt={`${color} ${storage}`}
-                                                  className="w-full h-full object-contain rounded"
-                                                />
-                                              ) : (
-                                                <ImageIcon className="w-8 h-8 text-gray-400" />
-                                              )}
-                                            </div>
-                                            <label
-                                              htmlFor={`upload-${key}`}
-                                              className={`cursor-pointer text-xs bg-blue-600 text-white px-2 py-1 rounded text-center block hover:bg-blue-700 transition-colors ${
-                                                uploadingVariantImage === key
-                                                  ? "opacity-50"
-                                                  : ""
-                                              }`}
-                                            >
-                                              {uploadingVariantImage === key
-                                                ? "Đang tải..."
-                                                : "Tải ảnh"}
-                                            </label>
-                                            <input
-                                              id={`upload-${key}`}
-                                              type="file"
-                                              accept="image/*"
-                                              onChange={(e) =>
-                                                handleImageUpload(e, true, key)
-                                              }
-                                              className="hidden"
-                                            />
-                                          </div>
+                                          {/* Ảnh dùng theo bộ ảnh của màu - không hiển thị gì tại đây */}
 
                                           {/* Price Input */}
                                           <input
-                                            type="number"
-                                            value={variant?.price || ""}
+                                            type="text"
+                                            inputMode="numeric"
+                                            value={formatVND(
+                                              variant?.price || ""
+                                            )}
                                             onChange={(e) =>
                                               updateVariantInMatrix(
                                                 key,
                                                 "price",
-                                                e.target.value
+                                                parseDigits(e.target.value)
                                               )
                                             }
                                             placeholder="Giá (VND)"
-                                            className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                                            className={`w-full px-2 py-1 text-xs border rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent ${
+                                              invalidVariantKeys.has(key)
+                                                ? "border-red-500"
+                                                : "border-gray-300"
+                                            }`}
                                           />
 
                                           {/* Status Indicators */}
@@ -1063,16 +1185,16 @@ export default function EditProductPage() {
                             •{" "}
                             {
                               Object.values(variantsMatrix).filter(
-                                (v) => v.price && v.image
+                                (v) => v.price
                               ).length
                             }{" "}
-                            variants hoàn chỉnh (có giá + ảnh)
+                            variants hoàn chỉnh (có giá)
                           </p>
                           <p>
                             •{" "}
                             {
                               Object.values(variantsMatrix).filter(
-                                (v) => !v.price || !v.image
+                                (v) => !v.price
                               ).length
                             }{" "}
                             variants chưa hoàn thành

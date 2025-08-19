@@ -7,9 +7,6 @@ const branches = [
   { address: "15i Trần Phú, Q.5 (Chi Nhánh Chính)", time: "08:00AM - 10:00PM" },
   { address: "87b Lê Văn Duyệt, Bình Thạnh", time: "09:30AM - 08:30PM" },
   { address: "02 Hồ Văn Leo, Biên Hòa", time: "08:00AM - 08:00PM" },
-  { address: "6/105 Nguyễn Trung Trực, Long An", time: "10:00AM - 08:00PM" },
-  { address: "582 Đinh Bộ Lĩnh, Mỹ Tho", time: "10:00AM - 08:00PM" },
-  { address: "631 Ang Mo Kio Avenue 4, Singapore", time: "09:00AM - 05:00PM" },
 ];
 
 const policies = [

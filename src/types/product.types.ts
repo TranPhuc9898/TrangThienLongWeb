@@ -5,53 +5,74 @@ export type Discount = {
   percentage: number;
 };
 
-export type ProductType = 'iphone' | 'ipad' | 'watch' | 'airpods' | 'mac';
+export type ProductType = "iphone" | "ipad" | "watch" | "airpods" | "mac";
+
+// Updated Product interface to match new database schema
+export interface ProductVariant {
+  id: string;
+  storage: string;
+  color: string;
+  price: bigint | number;
+  image: string;
+  inStock: boolean;
+  quantity: number;
+}
 
 export interface Product {
-  id: number;
-  title: string;
-  price: number;
-  discount: {
-    percentage: number;
-    amount: number;
-  };
+  // Core fields (matching Prisma schema)
+  id: string;
+  productName?: string;
+  brand: string;
+  condition?: string;
+  slug: string;
+  basePrice?: bigint | number;
+  currency?: string;
+  discount?: string; // "-5%" format
+  thumbnail?: string;
+  description?: string;
+  promotionGeneral?: string;
+  promotionStudent?: string;
+  installment?: string;
+  category: string;
   rating: number;
   reviewCount: number;
-  gallery: string[];
-  category: string;
-  brand: string;
+  featured?: boolean;
   inStock: boolean;
-  description: string;
-  features: string[];
-  storages: {
+  variants?: ProductVariant[];
+
+  // Legacy fields (for backward compatibility)
+  title?: string;
+  price?: number;
+  gallery?: string[];
+  features?: string[];
+  storages?: {
     label: string;
     price: number;
   }[];
   originalPrice?: number;
-  productType: ProductType;
+  productType?: ProductType;
   colors?: string[];
   sizes?: string[]; // For Watch
-  bands?: string[]; // For Watch  
+  bands?: string[]; // For Watch
   ramOptions?: string[]; // For Mac
   screenSize?: string; // For iPad, Mac
-  connectivity?: 'wifi' | 'cellular'; // For iPad
-  slug: string;
+  connectivity?: "wifi" | "cellular"; // For iPad
 }
 
 // Extended interfaces for specific product types
 export interface ProductIphone extends Product {
-  productType: 'iphone';
+  productType: "iphone";
   iphone: boolean;
 }
 
 export interface ProductIpad extends Product {
-  productType: 'ipad';
+  productType: "ipad";
   screenSize: string;
-  connectivity: 'wifi' | 'cellular';
+  connectivity: "wifi" | "cellular";
 }
 
 export interface ProductWatch extends Product {
-  productType: 'watch';
+  productType: "watch";
   sizes: string[];
   bands: string[];
   gpsOnly?: boolean;
@@ -59,13 +80,13 @@ export interface ProductWatch extends Product {
 }
 
 export interface ProductAirPods extends Product {
-  productType: 'airpods';
+  productType: "airpods";
   noiseCancellation?: boolean;
   spatialAudio?: boolean;
 }
 
 export interface ProductMac extends Product {
-  productType: 'mac';
+  productType: "mac";
   ramOptions: string[];
   screenSize: string;
   processor: string;

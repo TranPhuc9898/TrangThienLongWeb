@@ -41,6 +41,7 @@ model Product {
   
   // Relationships
   variants         ProductVariant[]
+  colors           ProductColor[]
   
   // Timestamps
   createdAt        DateTime         @default(now())
@@ -57,6 +58,7 @@ model ProductVariant {
   color     String   // "Black Titanium", "Blue Titanium", etc.
   price     BigInt   // Specific price for this variant
   image     String   // Specific image for this color/storage combo
+  // images removed; gallery is managed per color
   
   // Stock Management
   inStock   Boolean  @default(true)
@@ -72,6 +74,19 @@ model ProductVariant {
 
   @@unique([productId, storage, color]) // Prevent duplicate combinations
   @@map("product_variants")
+}
+
+model ProductColor {
+  id        String  @id @default(cuid())
+  color     String
+  images    Json    // up to 5 URLs
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([productId, color])
+  @@map("product_colors")
 }
 
 model AdminSession {

@@ -128,7 +128,7 @@ const FeaturedProductsShowcase: React.FC<FeaturedProductsShowcaseProps> = ({
                   </div>
 
                   <Link
-                    href={`/shop/product/${product.slug}`}
+                    href={`/${product.slug}`}
                     className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
                   >
                     <ShoppingCart className="w-4 h-4" />

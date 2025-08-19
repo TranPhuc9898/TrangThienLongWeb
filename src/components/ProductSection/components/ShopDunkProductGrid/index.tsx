@@ -96,13 +96,12 @@ const ShopDunkProductGrid: React.FC<ShopDunkProductGridProps> = ({
     return ["128GB", "256GB"];
   };
 
-  // Calculate discount percentage
+  // Parse discount percentage from string like "-20%"
   const getDiscountPercentage = (product: Product) => {
-    if (product.discount) {
-      return product.discount.percentage;
-    }
-    // Mock discount for demo
-    return Math.floor(Math.random() * 20) + 5; // 5-25%
+    if (!product.discount) return 0;
+    const match = String(product.discount).match(/-?(\d+)\s*%/);
+    const percent = match ? parseInt(match[1], 10) : 0;
+    return Number.isFinite(percent) && percent > 0 ? percent : 0;
   };
 
   const displayProducts = products.slice(0, 4); // Show first 4 products
@@ -136,15 +135,20 @@ const ShopDunkProductGrid: React.FC<ShopDunkProductGridProps> = ({
         console.error("❌ No product card found with .product-card selector");
       }
 
+      const percent = getDiscountPercentage(product);
+      const priceNumber = Number(
+        (product.basePrice as unknown as number) ?? product.price ?? 0
+      );
+
       dispatch(
         addToCart({
-          id: product.id,
+          id: product.id as unknown as number,
           name: product.productName,
           srcUrl:
             product.thumbnail || product.gallery?.[0] || "/images/iphone14.png",
-          price: product.basePrice || product.price,
+          price: priceNumber,
           attributes: [storage, "Mặc định"],
-          discount: product.discount,
+          discount: { amount: 0, percentage: percent },
           quantity: 1,
         })
       );
@@ -176,9 +180,18 @@ const ShopDunkProductGrid: React.FC<ShopDunkProductGridProps> = ({
           {displayProducts.map((product, index) => {
             const storageOptions = getStorageOptions(product);
             const discountPercent = getDiscountPercentage(product);
-            const originalPrice = product.discount
-              ? product.basePrice || product.price + product.discount.amount
-              : Math.floor(product.basePrice || product.price * 1.2);
+            const basePrice = (() => {
+              const raw =
+                (product.basePrice as unknown as any) ??
+                (product.price as unknown as any) ??
+                0;
+              const digits = String(raw).replace(/\D/g, "");
+              return digits ? Number(digits) : 0;
+            })();
+            const discountedPrice =
+              discountPercent > 0
+                ? Math.round(basePrice * (1 - discountPercent / 100))
+                : basePrice;
 
             return (
               <motion.div
@@ -191,11 +204,13 @@ const ShopDunkProductGrid: React.FC<ShopDunkProductGridProps> = ({
               >
                 {/* Discount Badge */}
                 <div className="relative">
-                  <div className="absolute top-4 left-4 z-10">
-                    <span className="bg-red-500 text-white text-sm font-bold px-3 py-1 rounded-full">
-                      -{discountPercent}%
-                    </span>
-                  </div>
+                  {discountPercent > 0 && (
+                    <div className="absolute top-4 left-4 z-10">
+                      <span className="bg-red-500 text-white text-sm font-bold px-3 py-1 rounded-full">
+                        -{discountPercent}%
+                      </span>
+                    </div>
+                  )}
 
                   {/* Product Image */}
                   <div className="relative aspect-square p-8 bg-gray-50">
@@ -261,11 +276,13 @@ const ShopDunkProductGrid: React.FC<ShopDunkProductGridProps> = ({
                   <div className="mb-4">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-2xl font-bold text-red-600">
-                        {product.basePrice || product.price.toLocaleString()}đ
+                        {discountedPrice.toLocaleString("vi-VN")}đ
                       </span>
-                      <span className="text-lg text-gray-400 line-through">
-                        {originalPrice.toLocaleString()}đ
-                      </span>
+                      {discountPercent > 0 && basePrice > 0 && (
+                        <span className="text-lg text-gray-400 line-through">
+                          {basePrice.toLocaleString("vi-VN")}đ
+                        </span>
+                      )}
                     </div>
                   </div>
 

@@ -16,13 +16,16 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const product = await prisma.product.findUnique({
-      where: { id: params.id },
+    const product = await prisma.product.findFirst({
+      where: {
+        OR: [{ id: params.id }, { slug: params.id }],
+      },
       include: {
         variants: {
           where: { inStock: true }, // Only get in-stock variants
           orderBy: [{ storage: "asc" }, { color: "asc" }],
         },
+        colors: true,
       },
     });
 

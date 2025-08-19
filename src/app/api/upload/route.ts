@@ -13,7 +13,15 @@ export async function POST(request: NextRequest) {
     }
 
     const formData = await request.formData();
-    const file = formData.get("file") as File;
+    let file = formData.get("file") as File | null;
+    if (!file) {
+      const files = formData.getAll("file");
+      if (files && files.length > 0) file = files[0] as File;
+    }
+    if (!file) {
+      const filesAlt = formData.getAll("files");
+      if (filesAlt && filesAlt.length > 0) file = filesAlt[0] as File;
+    }
 
     if (!file) {
       return NextResponse.json(
@@ -31,11 +39,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate file size (5MB max)
-    const maxSize = parseInt(process.env.MAX_FILE_SIZE || "5242880");
+    // Validate file size (default 7MB). Can override via env MAX_FILE_SIZE.
+    const maxSize = parseInt(process.env.MAX_FILE_SIZE || "7340032");
     if (file.size > maxSize) {
       return NextResponse.json(
-        { error: "File quá lớn (tối đa 5MB)" },
+        {
+          error: `File quá lớn (tối đa ${Math.round(
+            maxSize / (1024 * 1024)
+          )}MB)`,
+        },
         { status: 400 }
       );
     }
@@ -75,4 +87,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

@@ -6,7 +6,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Search, ShoppingCart, User, ChevronDown, Menu, X } from "lucide-react";
+import { Search, ShoppingCart, ChevronDown, Menu, X } from "lucide-react";
 
 interface DropdownItem {
   label: string;
@@ -32,16 +32,20 @@ const navigationData: NavItem[] = [
       { label: "iPhone 15 Pro", href: "/iphone/15-pro", isNew: true },
       { label: "iPhone 15 Plus", href: "/iphone/15-plus", isNew: true },
       { label: "iPhone 15", href: "/iphone/15", isNew: true },
-      { label: "iPhone 14 Pro Max", href: "/iphone/14-pro-max", isPopular: true },
+      {
+        label: "iPhone 14 Pro Max",
+        href: "/iphone/14-pro-max",
+        isPopular: true,
+      },
       { label: "iPhone 14 Pro", href: "/iphone/14-pro", isPopular: true },
       { label: "iPhone 14", href: "/iphone/14" },
       { label: "iPhone 13", href: "/iphone/13" },
       { label: "Tất cả iPhone", href: "/iphone" },
-    ]
+    ],
   },
   {
     label: "iPad",
-    href: "/ipad", 
+    href: "/ipad",
     hasDropdown: true,
     dropdownItems: [
       { label: "iPad Pro M2", href: "/ipad/pro-m2", isNew: true },
@@ -49,7 +53,7 @@ const navigationData: NavItem[] = [
       { label: "iPad", href: "/ipad/ipad" },
       { label: "iPad Mini", href: "/ipad/mini" },
       { label: "Tất cả iPad", href: "/ipad" },
-    ]
+    ],
   },
   {
     label: "Mac",
@@ -58,10 +62,10 @@ const navigationData: NavItem[] = [
     dropdownItems: [
       { label: "MacBook Air M2", href: "/mac/air-m2", isNew: true },
       { label: "MacBook Pro M2", href: "/mac/pro-m2", isNew: true },
-      { label: "iMac 24\"", href: "/mac/imac-24", isPopular: true },
+      { label: 'iMac 24"', href: "/mac/imac-24", isPopular: true },
       { label: "Mac Studio", href: "/mac/studio" },
       { label: "Tất cả Mac", href: "/macbook" },
-    ]
+    ],
   },
   {
     label: "Watch",
@@ -72,7 +76,7 @@ const navigationData: NavItem[] = [
       { label: "Apple Watch Ultra 2", href: "/watch/ultra-2", isNew: true },
       { label: "Apple Watch SE", href: "/watch/se", isPopular: true },
       { label: "Tất cả Watch", href: "/apple-watch" },
-    ]
+    ],
   },
   {
     label: "AirPods",
@@ -83,7 +87,7 @@ const navigationData: NavItem[] = [
       { label: "AirPods (3rd gen)", href: "/airpods/3rd", isPopular: true },
       { label: "AirPods Max", href: "/airpods/max" },
       { label: "Tất cả AirPods", href: "/airpods" },
-    ]
+    ],
   },
   {
     label: "Phụ kiện",
@@ -94,7 +98,7 @@ const navigationData: NavItem[] = [
       { label: "Sạc và Cable", href: "/phu-kien/sac-cable" },
       { label: "Dây đeo Watch", href: "/phu-kien/day-watch" },
       { label: "Tất cả phụ kiện", href: "/phu-kien" },
-    ]
+    ],
   },
 ];
 
@@ -142,7 +146,12 @@ const ShopDunkStyleNavbar = () => {
                       stroke="currentColor"
                       viewBox="0 0 24 24"
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
                     </svg>
                   )}
                 </Link>
@@ -221,27 +230,40 @@ const ShopDunkStyleNavbar = () => {
           <div className="flex items-center space-x-4">
             {/* Mobile Search */}
             <button className="md:hidden p-2 text-gray-600 hover:text-gray-900 transition-colors">
-              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
               </svg>
             </button>
 
-            {/* User Account */}
-            <div className="relative group">
-              <button className="p-2 text-gray-600 hover:text-gray-900 transition-colors">
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              </button>
-            </div>
+            {/* User Account removed */}
 
             {/* Cart */}
             <Link
               href="/cart"
               className="relative p-2 text-gray-600 hover:text-gray-900 transition-colors group"
             >
-              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0H17M9 19v.01M20 19v.01" />
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0H17M9 19v.01M20 19v.01"
+                />
               </svg>
               {/* Cart Badge */}
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -251,8 +273,18 @@ const ShopDunkStyleNavbar = () => {
 
             {/* Mobile Menu Button */}
             <button className="lg:hidden p-2 text-gray-600 hover:text-gray-900 transition-colors">
-              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
               </svg>
             </button>
           </div>

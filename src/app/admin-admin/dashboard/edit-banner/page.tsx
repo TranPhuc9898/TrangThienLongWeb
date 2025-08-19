@@ -92,7 +92,8 @@ export default function EditBannerPage() {
           imageUrl: data.url,
         }));
       } else {
-        alert("Lỗi upload ảnh");
+        const err = await response.json().catch(() => ({} as any));
+        alert(`Lỗi upload ảnh: ${err.error || response.statusText}`);
       }
     } catch (error) {
       console.error("Upload error:", error);
@@ -611,7 +612,7 @@ export default function EditBannerPage() {
                         : "Click để tải ảnh banner"}
                     </span>
                     <span className="text-xs text-gray-500 mt-1">
-                      Khuyến nghị: 1920x600px, PNG/JPG tối đa 5MB
+                      Khuyến nghị: 1920x600px, PNG/JPG/WebP tối đa 7MB
                     </span>
                   </label>
                 </div>
