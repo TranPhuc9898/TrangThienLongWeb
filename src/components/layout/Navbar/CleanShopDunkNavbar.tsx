@@ -27,13 +27,37 @@ const navigationData: NavItem[] = [
     label: "iPhone",
     href: "/iphone",
     dropdownItems: [
-      { label: "iPhone 17 Pro Max", href: "/iphone/iphone-17-pro-max-series", isNew: true },
-      { label: "iPhone 17 Pro", href: "/iphone/iphone-17-pro-series", isNew: true },
-      { label: "iPhone 16 Pro Max", href: "/iphone/iphone-16-pro-max-series", isNew: true },
-      { label: "iPhone 16 Pro", href: "/iphone/iphone-16-pro-series", isNew: true },
+      {
+        label: "iPhone 17 Pro Max",
+        href: "/iphone/iphone-17-pro-max-series",
+        isNew: true,
+      },
+      {
+        label: "iPhone 17 Pro",
+        href: "/iphone/iphone-17-pro-series",
+        isNew: true,
+      },
+      {
+        label: "iPhone 16 Pro Max",
+        href: "/iphone/iphone-16-pro-max-series",
+        isNew: true,
+      },
+      {
+        label: "iPhone 16 Pro",
+        href: "/iphone/iphone-16-pro-series",
+        isNew: true,
+      },
       { label: "iPhone 16", href: "/iphone/iphone-16-series", isNew: true },
-      { label: "iPhone 15 Pro Max", href: "/iphone/iphone-15-pro-max-series", isHot: true },
-      { label: "iPhone 15 Pro", href: "/iphone/iphone-15-pro-series", isHot: true },
+      {
+        label: "iPhone 15 Pro Max",
+        href: "/iphone/iphone-15-pro-max-series",
+        isHot: true,
+      },
+      {
+        label: "iPhone 15 Pro",
+        href: "/iphone/iphone-15-pro-series",
+        isHot: true,
+      },
       { label: "iPhone 15", href: "/iphone/iphone-15-series" },
       { label: "iPhone 14 Pro Max", href: "/iphone/iphone-14-pro-max-series" },
       { label: "iPhone 14", href: "/iphone/iphone-14-series" },
@@ -57,8 +81,16 @@ const navigationData: NavItem[] = [
     label: "Mac",
     href: "/macbook",
     dropdownItems: [
-      { label: "MacBook Pro M3", href: "/mac/macbook-pro-m3-series", isNew: true },
-      { label: "MacBook Air M3", href: "/mac/macbook-air-m3-series", isNew: true },
+      {
+        label: "MacBook Pro M3",
+        href: "/mac/macbook-pro-m3-series",
+        isNew: true,
+      },
+      {
+        label: "MacBook Air M3",
+        href: "/mac/macbook-air-m3-series",
+        isNew: true,
+      },
       { label: "MacBook Air M2", href: "/mac/macbook-air-m2-series" },
       { label: 'iMac 24" M3', href: "/mac/imac-24-m3-series", isHot: true },
       { label: "Tất cả Mac", href: "/macbook" },
@@ -68,9 +100,20 @@ const navigationData: NavItem[] = [
     label: "Watch",
     href: "/apple-watch",
     dropdownItems: [
-      { label: "Apple Watch Series 10", href: "/watch/apple-watch-series-10-series", isNew: true },
-      { label: "Apple Watch Series 9", href: "/watch/apple-watch-series-9-series" },
-      { label: "Apple Watch Ultra 2", href: "/watch/apple-watch-ultra-2-series", isHot: true },
+      {
+        label: "Apple Watch Series 10",
+        href: "/watch/apple-watch-series-10-series",
+        isNew: true,
+      },
+      {
+        label: "Apple Watch Series 9",
+        href: "/watch/apple-watch-series-9-series",
+      },
+      {
+        label: "Apple Watch Ultra 2",
+        href: "/watch/apple-watch-ultra-2-series",
+        isHot: true,
+      },
       { label: "Apple Watch SE", href: "/watch/apple-watch-se-series" },
       { label: "Tất cả Watch", href: "/apple-watch" },
     ],
@@ -79,10 +122,18 @@ const navigationData: NavItem[] = [
     label: "AirPods",
     href: "/airpods",
     dropdownItems: [
-      { label: "AirPods Pro 2", href: "/airpods/airpods-pro-2-series", isNew: true },
+      {
+        label: "AirPods Pro 2",
+        href: "/airpods/airpods-pro-2-series",
+        isNew: true,
+      },
       { label: "AirPods 4", href: "/airpods/airpods-4-series", isNew: true },
       { label: "AirPods 3", href: "/airpods/airpods-3-series" },
-      { label: "AirPods Max", href: "/airpods/airpods-max-series", isHot: true },
+      {
+        label: "AirPods Max",
+        href: "/airpods/airpods-max-series",
+        isHot: true,
+      },
       { label: "Tất cả AirPods", href: "/airpods" },
     ],
   },
