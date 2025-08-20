@@ -37,6 +37,7 @@ interface Product {
   brand: string;
   condition: string;
   slug: string;
+  tag?: string; // ✅ Add tag field
   basePrice: string;
   currency: string;
   discount?: string;
@@ -69,6 +70,8 @@ export default function EditProductPage() {
     productName: "",
     brand: "Apple",
     condition: "99%",
+    slug: "",
+    tag: "", // ✅ NEW: Auto-fill from productName
 
     // Pricing
     basePrice: "",
@@ -102,6 +105,16 @@ export default function EditProductPage() {
     return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
   const parseDigits = (formatted: string) => formatted.replace(/\D/g, "");
+
+  // ✅ ADD: Handle product name change and auto-fill tag
+  const handleProductNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newName = e.target.value;
+    setFormData({
+      ...formData,
+      productName: newName,
+      tag: newName, // ✅ Auto-fill tag = productName
+    });
+  };
 
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadingVariantImage, setUploadingVariantImage] = useState<
@@ -369,6 +382,8 @@ export default function EditProductPage() {
         productName: product.productName,
         brand: product.brand,
         condition: product.condition,
+        slug: product.slug || "",
+        tag: product.tag || product.productName,
         basePrice: product.basePrice.toString(),
         currency: product.currency,
         discount: product.discount || "",
@@ -543,8 +558,10 @@ export default function EditProductPage() {
   const resetForm = () => {
     setFormData({
       productName: "",
-      brand: "",
+      brand: "Apple",
       condition: "99%",
+      slug: "",
+      tag: "",
       basePrice: "",
       currency: "VND",
       discount: "",
@@ -732,12 +749,7 @@ export default function EditProductPage() {
                           type="text"
                           required
                           value={formData.productName}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              productName: e.target.value,
-                            })
-                          }
+                          onChange={handleProductNameChange} // ✅ Use new handler
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           placeholder="iPhone 15 Pro Max"
                         />
@@ -751,6 +763,24 @@ export default function EditProductPage() {
                           readOnly
                           value="Apple"
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-700"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Tag tìm kiếm *
+                          <span className="text-xs text-gray-500 ml-2">
+                            (Tự động từ tên sản phẩm)
+                          </span>
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={formData.tag}
+                          onChange={(e) =>
+                            setFormData({ ...formData, tag: e.target.value })
+                          }
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="iPhone 15 Pro Max"
                         />
                       </div>
                       <div>

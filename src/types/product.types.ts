@@ -25,6 +25,7 @@ export interface Product {
   brand: string;
   condition?: string;
   slug: string;
+  tag?: string; // ✅ Add tag field
   basePrice?: bigint | number;
   currency?: string;
   discount?: string; // "-5%" format
@@ -39,6 +40,8 @@ export interface Product {
   featured?: boolean;
   inStock: boolean;
   variants?: ProductVariant[];
+  createdAt?: string; // ✅ Add createdAt field
+  updatedAt?: string; // ✅ Add updatedAt field
 
   // Legacy fields (for backward compatibility)
   title?: string;

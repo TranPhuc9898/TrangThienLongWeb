@@ -2,7 +2,7 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -27,12 +27,17 @@ const navigationData: NavItem[] = [
     label: "iPhone",
     href: "/iphone",
     dropdownItems: [
-      { label: "iPhone 15 Pro Max", href: "/iphone/15-pro-max", isNew: true },
-      { label: "iPhone 15 Pro", href: "/iphone/15-pro", isNew: true },
-      { label: "iPhone 15", href: "/iphone/15", isNew: true },
-      { label: "iPhone 14 Pro Max", href: "/iphone/14-pro-max", isHot: true },
-      { label: "iPhone 14", href: "/iphone/14" },
-      { label: "iPhone 13", href: "/iphone/13" },
+      { label: "iPhone 17 Pro Max", href: "/iphone/iphone-17-pro-max-series", isNew: true },
+      { label: "iPhone 17 Pro", href: "/iphone/iphone-17-pro-series", isNew: true },
+      { label: "iPhone 16 Pro Max", href: "/iphone/iphone-16-pro-max-series", isNew: true },
+      { label: "iPhone 16 Pro", href: "/iphone/iphone-16-pro-series", isNew: true },
+      { label: "iPhone 16", href: "/iphone/iphone-16-series", isNew: true },
+      { label: "iPhone 15 Pro Max", href: "/iphone/iphone-15-pro-max-series", isHot: true },
+      { label: "iPhone 15 Pro", href: "/iphone/iphone-15-pro-series", isHot: true },
+      { label: "iPhone 15", href: "/iphone/iphone-15-series" },
+      { label: "iPhone 14 Pro Max", href: "/iphone/iphone-14-pro-max-series" },
+      { label: "iPhone 14", href: "/iphone/iphone-14-series" },
+      { label: "iPhone 13", href: "/iphone/iphone-13-series" },
       { label: "Tất cả iPhone", href: "/iphone" },
     ],
   },
@@ -40,10 +45,11 @@ const navigationData: NavItem[] = [
     label: "iPad",
     href: "/ipad",
     dropdownItems: [
-      { label: "iPad Pro M2", href: "/ipad/pro-m2", isNew: true },
-      { label: "iPad Air", href: "/ipad/air", isHot: true },
-      { label: "iPad Gen 10", href: "/ipad/gen-10" },
-      { label: "iPad Mini", href: "/ipad/mini" },
+      { label: "iPad Pro M4", href: "/ipad/ipad-pro-m4-series", isNew: true },
+      { label: "iPad Pro M2", href: "/ipad/ipad-pro-m2-series" },
+      { label: "iPad Air", href: "/ipad/ipad-air-series", isHot: true },
+      { label: "iPad Gen 10", href: "/ipad/ipad-gen-10-series" },
+      { label: "iPad Mini", href: "/ipad/ipad-mini-series" },
       { label: "Tất cả iPad", href: "/ipad" },
     ],
   },
@@ -51,9 +57,10 @@ const navigationData: NavItem[] = [
     label: "Mac",
     href: "/macbook",
     dropdownItems: [
-      { label: "MacBook Air M2", href: "/mac/air-m2", isNew: true },
-      { label: "MacBook Pro", href: "/mac/pro", isNew: true },
-      { label: 'iMac 24"', href: "/mac/imac-24", isHot: true },
+      { label: "MacBook Pro M3", href: "/mac/macbook-pro-m3-series", isNew: true },
+      { label: "MacBook Air M3", href: "/mac/macbook-air-m3-series", isNew: true },
+      { label: "MacBook Air M2", href: "/mac/macbook-air-m2-series" },
+      { label: 'iMac 24" M3', href: "/mac/imac-24-m3-series", isHot: true },
       { label: "Tất cả Mac", href: "/macbook" },
     ],
   },
@@ -61,9 +68,10 @@ const navigationData: NavItem[] = [
     label: "Watch",
     href: "/apple-watch",
     dropdownItems: [
-      { label: "Apple Watch Series 9", href: "/watch/series-9", isNew: true },
-      { label: "Apple Watch Ultra 2", href: "/watch/ultra-2", isNew: true },
-      { label: "Apple Watch SE", href: "/watch/se", isHot: true },
+      { label: "Apple Watch Series 10", href: "/watch/apple-watch-series-10-series", isNew: true },
+      { label: "Apple Watch Series 9", href: "/watch/apple-watch-series-9-series" },
+      { label: "Apple Watch Ultra 2", href: "/watch/apple-watch-ultra-2-series", isHot: true },
+      { label: "Apple Watch SE", href: "/watch/apple-watch-se-series" },
       { label: "Tất cả Watch", href: "/apple-watch" },
     ],
   },
@@ -71,9 +79,10 @@ const navigationData: NavItem[] = [
     label: "AirPods",
     href: "/airpods",
     dropdownItems: [
-      { label: "AirPods Pro 2", href: "/airpods/pro-2", isNew: true },
-      { label: "AirPods 3", href: "/airpods/3rd", isHot: true },
-      { label: "AirPods Max", href: "/airpods/max" },
+      { label: "AirPods Pro 2", href: "/airpods/airpods-pro-2-series", isNew: true },
+      { label: "AirPods 4", href: "/airpods/airpods-4-series", isNew: true },
+      { label: "AirPods 3", href: "/airpods/airpods-3-series" },
+      { label: "AirPods Max", href: "/airpods/airpods-max-series", isHot: true },
       { label: "Tất cả AirPods", href: "/airpods" },
     ],
   },
@@ -81,10 +90,10 @@ const navigationData: NavItem[] = [
     label: "Phụ kiện",
     href: "/phu-kien",
     dropdownItems: [
-      { label: "Ốp lưng", href: "/phu-kien/op-lung" },
-      { label: "Sạc & Cable", href: "/phu-kien/sac-cable" },
-      { label: "Dây Watch", href: "/phu-kien/day-watch" },
-      { label: "Tất cả", href: "/phu-kien" },
+      { label: "Ốp lưng iPhone", href: "/phu-kien/op-lung-series" },
+      { label: "Sạc & Cable", href: "/phu-kien/sac-cable-series" },
+      { label: "Dây Apple Watch", href: "/phu-kien/day-watch-series" },
+      { label: "Tất cả phụ kiện", href: "/phu-kien" },
     ],
   },
 ];
@@ -93,6 +102,21 @@ const CleanShopDunkNavbar = () => {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnter = useCallback((label: string) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    setActiveDropdown(label);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    timeoutRef.current = setTimeout(() => {
+      setActiveDropdown(null);
+    }, 300);
+  }, []);
 
   return (
     <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md border-b border-gray-100 z-50 shadow-sm">
@@ -118,8 +142,8 @@ const CleanShopDunkNavbar = () => {
               <div
                 key={item.label}
                 className="relative group"
-                onMouseEnter={() => setActiveDropdown(item.label)}
-                onMouseLeave={() => setActiveDropdown(null)}
+                onMouseEnter={() => handleMouseEnter(item.label)}
+                onMouseLeave={handleMouseLeave}
               >
                 <Link
                   href={item.href}
@@ -133,32 +157,38 @@ const CleanShopDunkNavbar = () => {
 
                 {/* Dropdown */}
                 {item.dropdownItems && activeDropdown === item.label && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute top-full left-0 w-56 bg-white border border-gray-100 rounded-lg shadow-lg py-1 mt-1"
+                  <div
+                    className="absolute top-full left-0 pt-1"
+                    onMouseEnter={() => handleMouseEnter(item.label)}
+                    onMouseLeave={handleMouseLeave}
                   >
-                    {item.dropdownItems.map((dropdownItem, index) => (
-                      <Link
-                        key={index}
-                        href={dropdownItem.href}
-                        className="flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors"
-                      >
-                        <span>{dropdownItem.label}</span>
-                        {dropdownItem.isNew && (
-                          <span className="bg-red-500 text-white text-xs px-1.5 py-0.5 rounded text-[10px] font-medium">
-                            MỚI
-                          </span>
-                        )}
-                        {dropdownItem.isHot && (
-                          <span className="bg-orange-500 text-white text-xs px-1.5 py-0.5 rounded text-[10px] font-medium">
-                            HOT
-                          </span>
-                        )}
-                      </Link>
-                    ))}
-                  </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.15 }}
+                      className="w-56 bg-white border border-gray-100 rounded-lg shadow-lg py-1"
+                    >
+                      {item.dropdownItems.map((dropdownItem, index) => (
+                        <Link
+                          key={index}
+                          href={dropdownItem.href}
+                          className="flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors"
+                        >
+                          <span>{dropdownItem.label}</span>
+                          {dropdownItem.isNew && (
+                            <span className="bg-red-500 text-white text-xs px-1.5 py-0.5 rounded text-[10px] font-medium">
+                              MỚI
+                            </span>
+                          )}
+                          {dropdownItem.isHot && (
+                            <span className="bg-orange-500 text-white text-xs px-1.5 py-0.5 rounded text-[10px] font-medium">
+                              HOT
+                            </span>
+                          )}
+                        </Link>
+                      ))}
+                    </motion.div>
+                  </div>
                 )}
               </div>
             ))}

@@ -5,7 +5,6 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import { Search, ShoppingCart, ChevronDown, Menu, X } from "lucide-react";
 
 interface DropdownItem {
@@ -107,6 +106,11 @@ const ShopDunkStyleNavbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
+  // ✅ SIMPLEST: Just toggle - NO useEffect, NO outside click
+  const toggleDropdown = (label: string) => {
+    setActiveDropdown(activeDropdown === label ? null : label);
+  };
+
   return (
     <header className="sticky top-0 bg-white border-b border-gray-200 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -128,20 +132,18 @@ const ShopDunkStyleNavbar = () => {
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-8">
             {navigationData.map((item) => (
-              <div
-                key={item.label}
-                className="relative group"
-                onMouseEnter={() => setActiveDropdown(item.label)}
-                onMouseLeave={() => setActiveDropdown(null)}
-              >
-                <Link
-                  href={item.href}
-                  className="text-gray-900 hover:text-blue-600 font-medium text-sm transition-colors duration-200 py-2 relative"
-                >
-                  {item.label}
-                  {item.hasDropdown && (
+              <div key={item.label} className="relative">
+                {item.hasDropdown ? (
+                  <button
+                    type="button"
+                    onClick={() => toggleDropdown(item.label)}
+                    className="text-gray-900 hover:text-blue-600 font-medium text-sm transition-colors duration-200 py-2 flex items-center gap-1"
+                  >
+                    {item.label}
                     <svg
-                      className="ml-1 h-4 w-4 inline-block transition-transform duration-200 group-hover:rotate-180"
+                      className={`h-4 w-4 transition-transform duration-200 ${
+                        activeDropdown === item.label ? "rotate-180" : ""
+                      }`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -153,23 +155,25 @@ const ShopDunkStyleNavbar = () => {
                         d="M19 9l-7 7-7-7"
                       />
                     </svg>
-                  )}
-                </Link>
+                  </button>
+                ) : (
+                  <Link
+                    href={item.href}
+                    className="text-gray-900 hover:text-blue-600 font-medium text-sm transition-colors duration-200 py-2"
+                  >
+                    {item.label}
+                  </Link>
+                )}
 
                 {/* Dropdown Menu */}
                 {item.hasDropdown && activeDropdown === item.label && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute top-full left-0 w-64 bg-white border border-gray-200 rounded-lg shadow-xl py-2 mt-1"
-                  >
+                  <div className="absolute top-full left-0 w-64 bg-white border border-gray-200 rounded-lg shadow-xl py-2 mt-1 z-50">
                     {item.dropdownItems?.map((dropdownItem, index) => (
                       <Link
                         key={index}
                         href={dropdownItem.href}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-150 relative"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-150"
+                        onClick={() => setActiveDropdown(null)} // Close when click item
                       >
                         <div className="flex items-center justify-between">
                           <span>{dropdownItem.label}</span>
@@ -186,7 +190,7 @@ const ShopDunkStyleNavbar = () => {
                         </div>
                       </Link>
                     ))}
-                  </motion.div>
+                  </div>
                 )}
               </div>
             ))}
@@ -245,8 +249,6 @@ const ShopDunkStyleNavbar = () => {
               </svg>
             </button>
 
-            {/* User Account removed */}
-
             {/* Cart */}
             <Link
               href="/cart"
@@ -265,7 +267,6 @@ const ShopDunkStyleNavbar = () => {
                   d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0H17M9 19v.01M20 19v.01"
                 />
               </svg>
-              {/* Cart Badge */}
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center group-hover:scale-110 transition-transform">
                 0
               </span>

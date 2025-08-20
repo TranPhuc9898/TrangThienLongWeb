@@ -115,6 +115,8 @@ export async function POST(request: NextRequest) {
       variants = [],
       // Colors galleries per color
       colors = [],
+      // Tag for filtering
+      tag,
     } = await request.json();
 
     // Validate required fields
@@ -178,6 +180,7 @@ export async function POST(request: NextRequest) {
         brand,
         condition,
         slug,
+        tag: tag || productName, // Default to productName if no tag provided
         basePrice: basePriceValue,
         currency,
         discount,

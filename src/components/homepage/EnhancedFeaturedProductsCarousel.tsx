@@ -16,13 +16,31 @@ const EnhancedFeaturedProductsCarousel: React.FC<
 > = ({ products }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // ✅ FIXED: Smart infinite logic - no duplicates if insufficient products
+  const infiniteProducts = (() => {
+    if (products.length === 0) return [];
+
+    // If we have 3+ unique products, use triple for infinite
+    if (products.length >= 3) {
+      return [...products, ...products, ...products];
+    }
+
+    // If only 1-2 products, show them normally (no infinite scroll)
+    return products;
+  })();
+
+  // ✅ Disable auto scroll if too few products
+  const shouldAutoScroll = products.length >= 3;
+
   // Auto scroll mượt và rõ ràng
   useEffect(() => {
+    if (!shouldAutoScroll) return; // ✅ Skip auto scroll for few products
+
     const scrollContainer = scrollRef.current;
     if (!scrollContainer) return;
 
     let isPaused = false;
-    const scrollSpeed = 1.5; // Tăng tốc độ lên để thấy rõ hơn
+    const scrollSpeed = 1.5;
 
     const autoScroll = () => {
       if (isPaused) return;
@@ -30,16 +48,13 @@ const EnhancedFeaturedProductsCarousel: React.FC<
       const currentScroll = scrollContainer.scrollLeft;
       const maxScroll =
         scrollContainer.scrollWidth - scrollContainer.clientWidth;
-      const cardWidth = 320 + 24; // 320px card width + 24px gap
 
       if (currentScroll >= maxScroll * 0.6) {
-        // Reset về đầu khi scroll đến 60%
         scrollContainer.scrollTo({
           left: 0,
           behavior: "smooth",
         });
       } else {
-        // Scroll từ từ
         scrollContainer.scrollTo({
           left: currentScroll + scrollSpeed,
           behavior: "auto",
@@ -47,7 +62,6 @@ const EnhancedFeaturedProductsCarousel: React.FC<
       }
     };
 
-    // Pause khi hover
     const handleMouseEnter = () => {
       isPaused = true;
     };
@@ -58,17 +72,14 @@ const EnhancedFeaturedProductsCarousel: React.FC<
     scrollContainer.addEventListener("mouseenter", handleMouseEnter);
     scrollContainer.addEventListener("mouseleave", handleMouseLeave);
 
-    const interval = setInterval(autoScroll, 30); // Chạy mượt hơn
+    const interval = setInterval(autoScroll, 30);
 
     return () => {
       clearInterval(interval);
       scrollContainer.removeEventListener("mouseenter", handleMouseEnter);
       scrollContainer.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, []);
-
-  // Triple products for infinite effect
-  const infiniteProducts = [...products, ...products, ...products];
+  }, [shouldAutoScroll]); // ✅ Add dependency
 
   return (
     <section className="py-20 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
@@ -242,9 +253,13 @@ const EnhancedFeaturedProductsCarousel: React.FC<
             ))}
           </div>
 
-          {/* Gradient Fade Edges */}
-          <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-gray-50 to-transparent pointer-events-none z-10" />
-          <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-gray-50 to-transparent pointer-events-none z-10" />
+          {/* ✅ Only show gradient edges if auto scrolling */}
+          {shouldAutoScroll && (
+            <>
+              <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-gray-50 to-transparent pointer-events-none z-10" />
+              <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-gray-50 to-transparent pointer-events-none z-10" />
+            </>
+          )}
         </div>
       </div>
 

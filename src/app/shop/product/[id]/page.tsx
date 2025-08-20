@@ -65,6 +65,14 @@ interface Product {
   featured: boolean;
   inStock: boolean;
   variants: ProductVariant[];
+  colors: ProductColor[]; // ✅ Add colors array
+}
+
+interface ProductColor {
+  // ✅ Add interface
+  id: string;
+  color: string;
+  images: string[]; // Array of 5 image URLs
 }
 
 interface ProductDetailPageProps {
@@ -95,7 +103,16 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
       setSelectedStorage(firstVariant.storage);
       setSelectedColor(firstVariant.color);
       setSelectedVariant(firstVariant);
-      setActiveImage(firstVariant.image);
+
+      // ✅ Get first image from color gallery, not variant
+      const colorData = product.colors.find(
+        (c) => c.color === firstVariant.color
+      );
+      if (colorData?.images?.length && colorData.images.length > 0) {
+        setActiveImage(colorData.images[0]);
+      } else {
+        setActiveImage(firstVariant.image || product.thumbnail);
+      }
     }
   }, [product]);
 
@@ -106,9 +123,27 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
         (v) => v.storage === selectedStorage && v.color === selectedColor
       );
       setSelectedVariant(variant || null);
-      if (variant?.image) setActiveImage(variant.image);
+
+      // ✅ Only change image when COLOR changes, not storage
     }
   }, [product, selectedStorage, selectedColor]);
+
+  // ✅ New effect: Change image only when color changes
+  useEffect(() => {
+    if (product && selectedColor) {
+      const colorData = product.colors.find((c) => c.color === selectedColor);
+      if (colorData?.images?.length && colorData.images.length > 0) {
+        setActiveImage(colorData.images[0]); // Show first image of new color
+      }
+    }
+  }, [selectedColor]); // Only trigger on color change, not storage
+
+  // ✅ Get current color's images
+  const getCurrentColorImages = () => {
+    if (!product || !selectedColor) return [];
+    const colorData = product.colors.find((c) => c.color === selectedColor);
+    return colorData?.images || [];
+  };
 
   const loadProduct = async () => {
     try {
@@ -259,57 +294,27 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
                 )}
               </div>
 
-              {/* Thumbnails as carousel - show selected variant gallery (up to 5) and other variants as selectors */}
-              {product.variants.length > 0 && (
+              {/* Thumbnails as carousel - FIXED: Only for photo viewing */}
+              {/* ✅ FIXED: Gallery shows current color's images */}
+              {getCurrentColorImages().length > 0 && (
                 <Carousel className="w-full">
                   <CarouselContent>
-                    {[
-                      selectedVariant?.image,
-                      ...(selectedVariant?.images || []),
-                    ]
-                      .filter(Boolean)
-                      .slice(0, 5)
-                      .map((url, idx) => (
-                        <CarouselItem
-                          key={`main-${idx}`}
-                          className="basis-1/4 sm:basis-1/6"
-                        >
-                          <button
-                            onClick={() => setActiveImage(String(url))}
-                            className={`relative aspect-square bg-gray-50 rounded-lg overflow-hidden border-2 ${
-                              activeImage === url
-                                ? "border-blue-500"
-                                : "border-gray-200"
-                            }`}
-                          >
-                            <img
-                              src={String(url)}
-                              alt="preview"
-                              className="w-full h-full object-contain p-2"
-                            />
-                          </button>
-                        </CarouselItem>
-                      ))}
-                    {product.variants.map((variant) => (
+                    {getCurrentColorImages().map((imageUrl, idx) => (
                       <CarouselItem
-                        key={variant.id}
+                        key={`color-image-${idx}`}
                         className="basis-1/4 sm:basis-1/6"
                       >
                         <button
-                          onClick={() => {
-                            setSelectedStorage(variant.storage);
-                            setSelectedColor(variant.color);
-                            setActiveImage(variant.image);
-                          }}
-                          className={`w-full relative aspect-square bg-gray-50 rounded-lg overflow-hidden border-2 ${
-                            selectedVariant?.id === variant.id
+                          onClick={() => setActiveImage(imageUrl)} // ✅ Only change active image
+                          className={`relative aspect-square bg-gray-50 rounded-lg overflow-hidden border-2 ${
+                            activeImage === imageUrl
                               ? "border-blue-500"
                               : "border-gray-200"
                           }`}
                         >
                           <img
-                            src={variant.image}
-                            alt={`${variant.color} ${variant.storage}`}
+                            src={imageUrl}
+                            alt={`${selectedColor} view ${idx + 1}`}
                             className="w-full h-full object-contain p-2"
                           />
                         </button>
@@ -322,6 +327,8 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
                   </div>
                 </Carousel>
               )}
+
+              {/* ✅ REMOVED: Variant preview section - not needed anymore */}
             </div>
 
             {/* Product Details */}
@@ -403,9 +410,9 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
                 )}
               </div>
 
-              {/* Variants Selection */}
+              {/* Variants Selection - Keep independent */}
               <div className="space-y-4">
-                {/* Storage Selection */}
+                {/* Storage Selection - INDEPENDENT */}
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-3">
                     Dung lượng
@@ -414,7 +421,7 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
                     {getStorageOptions().map((storage) => (
                       <button
                         key={storage}
-                        onClick={() => setSelectedStorage(storage)}
+                        onClick={() => setSelectedStorage(storage)} // ✅ Only way to change storage
                         className={`px-4 py-3 text-sm font-medium rounded-lg border-2 transition-colors ${
                           selectedStorage === storage
                             ? "border-blue-500 bg-blue-50 text-blue-700"
@@ -427,7 +434,7 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
                   </div>
                 </div>
 
-                {/* Color Selection */}
+                {/* Color Selection - INDEPENDENT */}
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-3">
                     Màu sắc
@@ -436,7 +443,7 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
                     {getColorOptions().map((color) => (
                       <button
                         key={color}
-                        onClick={() => setSelectedColor(color)}
+                        onClick={() => setSelectedColor(color)} // ✅ Only way to change color
                         className={`w-full px-4 py-3 text-left rounded-lg border-2 transition-colors ${
                           selectedColor === color
                             ? "border-blue-500 bg-blue-50 text-blue-700"

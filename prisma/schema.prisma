@@ -17,6 +17,7 @@ model Product {
   brand            String           // "Apple"
   condition        String           @default("99%") // "99%", "Like New", etc.
   slug             String           @unique
+  tag              String?          // "iPhone 15 Pro Max" - for filtering
   
   // Pricing & Currency
   basePrice        BigInt           // Base price in smallest unit
