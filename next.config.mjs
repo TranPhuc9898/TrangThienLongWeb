@@ -10,7 +10,13 @@ const nextConfig = {
         protocol: "https",
         hostname: "**",
       },
+      {
+        protocol: "http",
+        hostname: "localhost",
+      },
     ],
+    // 🔥 FIX: Disable optimization for local uploads to prevent 400 errors
+    unoptimized: process.env.NODE_ENV === "development",
   },
 
   // SEO & Performance

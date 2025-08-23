@@ -45,6 +45,7 @@ export default function EditBannerPage() {
     active: true,
   });
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [cleaningUp, setCleaningUp] = useState(false);
   const router = useRouter();
 
   // Load banners
@@ -257,6 +258,40 @@ export default function EditBannerPage() {
     }
   };
 
+  const handleCleanupBanners = async () => {
+    if (
+      !confirm(
+        "🧹 Bạn có chắc muốn XÓA TẤT CẢ banner có ảnh bị mất không?\n\nThao tác này không thể hoàn tác!"
+      )
+    ) {
+      return;
+    }
+
+    setCleaningUp(true);
+    try {
+      const response = await fetch("/api/banners", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cleanup: true }),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        alert(
+          `✅ ${result.message || `Đã dọn dẹp ${result.deletedCount} banner`}`
+        );
+        loadBanners(); // Refresh list
+      } else {
+        alert(`❌ Lỗi: ${result.error}`);
+      }
+    } catch (error) {
+      console.error("Cleanup error:", error);
+      alert("❌ Có lỗi xảy ra khi dọn dẹp");
+    } finally {
+      setCleaningUp(false);
+    }
+  };
+
   const resetForm = () => {
     setEditingBanner(null);
     setFormData({
@@ -342,16 +377,30 @@ export default function EditBannerPage() {
           <h2 className="text-xl font-bold text-gray-900">Danh sách banner</h2>
           <p className="text-gray-600">Quản lý tất cả banner trên website</p>
         </div>
-        <button
-          onClick={() => {
-            resetForm();
-            setShowModal(true);
-          }}
-          className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-200 shadow-sm"
-        >
-          <Plus className="w-5 h-5 mr-2" />
-          Thêm banner
-        </button>
+        <div className="flex space-x-3">
+          <button
+            onClick={handleCleanupBanners}
+            disabled={cleaningUp}
+            className="flex items-center px-4 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-all duration-200 shadow-sm disabled:opacity-50"
+          >
+            {cleaningUp ? (
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+            ) : (
+              <Trash2 className="w-4 h-4 mr-2" />
+            )}
+            {cleaningUp ? "Đang dọn..." : "🧹 Dọn dẹp"}
+          </button>
+          <button
+            onClick={() => {
+              resetForm();
+              setShowModal(true);
+            }}
+            className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-200 shadow-sm"
+          >
+            <Plus className="w-5 h-5 mr-2" />
+            Thêm banner
+          </button>
+        </div>
       </div>
 
       {/* Banners List */}

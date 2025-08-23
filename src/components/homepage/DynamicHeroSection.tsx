@@ -166,7 +166,10 @@ const DynamicHeroSection = () => {
       >
         {banners.map((banner) => (
           <SwiperSlide key={banner.id}>
-            <div className="relative w-full h-[260px] sm:h-[360px] lg:h-[460px] bg-white">
+            <div
+              className="relative w-full h-[260px] sm:h-[360px] lg:h-[460px] bg-white"
+              data-banner-slide={banner.id}
+            >
               {banner.link ? (
                 <a href={banner.link} target="_blank" rel="noopener noreferrer">
                   <Image
@@ -174,8 +177,21 @@ const DynamicHeroSection = () => {
                     alt={banner.title}
                     fill
                     priority
+                    unoptimized={banner.imageUrl.startsWith("/uploads")}
                     className="object-contain object-center select-none pointer-events-none"
                     sizes="100vw"
+                    onError={(e) => {
+                      console.error(
+                        "🖼️ Banner image failed to load:",
+                        banner.imageUrl
+                      );
+                      // Hide broken image container
+                      const target = e.target as HTMLImageElement;
+                      const container = target.closest("[data-banner-slide]");
+                      if (container) {
+                        (container as HTMLElement).style.display = "none";
+                      }
+                    }}
                   />
                 </a>
               ) : (
@@ -184,8 +200,21 @@ const DynamicHeroSection = () => {
                   alt={banner.title}
                   fill
                   priority
+                  unoptimized={banner.imageUrl.startsWith("/uploads")}
                   className="object-contain object-center select-none pointer-events-none"
                   sizes="100vw"
+                  onError={(e) => {
+                    console.error(
+                      "🖼️ Banner image failed to load:",
+                      banner.imageUrl
+                    );
+                    // Hide broken image container
+                    const target = e.target as HTMLImageElement;
+                    const container = target.closest("[data-banner-slide]");
+                    if (container) {
+                      (container as HTMLElement).style.display = "none";
+                    }
+                  }}
                 />
               )}
             </div>
