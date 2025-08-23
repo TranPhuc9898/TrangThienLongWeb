@@ -48,9 +48,35 @@ export const AdminEditProvider = ({ children }: AdminEditProviderProps) => {
 
   useEffect(() => {
     checkAdminStatus();
+
     // Check admin status every 30 seconds
     const interval = setInterval(checkAdminStatus, 30000);
-    return () => clearInterval(interval);
+
+    // Listen for logout events
+    const handleLogout = () => {
+      console.log("🚪 Admin logout detected - hiding edit buttons");
+      setIsAdminLoggedIn(false);
+      setEditMode(false);
+      // Also recheck admin status to be sure
+      setTimeout(checkAdminStatus, 100);
+    };
+
+    // Listen for storage changes (logout from another tab)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "admin-login-time" && e.newValue === null) {
+        handleLogout();
+      }
+    };
+
+    // Listen for custom logout event
+    window.addEventListener("admin-logout", handleLogout);
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("admin-logout", handleLogout);
+      window.removeEventListener("storage", handleStorageChange);
+    };
   }, []);
 
   const value = {
@@ -66,4 +92,3 @@ export const AdminEditProvider = ({ children }: AdminEditProviderProps) => {
     </AdminEditContext.Provider>
   );
 };
-

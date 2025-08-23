@@ -30,6 +30,8 @@ export default function AdminLogin() {
       const data = await response.json();
 
       if (response.ok) {
+        // Store login time for session management
+        localStorage.setItem("admin-login-time", Date.now().toString());
         router.push("/admin-admin/dashboard");
       } else {
         setError(data.error || "Đăng nhập thất bại");
@@ -183,4 +185,3 @@ export default function AdminLogin() {
     </div>
   );
 }
-

@@ -33,13 +33,99 @@ export default function AdminDashboardLayout({
     banners: 0,
     views: 0,
   });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [sessionTimer, setSessionTimer] = useState<NodeJS.Timeout | null>(null);
   const router = useRouter();
   const pathname = usePathname();
 
+  // Auth check on mount
+  useEffect(() => {
+    checkAuthentication();
+  }, []);
+
   // Load stats
   useEffect(() => {
-    loadStats();
-  }, []);
+    if (isAuthenticated) {
+      loadStats();
+    }
+  }, [isAuthenticated]);
+
+  const checkAuthentication = async () => {
+    try {
+      // Check if admin token exists and is valid
+      const response = await fetch("/api/admin/status");
+
+      if (response.ok) {
+        setIsAuthenticated(true);
+        startSessionTimer();
+      } else {
+        // Not authenticated, redirect to login
+        router.push("/admin-admin/login");
+        return;
+      }
+    } catch (error) {
+      console.error("Auth check failed:", error);
+      router.push("/admin-admin/login");
+      return;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const startSessionTimer = () => {
+    // Clear existing timer
+    if (sessionTimer) {
+      clearTimeout(sessionTimer);
+    }
+
+    // Get login time from localStorage
+    const loginTime = localStorage.getItem("admin-login-time");
+    if (!loginTime) {
+      // No login time found, redirect to login
+      router.push("/admin-admin/login");
+      return;
+    }
+
+    const loginTimestamp = parseInt(loginTime);
+    const currentTime = Date.now();
+    const elapsedTime = currentTime - loginTimestamp;
+    const oneHour = 3600000; // 1 hour in milliseconds
+
+    if (elapsedTime >= oneHour) {
+      // Already expired, logout immediately
+      handleSessionExpiry();
+      return;
+    }
+
+    // Set timer for remaining time
+    const remainingTime = oneHour - elapsedTime;
+    const timer = setTimeout(() => {
+      handleSessionExpiry();
+    }, remainingTime);
+
+    setSessionTimer(timer);
+  };
+
+  const handleSessionExpiry = async () => {
+    alert("Phiên đăng nhập đã hết hạn sau 1 tiếng. Vui lòng đăng nhập lại!");
+
+    try {
+      // Logout and clear token
+      await fetch("/api/auth", { method: "DELETE" });
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+
+    // Clear login time from localStorage
+    localStorage.removeItem("admin-login-time");
+
+    // Dispatch logout event to hide edit buttons immediately
+    window.dispatchEvent(new CustomEvent("admin-logout"));
+
+    // Redirect to login
+    router.push("/admin-admin/login");
+  };
 
   const loadStats = async () => {
     try {
@@ -63,12 +149,33 @@ export default function AdminDashboardLayout({
 
   const handleLogout = async () => {
     try {
+      // Clear session timer
+      if (sessionTimer) {
+        clearTimeout(sessionTimer);
+      }
+
       await fetch("/api/auth", { method: "DELETE" });
+
+      // Clear login time from localStorage
+      localStorage.removeItem("admin-login-time");
+
+      // Dispatch logout event to hide edit buttons immediately
+      window.dispatchEvent(new CustomEvent("admin-logout"));
+
       router.push("/admin-admin/login");
     } catch (error) {
       console.error("Logout error:", error);
     }
   };
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (sessionTimer) {
+        clearTimeout(sessionTimer);
+      }
+    };
+  }, [sessionTimer]);
 
   const sidebarItems: SidebarItem[] = [
     {
@@ -166,6 +273,23 @@ export default function AdminDashboardLayout({
     </div>
   );
 
+  // Show loading while checking authentication
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Đang kiểm tra quyền truy cập...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render dashboard if not authenticated
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Desktop Sidebar */}
@@ -219,5 +343,3 @@ export default function AdminDashboardLayout({
     </div>
   );
 }
-
-
