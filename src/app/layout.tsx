@@ -20,6 +20,14 @@ export const metadata: Metadata = {
     "Trang Thiên Long Mobile - iPhone, iPad, MacBook Chính Hãng Giá Tốt Nhất",
   description:
     "⭐ Cửa hàng Apple uy tín hàng đầu Việt Nam ⭐ iPhone 15, iPad, MacBook, Apple Watch chính hãng ⭐ Giá tốt nhất ⭐ Bảo hành 12 tháng ⭐ Trả góp 0%",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/images/ttl.png", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/images/ttl.png",
+  },
   keywords: [
     "iphone giá rẻ",
     "ipad chính hãng",
@@ -79,6 +87,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi">
+      <head>
+        <link rel="icon" href="/images/ttl.png" type="image/png" />
+        <link rel="shortcut icon" href="/images/ttl.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/images/ttl.png" />
+      </head>
       <body className={satoshi.className}>
         <OrganizationSchema />
         <LocalBusinessSchema />
