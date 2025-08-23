@@ -22,7 +22,8 @@ import {
 import { Product } from "@/types/product.types";
 import PriceComparison from "@/components/iphone/PriceComparison";
 import AdvancedFilters from "@/components/iphone/AdvancedFilters";
-// SEO will be handled by page metadata
+import { ProductCollectionSchema } from "@/components/seo/SEOComponents";
+// SEO enhanced with Product Collection Schema
 
 // 🎯 iPhone Page - Professional UI/UX Design
 export default function iPhonePage() {
@@ -107,11 +108,14 @@ export default function iPhonePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+      {/* Product Collection Schema for SEO */}
+      <ProductCollectionSchema products={allProducts} />
+
       {/* 🎬 Hero Section - Compact banner only */}
       <section className="relative overflow-hidden">
         <Image
           src="/images/iphone/iPhone.png"
-          alt="iPhone banner"
+          alt="iPhone Chính Hãng - iPhone 15, iPhone 14 Pro Max | Trang Thiên Long"
           fill
           priority
           className="object-cover"

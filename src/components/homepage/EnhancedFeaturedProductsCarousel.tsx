@@ -20,17 +20,17 @@ const EnhancedFeaturedProductsCarousel: React.FC<
   const infiniteProducts = (() => {
     if (products.length === 0) return [];
 
-    // If we have 3+ unique products, use triple for infinite
-    if (products.length >= 3) {
+    // If we have 2+ unique products, use triple for infinite
+    if (products.length >= 2) {
       return [...products, ...products, ...products];
     }
 
-    // If only 1-2 products, show them normally (no infinite scroll)
+    // If only 1 product, show it normally (no infinite scroll)
     return products;
   })();
 
   // ✅ Disable auto scroll if too few products
-  const shouldAutoScroll = products.length >= 3;
+  const shouldAutoScroll = products.length >= 2;
 
   // Auto scroll mượt và rõ ràng
   useEffect(() => {
@@ -130,13 +130,15 @@ const EnhancedFeaturedProductsCarousel: React.FC<
 
                     {/* Overlay Actions */}
                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
-                      <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-50 transition-colors"
-                      >
-                        <Eye className="w-5 h-5 text-gray-700" />
-                      </motion.button>
+                      <Link href={`/${product.slug}`}>
+                        <motion.div
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-50 transition-colors cursor-pointer"
+                        >
+                          <Eye className="w-5 h-5 text-gray-700" />
+                        </motion.div>
+                      </Link>
                       <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
@@ -226,9 +228,6 @@ const EnhancedFeaturedProductsCarousel: React.FC<
                             ).toLocaleString()}
                             đ
                           </span>
-                          <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs">
-                            {product.discount}
-                          </span>
                         </>
                       ) : (
                         <span className="text-2xl font-bold text-gray-900">
@@ -245,7 +244,7 @@ const EnhancedFeaturedProductsCarousel: React.FC<
                       className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
                     >
                       <ShoppingCart className="w-4 h-4" />
-                      Mua Ngay
+                      Xem Chi Tiết Sản Phẩm
                     </Link>
                   </div>
                 </div>

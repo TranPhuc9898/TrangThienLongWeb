@@ -1,7 +1,6 @@
-import Head from "next/head";
 import { Metadata } from "next";
 
-// 🎯 iPhone-specific SEO optimization
+// 🎯 iPhone-specific SEO optimization - Updated to Next.js 13+ metadata API
 export const metadata: Metadata = {
   title: "iPhone Chính Hãng - Giá Tốt Nhất | Trang Thiên Long Mobile",
   description:
@@ -22,6 +21,7 @@ export const metadata: Metadata = {
     description:
       "Khám phá bộ sưu tập iPhone mới nhất với giá cạnh tranh nhất. Từ iPhone 15 Pro Max đến iPhone 13, đầy đủ màu sắc và dung lượng.",
     type: "website",
+    url: "https://thientranglong.vn/iphone",
     images: [
       {
         url: "/images/iphone-collection-seo.jpg",
@@ -30,12 +30,15 @@ export const metadata: Metadata = {
         alt: "iPhone Collection - Trang Thiên Long Mobile",
       },
     ],
+    siteName: "Trang Thiên Long Mobile",
   },
   twitter: {
     card: "summary_large_image",
     title: "iPhone Chính Hãng - Trang Thiên Long Mobile",
     description: "iPhone 15, iPhone 14 Pro Max chính hãng với giá tốt nhất",
     images: ["/images/iphone-collection-seo.jpg"],
+    creator: "@thientranglong",
+    site: "@thientranglong",
   },
   robots: {
     index: true,
@@ -50,6 +53,11 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: "https://thientranglong.vn/iphone",
+  },
+  other: {
+    "geo.region": "VN",
+    "geo.placename": "Ho Chi Minh City",
+    "geo.position": "10.762622,106.660172",
   },
 };
 
@@ -108,83 +116,4 @@ const iPhoneStructuredData = {
   },
 };
 
-const SEOHead: React.FC = () => {
-  return (
-    <Head>
-      {/* Core Meta Tags */}
-      <title>iPhone Chính Hãng - Giá Tốt Nhất | Trang Thiên Long Mobile</title>
-      <meta
-        name="description"
-        content="🍎 Mua iPhone chính hãng giá tốt nhất tại Trang Thiên Long Mobile. iPhone 15, iPhone 14, iPhone 13 Pro Max đầy đủ màu sắc, dung lượng. Bảo hành 12 tháng, trả góp 0%, giao hàng miễn phí."
-      />
-      <meta
-        name="keywords"
-        content="iphone chính hãng, iphone giá rẻ, iphone 15 pro max, iphone 14 pro, iphone cũ like new, iphone trả góp 0%, cửa hàng iphone uy tín, mua iphone tp hcm, iphone bảo hành chính hãng"
-      />
-
-      {/* Open Graph */}
-      <meta
-        property="og:title"
-        content="iPhone Chính Hãng - Giá Tốt Nhất Việt Nam"
-      />
-      <meta
-        property="og:description"
-        content="Khám phá bộ sưu tập iPhone mới nhất với giá cạnh tranh nhất. Từ iPhone 15 Pro Max đến iPhone 13, đầy đủ màu sắc và dung lượng."
-      />
-      <meta
-        property="og:image"
-        content="https://thientranglong.vn/images/iphone-collection-seo.jpg"
-      />
-      <meta property="og:url" content="https://thientranglong.vn/iphone" />
-      <meta property="og:type" content="website" />
-
-      {/* Twitter Card */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta
-        name="twitter:title"
-        content="iPhone Chính Hãng - Trang Thiên Long Mobile"
-      />
-      <meta
-        name="twitter:description"
-        content="iPhone 15, iPhone 14 Pro Max chính hãng với giá tốt nhất"
-      />
-      <meta
-        name="twitter:image"
-        content="https://thientranglong.vn/images/iphone-collection-seo.jpg"
-      />
-
-      {/* Canonical URL */}
-      <link rel="canonical" href="https://thientranglong.vn/iphone" />
-
-      {/* Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(iPhoneStructuredData),
-        }}
-      />
-
-      {/* Additional SEO Tags */}
-      <meta name="robots" content="index, follow" />
-      <meta
-        name="googlebot"
-        content="index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"
-      />
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <meta httpEquiv="Content-Language" content="vi" />
-
-      {/* Preload Critical Resources */}
-      <link
-        rel="preload"
-        href="/fonts/inter-var.woff2"
-        as="font"
-        type="font/woff2"
-        crossOrigin=""
-      />
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-    </Head>
-  );
-};
-
-export default SEOHead;
+// ✅ Removed deprecated Head component - using Next.js 13+ metadata API instead

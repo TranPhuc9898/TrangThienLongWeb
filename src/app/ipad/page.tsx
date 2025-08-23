@@ -2,8 +2,12 @@
 
 import { Metadata } from "next";
 import ProductListSec from "@/components/common/ProductListSec";
-// import { mockProductsIpad } from "@/data"; // Removed mock data
-import { Breadcrumbs } from "@/components/seo/SEOComponents";
+import {
+  Breadcrumbs,
+  ProductCollectionSchema,
+  ImageSchema,
+} from "@/components/seo/SEOComponents";
+import { Product } from "@/types/product.types";
 
 export const metadata: Metadata = {
   title:
@@ -33,7 +37,30 @@ export const metadata: Metadata = {
 
 import Image from "next/image";
 
-export default function iPadPage() {
+// Fetch iPad products for SEO
+async function getIpadProducts(): Promise<Product[]> {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+    const response = await fetch(`${baseUrl}/api/products`, {
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      return [];
+    }
+
+    const products = await response.json();
+    return products.filter((p: Product) =>
+      p.category?.toLowerCase().includes("ipad")
+    );
+  } catch (error) {
+    console.error("Error fetching iPad products:", error);
+    return [];
+  }
+}
+
+export default async function iPadPage() {
+  const ipadProducts = await getIpadProducts();
   const breadcrumbItems = [
     { name: "Trang chủ", href: "/" },
     { name: "iPad", href: "/ipad" },
@@ -41,11 +68,36 @@ export default function iPadPage() {
 
   return (
     <main className="min-h-screen bg-gray-50">
+      {/* Product Collection Schema for SEO */}
+      <ProductCollectionSchema products={ipadProducts} />
+
+      {/* Image Schema for SEO */}
+      <ImageSchema
+        images={ipadProducts.map((product) => ({
+          url: product.thumbnail || "/images/ipad/ipad.png",
+          alt: `${
+            product.productName || product.title
+          } - iPad Chính Hãng | Trang Thiên Long`,
+          caption: `${product.productName || product.title} ${
+            product.condition || "99%"
+          } chính hãng`,
+          width: 1200,
+          height: 630,
+        }))}
+        primaryImage={{
+          url: "/images/ipad/ipad.png",
+          alt: "iPad Collection - iPad Pro, iPad Air, iPad Mini Chính Hãng | Trang Thiên Long",
+          caption: "Bộ sưu tập iPad chính hãng với giá tốt nhất",
+          width: 1200,
+          height: 630,
+        }}
+      />
+
       {/* Banner */}
       <section className="relative overflow-hidden">
         <Image
           src="/images/ipad/ipad.png"
-          alt="iPad banner"
+          alt="iPad Chính Hãng - iPad Pro, iPad Air, iPad Mini | Trang Thiên Long"
           fill
           priority
           className="object-cover"
@@ -66,7 +118,11 @@ export default function iPadPage() {
           </p>
         </div>
 
-        <ProductListSec title="Tất cả iPad" data={[]} viewAllLink="#" />
+        <ProductListSec
+          title="Tất cả iPad"
+          data={ipadProducts}
+          viewAllLink="#"
+        />
       </div>
     </main>
   );

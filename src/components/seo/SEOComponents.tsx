@@ -104,59 +104,153 @@ interface ProductSchemaProps {
 }
 
 export const ProductSchema: React.FC<ProductSchemaProps> = ({ product }) => {
+  // Enhanced Offer schema with variants
+  const offers = [];
+
+  // Main offer for base price
+  const basePrice = product.basePrice || product.price || 0;
+  const basePriceNum =
+    typeof basePrice === "bigint" ? Number(basePrice) : Number(basePrice);
+
+  offers.push({
+    "@type": "Offer",
+    price: basePriceNum,
+    priceCurrency: "VND",
+    availability: product.inStock
+      ? "https://schema.org/InStock"
+      : "https://schema.org/OutOfStock",
+    itemCondition: "https://schema.org/NewCondition",
+    seller: {
+      "@type": "Organization",
+      name: "Trang Thiên Long Mobile",
+      url: "https://thientranglong.vn",
+    },
+    priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .split("T")[0],
+    shippingDetails: {
+      "@type": "OfferShippingDetails",
+      shippingRate: {
+        "@type": "MonetaryAmount",
+        value: 0,
+        currency: "VND",
+      },
+      shippingDestination: {
+        "@type": "DefinedRegion",
+        addressCountry: "VN",
+      },
+    },
+    hasMerchantReturnPolicy: {
+      "@type": "MerchantReturnPolicy",
+      applicableCountry: "VN",
+      returnPolicyCategory:
+        "https://schema.org/MerchantReturnFiniteReturnWindow",
+      merchantReturnDays: 30,
+      returnMethod: "https://schema.org/ReturnByMail",
+      returnFees: "https://schema.org/FreeReturn",
+    },
+  });
+
+  // Add variant offers if available
+  if (product.variants && product.variants.length > 0) {
+    product.variants.forEach((variant: any) => {
+      if (variant.price) {
+        const variantPrice =
+          typeof variant.price === "bigint"
+            ? Number(variant.price)
+            : Number(variant.price);
+        offers.push({
+          "@type": "Offer",
+          price: variantPrice,
+          priceCurrency: "VND",
+          availability:
+            variant.inStock !== false
+              ? "https://schema.org/InStock"
+              : "https://schema.org/OutOfStock",
+          itemCondition: "https://schema.org/NewCondition",
+          seller: {
+            "@type": "Organization",
+            name: "Trang Thiên Long Mobile",
+            url: "https://thientranglong.vn",
+          },
+          priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+            .toISOString()
+            .split("T")[0],
+          additionalProperty: [
+            {
+              "@type": "PropertyValue",
+              name: "Storage",
+              value: variant.storage,
+            },
+            {
+              "@type": "PropertyValue",
+              name: "Color",
+              value: variant.color,
+            },
+          ],
+        });
+      }
+    });
+  }
+
   const structuredData = {
     "@context": "https://schema.org/",
     "@type": "Product",
     name: product.productName || product.title,
     description: product.description,
+    sku: product.id,
     brand: {
       "@type": "Brand",
       name: product.brand,
     },
     category: product.category,
-    image: (product.gallery || []).map(
-      (img) => `https://thientranglong.vn${img}`
-    ),
-    offers: {
-      "@type": "Offer",
-      price: product.price,
-      priceCurrency: "VND",
-      availability: product.inStock
-        ? "https://schema.org/InStock"
-        : "https://schema.org/OutOfStock",
-      seller: {
-        "@type": "Organization",
-        name: "Trang Thiên Long Mobile",
-        url: "https://thientranglong.vn",
-      },
-      priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-        .toISOString()
-        .split("T")[0],
-    },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: product.rating,
-      reviewCount: product.reviewCount,
-      bestRating: 5,
-      worstRating: 1,
-    },
-    review: [
-      {
-        "@type": "Review",
-        reviewRating: {
-          "@type": "Rating",
+    model: product.condition || "99%",
+    image: [
+      product.thumbnail || "/images/iphone14.png",
+      ...(product.gallery || []).map(
+        (img) => `https://thientranglong.vn${img}`
+      ),
+    ].filter(Boolean),
+    offers:
+      offers.length > 1
+        ? {
+            "@type": "AggregateOffer",
+            priceCurrency: "VND",
+            lowPrice: Math.min(...offers.map((o) => o.price)),
+            highPrice: Math.max(...offers.map((o) => o.price)),
+            offerCount: offers.length,
+            offers: offers,
+          }
+        : offers[0],
+    aggregateRating: product.rating
+      ? {
+          "@type": "AggregateRating",
           ratingValue: product.rating,
+          reviewCount: product.reviewCount || 1,
           bestRating: 5,
-        },
-        author: {
-          "@type": "Person",
-          name: "Khách hàng Trang Thiên Long",
-        },
-        reviewBody: `${
-          product.productName || product.title
-        } chất lượng tuyệt vời, giá cả hợp lý. Rất hài lòng với sản phẩm.`,
-      },
-    ],
+          worstRating: 1,
+        }
+      : undefined,
+    review: product.rating
+      ? [
+          {
+            "@type": "Review",
+            reviewRating: {
+              "@type": "Rating",
+              ratingValue: product.rating,
+              bestRating: 5,
+            },
+            author: {
+              "@type": "Person",
+              name: "Khách hàng Trang Thiên Long",
+            },
+            reviewBody: `${
+              product.productName || product.title
+            } chất lượng tuyệt vời, giá cả hợp lý. Rất hài lòng với sản phẩm.`,
+            datePublished: new Date().toISOString().split("T")[0],
+          },
+        ]
+      : undefined,
   };
 
   return (
@@ -292,6 +386,84 @@ export const LocalBusinessSchema: React.FC = () => {
           "Cửa hàng uy tín, iPhone chính hãng, giá tốt, nhân viên tư vấn nhiệt tình.",
       },
     ],
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+    />
+  );
+};
+
+// New: Image SEO Schema Component
+interface ImageSchemaProps {
+  images: Array<{
+    url: string;
+    alt: string;
+    caption?: string;
+    width?: number;
+    height?: number;
+  }>;
+  primaryImage?: {
+    url: string;
+    alt: string;
+    caption?: string;
+    width?: number;
+    height?: number;
+  };
+}
+
+export const ImageSchema: React.FC<ImageSchemaProps> = ({
+  images,
+  primaryImage,
+}) => {
+  const imageObjects = images.map((img) => ({
+    "@type": "ImageObject",
+    url: img.url.startsWith("http")
+      ? img.url
+      : `https://thientranglong.vn${img.url}`,
+    name: img.alt,
+    caption: img.caption || img.alt,
+    description: img.caption || img.alt,
+    width: img.width || 1200,
+    height: img.height || 630,
+    contentUrl: img.url.startsWith("http")
+      ? img.url
+      : `https://thientranglong.vn${img.url}`,
+    thumbnail: {
+      "@type": "ImageObject",
+      url: img.url.startsWith("http")
+        ? img.url
+        : `https://thientranglong.vn${img.url}`,
+      width: 300,
+      height: 200,
+    },
+  }));
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "ImageGallery",
+    name: "Product Images - Trang Thiên Long Mobile",
+    description: "High-quality product images showcasing Apple products",
+    image: primaryImage
+      ? {
+          "@type": "ImageObject",
+          url: primaryImage.url.startsWith("http")
+            ? primaryImage.url
+            : `https://thientranglong.vn${primaryImage.url}`,
+          name: primaryImage.alt,
+          caption: primaryImage.caption || primaryImage.alt,
+          width: primaryImage.width || 1200,
+          height: primaryImage.height || 630,
+        }
+      : imageObjects[0],
+    associatedMedia: imageObjects,
+    provider: {
+      "@type": "Organization",
+      name: "Trang Thiên Long Mobile",
+      url: "https://thientranglong.vn",
+    },
   };
 
   return (

@@ -1,19 +1,36 @@
 /** @format */
 
 import { MetadataRoute } from "next";
-// Removed mock data imports
+
+// Fetch products from database for dynamic sitemap
+async function getProductsForSitemap() {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+    const response = await fetch(`${baseUrl}/api/products`, {
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      return [];
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching products for sitemap:", error);
+    return [];
+  }
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://thientranglong.vn";
 
-  // Combine all products
-  // Return static sitemap for now
-  const allProducts: any[] = [];
+  // Fetch real products from database
+  const allProducts = await getProductsForSitemap();
 
-  // Generate product URLs
+  // Generate product URLs with proper slugs
   const productUrls = allProducts.map((product: any) => ({
-    url: `${baseUrl}/${product.productType}/${product.slug}`,
-    lastModified: new Date(),
+    url: `${baseUrl}/${product.slug || product.id}`,
+    lastModified: product.updatedAt ? new Date(product.updatedAt) : new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.8,
   }));
