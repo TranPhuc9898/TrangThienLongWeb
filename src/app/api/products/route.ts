@@ -215,6 +215,11 @@ export async function POST(request: NextRequest) {
 
 // PUT - Cập nhật sản phẩm và variants
 export async function PUT(request: NextRequest) {
+  // Declare variables outside try block for error logging
+  let id: string | undefined;
+  let variants: any[] = [];
+  let colors: any[] = [];
+
   try {
     if (!verifyToken()) {
       return NextResponse.json(
@@ -223,12 +228,14 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const {
-      id,
-      variants = [],
-      colors = [],
-      ...productData
-    } = await request.json();
+    const requestData = await request.json();
+    id = requestData.id;
+    variants = requestData.variants || [];
+    colors = requestData.colors || [];
+    const productData = { ...requestData };
+    delete productData.id;
+    delete productData.variants;
+    delete productData.colors;
 
     if (!id) {
       return NextResponse.json({ error: "Thiếu ID sản phẩm" }, { status: 400 });
@@ -251,6 +258,12 @@ export async function PUT(request: NextRequest) {
       }
     }
 
+    // Prepare colors first (needed for variant image lookup)
+    const processedColors = (colors || []).map((c: any) => ({
+      color: c.color,
+      images: Array.isArray(c.images) ? (c.images as string[]).slice(0, 5) : [],
+    }));
+
     // Process variants
     const processedVariants = [];
     for (const variant of variants) {
@@ -262,11 +275,20 @@ export async function PUT(request: NextRequest) {
       }
 
       try {
+        // Find color gallery for this variant
+        const colorGallery = processedColors.find(
+          (c: any) => c.color === variant.color
+        );
+
         processedVariants.push({
           ...variant,
           price: BigInt(variant.price),
           quantity: variant.quantity || 0,
           inStock: variant.inStock !== false,
+          image:
+            variant.image ||
+            (colorGallery && (colorGallery.images as any[])[0]) ||
+            productData.thumbnail,
         });
       } catch (error) {
         return NextResponse.json(
@@ -278,15 +300,9 @@ export async function PUT(request: NextRequest) {
       }
     }
 
-    // Prepare colors
-    const processedColors = (colors || []).map((c: any) => ({
-      color: c.color,
-      images: Array.isArray(c.images) ? (c.images as string[]).slice(0, 5) : [],
-    }));
-
     // Update product and replace all variants and colors
     const product = await prisma.product.update({
-      where: { id },
+      where: { id: id as any },
       data: {
         ...productData,
         variants: {
@@ -307,8 +323,18 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json(serializeBigInt(product));
   } catch (error) {
     console.error("Update product error:", error);
+    console.error("Error details:", {
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      productId: id,
+      variantsCount: variants?.length || 0,
+      colorsCount: colors?.length || 0,
+    });
     return NextResponse.json(
-      { error: "Không thể cập nhật sản phẩm" },
+      {
+        error: "Không thể cập nhật sản phẩm",
+        details: error instanceof Error ? error.message : String(error),
+      },
       { status: 500 }
     );
   }

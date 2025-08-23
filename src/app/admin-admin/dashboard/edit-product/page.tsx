@@ -433,6 +433,18 @@ export default function EditProductPage() {
         setVariantsMatrix({});
       }
 
+      // ✅ Load existing color galleries from product.colors
+      if (product.colors && product.colors.length > 0) {
+        const galleries: Record<string, string[]> = {};
+        product.colors.forEach((colorData) => {
+          galleries[colorData.color] = colorData.images || [];
+        });
+        setColorGalleries(galleries);
+      } else {
+        // Reset galleries for new products
+        setColorGalleries({});
+      }
+
       setEditingProduct(product);
       setShowModal(true);
     } catch (error) {
