@@ -23,24 +23,12 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
 
-  // Headers for security and performance
+  // Headers for images only
   async headers() {
     return [
       {
-        source: "/(.*)",
+        source: "/images/(.*)",
         headers: [
-          {
-            key: "X-Frame-Options",
-            value: "DENY",
-          },
-          {
-            key: "X-Content-Type-Options",
-            value: "nosniff",
-          },
-          {
-            key: "Referrer-Policy",
-            value: "origin-when-cross-origin",
-          },
           {
             key: "Cache-Control",
             value: "public, max-age=31536000, immutable",
@@ -48,11 +36,11 @@ const nextConfig = {
         ],
       },
       {
-        source: "/images/(.*)",
+        source: "/uploads/(.*)",
         headers: [
           {
             key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
+            value: "public, max-age=86400",
           },
         ],
       },
@@ -69,11 +57,7 @@ const nextConfig = {
     ];
   },
 
-  // Experimental features for better performance
-  experimental: {
-    optimizeCss: true,
-    scrollRestoration: true,
-  },
+  // Remove experimental features that cause build errors
 };
 
 export default nextConfig;
