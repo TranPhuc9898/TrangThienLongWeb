@@ -123,6 +123,7 @@ export default function Home() {
 
   return (
     <>
+      <FloatingToolbar />
       {/* SEO Metadata */}
       <Head>
         <title>
