@@ -240,9 +240,17 @@ export default function EditProductPage() {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
+    const current = colorGalleries[color] || [];
+    const remainingSlots = 5 - current.length;
+    
+    if (remainingSlots <= 0) {
+      alert("Đã đạt tối đa 5 ảnh cho màu này. Vui lòng xóa ảnh cũ trước khi thêm mới.");
+      return;
+    }
+
     const uploadedUrls: string[] = [];
     try {
-      for (let i = 0; i < files.length; i++) {
+      for (let i = 0; i < Math.min(files.length, remainingSlots); i++) {
         const formDataUpload = new FormData();
         formDataUpload.append("file", files[i]);
         const response = await fetch("/api/upload", {
@@ -265,6 +273,18 @@ export default function EditProductPage() {
     } catch (err) {
       console.error("Upload color images failed:", err);
     }
+  };
+
+  // ✅ NEW: Remove image from color gallery
+  const removeImageFromColor = (color: string, imageIndex: number) => {
+    setColorGalleries((prev) => {
+      const current = prev[color] || [];
+      const updated = current.filter((_, index) => index !== imageIndex);
+      return {
+        ...prev,
+        [color]: updated,
+      };
+    });
   };
 
   // Color management
@@ -1033,9 +1053,15 @@ export default function EditProductPage() {
                                 </span>
                                 <label
                                   htmlFor={`upload-color-${color}`}
-                                  className="cursor-pointer text-xs bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+                                  className={`cursor-pointer text-xs px-3 py-1 rounded transition-colors ${
+                                    (colorGalleries[color] || []).length >= 5
+                                      ? "bg-gray-400 text-gray-600 cursor-not-allowed"
+                                      : "bg-blue-600 text-white hover:bg-blue-700"
+                                  }`}
                                 >
-                                  Thêm ảnh (tối đa 5)
+                                  {(colorGalleries[color] || []).length >= 5
+                                    ? `Đã đủ 5 ảnh (${(colorGalleries[color] || []).length}/5)`
+                                    : `Thêm ảnh (${(colorGalleries[color] || []).length}/5)`}
                                 </label>
                                 <input
                                   id={`upload-color-${color}`}
@@ -1052,12 +1078,20 @@ export default function EditProductPage() {
                                 {(colorGalleries[color] || [])
                                   .slice(0, 5)
                                   .map((u, i) => (
-                                    <img
-                                      key={i}
-                                      src={u}
-                                      alt="img"
-                                      className="w-16 h-16 object-cover rounded"
-                                    />
+                                    <div key={i} className="relative group">
+                                      <img
+                                        src={u}
+                                        alt="img"
+                                        className="w-16 h-16 object-cover rounded"
+                                      />
+                                      <button
+                                        type="button"
+                                        onClick={() => removeImageFromColor(color, i)}
+                                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                                      >
+                                        <X className="w-3 h-3" />
+                                      </button>
+                                    </div>
                                   ))}
                               </div>
                             </div>
