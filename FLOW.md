@@ -18,7 +18,7 @@
   - Domain trangmobile.com được allow ✅
   - Next.js Image optimization HOẠT ĐỘNG ✅
   - Ảnh sẽ hiển thị đúng trên trang chủ ✅
-
+`
   KẾT QUẢ MONG ĐỢI:
 
   ĐÚNG RỒI - Khi bạn vào admin dashboard thêm sản phẩm thành công:

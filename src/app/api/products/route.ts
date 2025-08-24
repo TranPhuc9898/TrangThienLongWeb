@@ -426,7 +426,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // 🗑️ DELETE ALL IMAGE FILES
-    const uniqueFiles = [...new Set(filesToDelete)]; // Remove duplicates
+    const uniqueFiles = Array.from(new Set(filesToDelete)); // Remove duplicates
     for (const filePath of uniqueFiles) {
       safeDeleteFile(filePath);
     }
