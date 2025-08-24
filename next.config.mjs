@@ -8,6 +8,10 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
+        hostname: "trangmobile.com",
+      },
+      {
+        protocol: "https",
         hostname: "**",
       },
       {

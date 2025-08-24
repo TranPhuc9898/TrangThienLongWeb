@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
 import { prisma } from "@/lib/database";
+import fs from "fs";
+import path from "path";
 
 // Helper function to serialize BigInt values
 function serializeBigInt(obj: any): any {
@@ -340,7 +342,28 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-// DELETE - Xóa sản phẩm (cascade variants)
+// Helper function to safely delete file
+function safeDeleteFile(filePath: string) {
+  try {
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+      console.log(`🗑️ Deleted file: ${filePath}`);
+    }
+  } catch (error) {
+    console.error(`❌ Failed to delete file: ${filePath}`, error);
+  }
+}
+
+// Helper function to extract filename from URL path
+function extractFilename(imagePath: string): string | null {
+  if (!imagePath) return null;
+  
+  // Handle both /uploads/filename.jpg and full URLs
+  const match = imagePath.match(/\/uploads\/(.+)$/);
+  return match ? match[1] : null;
+}
+
+// DELETE - Xóa sản phẩm và tất cả file ảnh liên quan
 export async function DELETE(request: NextRequest) {
   try {
     if (!verifyToken()) {
@@ -356,14 +379,67 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "Thiếu ID sản phẩm" }, { status: 400 });
     }
 
-    // Delete product (variants will be cascade deleted)
+    // 🔥 GET PRODUCT DATA BEFORE DELETE to collect all image files
+    const productToDelete = await prisma.product.findUnique({
+      where: { id },
+      include: {
+        variants: true,
+        colors: true,
+      },
+    });
+
+    if (!productToDelete) {
+      return NextResponse.json({ error: "Sản phẩm không tồn tại" }, { status: 404 });
+    }
+
+    // 🗑️ COLLECT ALL IMAGE FILES TO DELETE
+    const filesToDelete: string[] = [];
+    const uploadsDir = path.join(process.cwd(), "public", "uploads");
+
+    // Add thumbnail
+    if (productToDelete.thumbnail) {
+      const filename = extractFilename(productToDelete.thumbnail);
+      if (filename) {
+        filesToDelete.push(path.join(uploadsDir, filename));
+      }
+    }
+
+    // Add variant images
+    for (const variant of productToDelete.variants) {
+      if (variant.image) {
+        const filename = extractFilename(variant.image);
+        if (filename) {
+          filesToDelete.push(path.join(uploadsDir, filename));
+        }
+      }
+    }
+
+    // Add color gallery images
+    for (const color of productToDelete.colors) {
+      const images = Array.isArray(color.images) ? color.images as string[] : [];
+      for (const image of images) {
+        const filename = extractFilename(image);
+        if (filename) {
+          filesToDelete.push(path.join(uploadsDir, filename));
+        }
+      }
+    }
+
+    // 🗑️ DELETE ALL IMAGE FILES
+    const uniqueFiles = [...new Set(filesToDelete)]; // Remove duplicates
+    for (const filePath of uniqueFiles) {
+      safeDeleteFile(filePath);
+    }
+
+    // 🗑️ DELETE PRODUCT FROM DATABASE (cascade variants and colors)
     await prisma.product.delete({
       where: { id },
     });
 
     return NextResponse.json({
       success: true,
-      message: "Xóa sản phẩm thành công",
+      message: `Xóa sản phẩm thành công. Đã xóa ${uniqueFiles.length} file ảnh.`,
+      deletedFiles: uniqueFiles.length,
     });
   } catch (error) {
     console.error("Delete product error:", error);
