@@ -120,7 +120,14 @@ const EnhancedFeaturedProductsCarousel: React.FC<
                   {/* Product Image với hover effects */}
                   <div className="relative aspect-square p-6 bg-gradient-to-br from-gray-50 to-gray-100 group-hover:from-blue-50 group-hover:to-purple-50 transition-all duration-500">
                     <Image
-                      src={product.thumbnail || "/images/iphone14.png"}
+                      src={
+                        product.thumbnail && 
+                        !product.thumbnail.includes('blob:') && 
+                        !product.thumbnail.includes('imgi146') &&
+                        !product.thumbnail.includes('.newsapped.') 
+                          ? product.thumbnail 
+                          : "/images/iphone14.png"
+                      }
                       alt={
                         product.productName || product.title || "Product Image"
                       }

@@ -40,7 +40,7 @@ const QuickAddToCart: React.FC<QuickAddToCartProps> = ({
           triggerFlight(
             productImage,
             (product.gallery && product.gallery[0]) ||
-              product.thumbnail ||
+              (product.thumbnail && !product.thumbnail.includes('blob:') && !product.thumbnail.includes('imgi146') && !product.thumbnail.includes('.newsapped.') ? product.thumbnail : null) ||
               "/images/iphone14.png"
           );
         }
@@ -52,7 +52,7 @@ const QuickAddToCart: React.FC<QuickAddToCartProps> = ({
           name: product.productName || product.title || "Product",
           srcUrl:
             (product.gallery && product.gallery[0]) ||
-            product.thumbnail ||
+            (product.thumbnail && !product.thumbnail.includes('blob:') && !product.thumbnail.includes('imgi146') && !product.thumbnail.includes('.newsapped.') ? product.thumbnail : null) ||
             "/images/iphone14.png",
           price: Number(product.price || product.basePrice || 0),
           attributes: ["Mặc định", "Mặc định"],

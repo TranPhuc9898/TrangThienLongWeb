@@ -126,7 +126,7 @@ const ShopDunkProductGrid: React.FC<ShopDunkProductGridProps> = ({
         if (productImage) {
           triggerFlight(
             productImage,
-            product.thumbnail || product.gallery?.[0] || "/images/iphone14.png"
+            (product.thumbnail && !product.thumbnail.includes('blob:') && !product.thumbnail.includes('imgi146') && !product.thumbnail.includes('.newsapped.') ? product.thumbnail : (product.gallery?.[0] || "/images/iphone14.png"))
           );
         } else {
           console.error("❌ No image found in product card");
@@ -145,7 +145,7 @@ const ShopDunkProductGrid: React.FC<ShopDunkProductGridProps> = ({
           id: product.id as unknown as number,
           name: product.productName || "Product",
           srcUrl:
-            product.thumbnail || product.gallery?.[0] || "/images/iphone14.png",
+            (product.thumbnail && !product.thumbnail.includes('blob:') && !product.thumbnail.includes('imgi146') && !product.thumbnail.includes('.newsapped.') ? product.thumbnail : (product.gallery?.[0] || "/images/iphone14.png")),
           price: priceNumber,
           attributes: [storage, "Mặc định"],
           discount: { amount: 0, percentage: percent },
@@ -216,9 +216,9 @@ const ShopDunkProductGrid: React.FC<ShopDunkProductGridProps> = ({
                   <div className="relative aspect-square p-8 bg-gray-50">
                     <Image
                       src={
-                        product.thumbnail ||
-                        product.gallery?.[0] ||
-                        "/images/iphone14.png"
+                        product.thumbnail && !product.thumbnail.includes('blob:') && !product.thumbnail.includes('imgi146') && !product.thumbnail.includes('.newsapped.') 
+                          ? product.thumbnail 
+                          : (product.gallery?.[0] || "/images/iphone14.png")
                       }
                       alt={product.productName || "Product"}
                       fill
