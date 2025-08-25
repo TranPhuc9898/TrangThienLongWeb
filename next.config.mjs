@@ -19,8 +19,8 @@ const nextConfig = {
         hostname: "localhost",
       },
     ],
-    // 🔥 FIX: Disable optimization for local uploads to prevent 400 errors
-    unoptimized: process.env.NODE_ENV === "development",
+    // ✅ ENABLED: Image optimization for better performance and SEO
+    // unoptimized: false, // Default is false, so we don't need this line
   },
 
   // SEO & Performance

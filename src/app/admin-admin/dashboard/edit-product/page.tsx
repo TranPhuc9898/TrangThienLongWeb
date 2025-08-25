@@ -140,9 +140,18 @@ export default function EditProductPage() {
       quantity: number;
     };
   }>({});
+  // ✅ STAGING AREA: Store images before upload
   const [colorGalleries, setColorGalleries] = useState<
     Record<string, string[]>
   >({});
+  const [stagingImages, setStagingImages] = useState<
+    Record<string, { file: File; preview: string }[]>
+  >({});
+  // ✅ STAGING THUMBNAIL: Store main image before upload
+  const [stagingThumbnail, setStagingThumbnail] = useState<{
+    file: File;
+    preview: string;
+  } | null>(null);
   const [invalidVariantKeys, setInvalidVariantKeys] = useState<Set<string>>(
     new Set()
   );
@@ -173,112 +182,76 @@ export default function EditProductPage() {
     }
   };
 
-  const handleImageUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-    isVariantImage = false,
-    colorStorageKey?: string
-  ) => {
+  // ✅ NEW: Handle thumbnail to staging area (no upload yet)
+  const handleThumbnailStaging = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    if (isVariantImage && colorStorageKey) {
-      setUploadingVariantImage(colorStorageKey);
-    } else {
-      setUploadingImage(true);
+    const file = files[0]; // Only take the first file for thumbnail
+    const preview = URL.createObjectURL(file);
+
+    // Cleanup previous staging thumbnail
+    if (stagingThumbnail?.preview) {
+      URL.revokeObjectURL(stagingThumbnail.preview);
     }
 
-    const uploadedUrls: string[] = [];
-
-    try {
-      for (let i = 0; i < files.length; i++) {
-        const formDataUpload = new FormData();
-        formDataUpload.append("file", files[i]);
-
-        const response = await fetch("/api/upload", {
-          method: "POST",
-          body: formDataUpload,
-        });
-
-        if (!response.ok) {
-          continue;
-        }
-        const result = await response.json();
-        if (result?.url) uploadedUrls.push(result.url);
-      }
-
-      if (uploadedUrls.length > 0) {
-        if (isVariantImage && colorStorageKey) {
-          setVariantsMatrix((prev) => {
-            const prevImages: string[] = [];
-            return {
-              ...prev,
-              [colorStorageKey]: {
-                ...prev[colorStorageKey],
-                image: prev[colorStorageKey]?.image || uploadedUrls[0],
-              },
-            };
-          });
-        } else {
-          setFormData({ ...formData, thumbnail: uploadedUrls[0] });
-        }
-      }
-    } catch (error) {
-      console.error("Upload failed:", error);
-    } finally {
-      if (isVariantImage) {
-        setUploadingVariantImage(null);
-      } else {
-        setUploadingImage(false);
-      }
-    }
+    setStagingThumbnail({ file, preview });
   };
 
-  const handleColorImagesUpload = async (
+  // ✅ NEW: Handle images to staging area (no upload yet)
+  const handleColorImagesStaging = (
     color: string,
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    const current = colorGalleries[color] || [];
-    const remainingSlots = 5 - current.length;
+    const currentStaging = stagingImages[color] || [];
+    const currentUploaded = colorGalleries[color] || [];
+    const totalCurrent = currentStaging.length + currentUploaded.length;
+    const remainingSlots = 5 - totalCurrent;
     
     if (remainingSlots <= 0) {
       alert("Đã đạt tối đa 5 ảnh cho màu này. Vui lòng xóa ảnh cũ trước khi thêm mới.");
       return;
     }
 
-    const uploadedUrls: string[] = [];
-    try {
-      for (let i = 0; i < Math.min(files.length, remainingSlots); i++) {
-        const formDataUpload = new FormData();
-        formDataUpload.append("file", files[i]);
-        const response = await fetch("/api/upload", {
-          method: "POST",
-          body: formDataUpload,
-        });
-        if (!response.ok) continue;
-        const result = await response.json();
-        if (result?.url) uploadedUrls.push(result.url);
-      }
-      if (uploadedUrls.length > 0) {
-        setColorGalleries((prev) => {
-          const current = prev[color] || [];
-          return {
-            ...prev,
-            [color]: [...current, ...uploadedUrls].slice(0, 5),
-          };
-        });
-      }
-    } catch (err) {
-      console.error("Upload color images failed:", err);
+    const newStagingImages: { file: File; preview: string }[] = [];
+    
+    for (let i = 0; i < Math.min(files.length, remainingSlots); i++) {
+      const file = files[i];
+      const preview = URL.createObjectURL(file);
+      newStagingImages.push({ file, preview });
+    }
+
+    if (newStagingImages.length > 0) {
+      setStagingImages((prev) => ({
+        ...prev,
+        [color]: [...currentStaging, ...newStagingImages],
+      }));
     }
   };
 
-  // ✅ NEW: Remove image from color gallery
-  const removeImageFromColor = (color: string, imageIndex: number) => {
+  // ✅ NEW: Remove uploaded image from color gallery
+  const removeUploadedImageFromColor = (color: string, imageIndex: number) => {
     setColorGalleries((prev) => {
       const current = prev[color] || [];
+      const updated = current.filter((_, index) => index !== imageIndex);
+      return {
+        ...prev,
+        [color]: updated,
+      };
+    });
+  };
+
+  // ✅ NEW: Remove staging image from color
+  const removeStagingImageFromColor = (color: string, imageIndex: number) => {
+    setStagingImages((prev) => {
+      const current = prev[color] || [];
+      // Cleanup object URL to prevent memory leak
+      if (current[imageIndex]?.preview) {
+        URL.revokeObjectURL(current[imageIndex].preview);
+      }
       const updated = current.filter((_, index) => index !== imageIndex);
       return {
         ...prev,
@@ -473,14 +446,78 @@ export default function EditProductPage() {
     }
   };
 
+  // ✅ NEW: Upload staging thumbnail to server
+  const uploadStagingThumbnail = async (): Promise<string | null> => {
+    if (!stagingThumbnail) return null;
+    
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append("file", stagingThumbnail.file);
+      
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formDataUpload,
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        return result?.url || null;
+      }
+    } catch (error) {
+      console.error("Failed to upload staging thumbnail:", error);
+    }
+    
+    return null;
+  };
+
+  // ✅ NEW: Upload staging images to server
+  const uploadStagingImages = async (): Promise<Record<string, string[]>> => {
+    const uploadedGalleries: Record<string, string[]> = {};
+    
+    for (const [color, stagingFiles] of Object.entries(stagingImages)) {
+      const uploadedUrls: string[] = [];
+      
+      for (const { file } of stagingFiles) {
+        try {
+          const formDataUpload = new FormData();
+          formDataUpload.append("file", file);
+          
+          const response = await fetch("/api/upload", {
+            method: "POST",
+            body: formDataUpload,
+          });
+          
+          if (response.ok) {
+            const result = await response.json();
+            if (result?.url) {
+              uploadedUrls.push(result.url);
+            }
+          }
+        } catch (error) {
+          console.error(`Failed to upload staging image for color ${color}:`, error);
+        }
+      }
+      
+      if (uploadedUrls.length > 0) {
+        uploadedGalleries[color] = uploadedUrls;
+      }
+    }
+    
+    return uploadedGalleries;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // ✅ UPLOAD STAGING THUMBNAIL AND IMAGES FIRST
+    const newThumbnailUrl = await uploadStagingThumbnail();
+    const newUploadedGalleries = await uploadStagingImages();
 
     // Nới lỏng để luôn tạo được nếu bạn muốn test nhanh
     // Điền fallback cho các trường bắt buộc nếu trống
     const fallbackName = formData.productName || "Sản phẩm mới";
     const fallbackCategory = formData.category || "iPhone";
-    const fallbackThumb = formData.thumbnail || "/images/iphone14.png";
+    const fallbackThumb = newThumbnailUrl || formData.thumbnail || "/images/iphone14.png";
     const fallbackBasePrice = parseDigits(formData.basePrice || "") || "0";
     const fallbackBrand = formData.brand || "Apple";
     const storages = selectedStorages.length > 0 ? selectedStorages : ["128GB"];
@@ -531,9 +568,12 @@ export default function EditProductPage() {
           `${formData.productName} chính hãng, bảo hành 12 tháng tại các trung tâm bảo hành ủy quyền. Miễn phí giao hàng toàn quốc.`,
 
         variants, // Use generated variants from matrix
-        colors: Object.entries(colorGalleries).map(([color, images]) => ({
+        colors: Object.entries({
+          ...colorGalleries,
+          ...newUploadedGalleries,
+        }).map(([color, images]) => ({
           color,
-          images: images.slice(0, 5),
+          images: (Array.isArray(images) ? images : []).slice(0, 5),
         })),
       };
 
@@ -552,6 +592,17 @@ export default function EditProductPage() {
             ? "Sản phẩm đã được cập nhật!"
             : "Sản phẩm đã được tạo!"
         );
+        // ✅ CLEANUP: Clear staging images and thumbnail after successful submit
+        setStagingImages({});
+        if (stagingThumbnail?.preview) {
+          URL.revokeObjectURL(stagingThumbnail.preview);
+        }
+        setStagingThumbnail(null);
+        // Clean up object URLs to prevent memory leaks
+        Object.values(stagingImages).forEach((files) => {
+          files.forEach(({ preview }) => URL.revokeObjectURL(preview));
+        });
+        
         setShowModal(false);
         resetForm();
         loadProducts();
@@ -614,7 +665,18 @@ export default function EditProductPage() {
     setSelectedColors([]);
     setSelectedStorages([]);
     setVariantsMatrix({});
+    setColorGalleries({});
     setNewColor("");
+
+    // ✅ CLEANUP: Clear staging images, thumbnail and object URLs
+    Object.values(stagingImages).forEach((files) => {
+      files.forEach(({ preview }) => URL.revokeObjectURL(preview));
+    });
+    setStagingImages({});
+    if (stagingThumbnail?.preview) {
+      URL.revokeObjectURL(stagingThumbnail.preview);
+    }
+    setStagingThumbnail(null);
 
     setEditingProduct(null);
   };
@@ -933,12 +995,24 @@ export default function EditProductPage() {
                     </h3>
                     <div className="flex items-center gap-4">
                       <div className="w-32 h-32 bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
-                        {formData.thumbnail ? (
-                          <img
-                            src={formData.thumbnail}
-                            alt="Thumbnail"
-                            className="w-full h-full object-contain rounded-lg"
-                          />
+                        {stagingThumbnail?.preview || formData.thumbnail ? (
+                          <div className="relative w-full h-full">
+                            <img
+                              src={stagingThumbnail?.preview || formData.thumbnail}
+                              alt="Thumbnail"
+                              className="w-full h-full object-contain rounded-lg"
+                            />
+                            {stagingThumbnail?.preview && (
+                              <div className="absolute bottom-0 left-0 bg-blue-500 text-white text-xs px-1 rounded">
+                                Preview
+                              </div>
+                            )}
+                            {formData.thumbnail && !stagingThumbnail?.preview && (
+                              <div className="absolute bottom-0 left-0 bg-green-500 text-white text-xs px-1 rounded">
+                                Uploaded
+                              </div>
+                            )}
+                          </div>
                         ) : (
                           <ImageIcon className="w-8 h-8 text-gray-400" />
                         )}
@@ -946,20 +1020,31 @@ export default function EditProductPage() {
                       <div>
                         <label
                           htmlFor="thumbnail-upload"
-                          className={`cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors ${
-                            uploadingImage ? "opacity-50" : ""
-                          }`}
+                          className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                         >
                           <Upload className="w-4 h-4" />
-                          {uploadingImage ? "Đang tải lên..." : "Tải ảnh lên"}
+                          {stagingThumbnail ? "Thay ảnh khác" : "Tải ảnh lên"}
                         </label>
                         <input
                           id="thumbnail-upload"
                           type="file"
                           accept="image/*"
-                          onChange={(e) => handleImageUpload(e)}
+                          onChange={handleThumbnailStaging}
                           className="hidden"
                         />
+                        {stagingThumbnail && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              URL.revokeObjectURL(stagingThumbnail.preview);
+                              setStagingThumbnail(null);
+                            }}
+                            className="ml-2 inline-flex items-center gap-2 px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm"
+                          >
+                            <X className="w-4 h-4" />
+                            Xóa
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -1054,14 +1139,14 @@ export default function EditProductPage() {
                                 <label
                                   htmlFor={`upload-color-${color}`}
                                   className={`cursor-pointer text-xs px-3 py-1 rounded transition-colors ${
-                                    (colorGalleries[color] || []).length >= 5
+                                    ((colorGalleries[color] || []).length + (stagingImages[color] || []).length) >= 5
                                       ? "bg-gray-400 text-gray-600 cursor-not-allowed"
                                       : "bg-blue-600 text-white hover:bg-blue-700"
                                   }`}
                                 >
-                                  {(colorGalleries[color] || []).length >= 5
-                                    ? `Đã đủ 5 ảnh (${(colorGalleries[color] || []).length}/5)`
-                                    : `Thêm ảnh (${(colorGalleries[color] || []).length}/5)`}
+                                  {((colorGalleries[color] || []).length + (stagingImages[color] || []).length) >= 5
+                                    ? `Đã đủ 5 ảnh (${(colorGalleries[color] || []).length + (stagingImages[color] || []).length}/5)`
+                                    : `Thêm ảnh (${(colorGalleries[color] || []).length + (stagingImages[color] || []).length}/5)`}
                                 </label>
                                 <input
                                   id={`upload-color-${color}`}
@@ -1069,28 +1154,54 @@ export default function EditProductPage() {
                                   accept="image/*"
                                   multiple
                                   onChange={(e) =>
-                                    handleColorImagesUpload(color, e)
+                                    handleColorImagesStaging(color, e)
                                   }
                                   className="hidden"
                                 />
                               </div>
                               <div className="grid grid-cols-5 gap-2">
+                                {/* Display uploaded images first */}
                                 {(colorGalleries[color] || [])
-                                  .slice(0, 5)
-                                  .map((u, i) => (
-                                    <div key={i} className="relative group">
+                                  .map((url, i) => (
+                                    <div key={`uploaded-${i}`} className="relative group">
                                       <img
-                                        src={u}
-                                        alt="img"
-                                        className="w-16 h-16 object-cover rounded"
+                                        src={url}
+                                        alt="uploaded img"
+                                        className="w-16 h-16 object-cover rounded border-2 border-green-500"
                                       />
                                       <button
                                         type="button"
-                                        onClick={() => removeImageFromColor(color, i)}
+                                        onClick={() => removeUploadedImageFromColor(color, i)}
                                         className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
                                       >
                                         <X className="w-3 h-3" />
                                       </button>
+                                      <div className="absolute bottom-0 left-0 bg-green-500 text-white text-xs px-1 rounded">
+                                        Uploaded
+                                      </div>
+                                    </div>
+                                  ))}
+                                
+                                {/* Display staging images */}
+                                {(stagingImages[color] || [])
+                                  .slice(0, 5 - (colorGalleries[color] || []).length)
+                                  .map((item, i) => (
+                                    <div key={`staging-${i}`} className="relative group">
+                                      <img
+                                        src={item.preview}
+                                        alt="preview img"
+                                        className="w-16 h-16 object-cover rounded border-2 border-blue-500"
+                                      />
+                                      <button
+                                        type="button"
+                                        onClick={() => removeStagingImageFromColor(color, i)}
+                                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                                      >
+                                        <X className="w-3 h-3" />
+                                      </button>
+                                      <div className="absolute bottom-0 left-0 bg-blue-500 text-white text-xs px-1 rounded">
+                                        Preview
+                                      </div>
                                     </div>
                                   ))}
                               </div>
