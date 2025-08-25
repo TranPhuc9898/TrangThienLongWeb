@@ -524,7 +524,7 @@ export default function EditProductPage() {
         // Điền fallback cho các trường bắt buộc nếu trống
         const fallbackName = formData.productName || "Sản phẩm mới";
         const fallbackCategory = formData.category || "iPhone";
-        const fallbackThumb = newThumbnailUrl || formData.thumbnail || "/images/iphone14.png";
+        const fallbackThumb = newThumbnailUrl || (formData.thumbnail && !formData.thumbnail.includes('blob:') ? formData.thumbnail : "/images/iphone14.png");
         const fallbackBasePrice = parseDigits(formData.basePrice || "") || "0";
         const fallbackBrand = formData.brand || "Apple";
         const storages = selectedStorages.length > 0 ? selectedStorages : ["128GB"];
