@@ -623,6 +623,9 @@ export default function EditProductPage() {
         // ✅ ALWAYS RESET LOADING STATE
         setIsSubmitting(false);
       }
+    } catch (outerError) {
+      console.error("Outer error:", outerError);
+      setIsSubmitting(false);
     }
   };
 
