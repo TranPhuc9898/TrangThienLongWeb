@@ -62,47 +62,82 @@ const FloatingToolbar = () => {
   };
 
   return (
-    <div className="fixed left-4 top-1/2 transform -translate-y-1/2 z-40">
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-2">
-        {toolbarItems.map((item) => (
-          <div
-            key={item.id}
-            className="relative"
-            onMouseEnter={() => setHoveredItem(item.id)}
-            onMouseLeave={() => setHoveredItem(null)}
-          >
-            <button
-              onClick={() => scrollToSection(item.sectionId)}
-              className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 mb-2 last:mb-0 hover:bg-blue-50 hover:scale-110 active:scale-95 ${
-                hoveredItem === item.id ? "bg-blue-50 scale-110" : ""
-              }`}
+    <>
+      {/* Desktop Toolbar - Vertical on left */}
+      <div className="hidden lg:block fixed left-4 top-1/2 transform -translate-y-1/2 z-40">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-2">
+          {toolbarItems.map((item) => (
+            <div
+              key={item.id}
+              className="relative"
+              onMouseEnter={() => setHoveredItem(item.id)}
+              onMouseLeave={() => setHoveredItem(null)}
             >
-              {item.isImage ? (
-                <Image
-                  src={item.icon as string}
-                  alt={item.label}
-                  width={24}
-                  height={24}
-                  className="w-6 h-6"
-                />
-              ) : (
-                React.createElement(item.icon, {
-                  className: "w-6 h-6 text-gray-700"
-                })
-              )}
-            </button>
+              <button
+                onClick={() => scrollToSection(item.sectionId)}
+                className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 mb-2 last:mb-0 hover:bg-blue-50 hover:scale-110 active:scale-95 ${
+                  hoveredItem === item.id ? "bg-blue-50 scale-110" : ""
+                }`}
+              >
+                {item.isImage ? (
+                  <Image
+                    src={item.icon as string}
+                    alt={item.label}
+                    width={24}
+                    height={24}
+                    className="w-6 h-6"
+                  />
+                ) : (
+                  React.createElement(item.icon, {
+                    className: "w-6 h-6 text-gray-700"
+                  })
+                )}
+              </button>
 
-            {/* Tooltip khi hover */}
-            {hoveredItem === item.id && (
-              <div className="absolute left-16 top-1/2 transform -translate-y-1/2 bg-black text-white px-3 py-1.5 rounded-lg text-sm whitespace-nowrap animate-fade-in">
-                {item.label}
-                <div className="absolute right-full top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-black"></div>
-              </div>
-            )}
-          </div>
-        ))}
+              {/* Tooltip khi hover */}
+              {hoveredItem === item.id && (
+                <div className="absolute left-16 top-1/2 transform -translate-y-1/2 bg-black text-white px-3 py-1.5 rounded-lg text-sm whitespace-nowrap animate-fade-in">
+                  {item.label}
+                  <div className="absolute right-full top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-black"></div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+
+      {/* Mobile Toolbar - Horizontal at bottom */}
+      <div className="lg:hidden fixed bottom-4 left-1/2 transform -translate-x-1/2 z-40 w-[calc(100%-2rem)] max-w-md">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-3">
+          <div className="flex justify-around items-center">
+            {toolbarItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => scrollToSection(item.sectionId)}
+                className="flex flex-col items-center justify-center p-2 rounded-xl hover:bg-blue-50 active:scale-95 transition-all duration-200"
+              >
+                {item.isImage ? (
+                  <Image
+                    src={item.icon as string}
+                    alt={item.label}
+                    width={28}
+                    height={28}
+                    className="w-7 h-7 mb-1"
+                  />
+                ) : (
+                  React.createElement(item.icon, {
+                    className: "w-7 h-7 mb-1 text-gray-700"
+                  })
+                )}
+                <span className="text-xs text-gray-600 font-medium">
+                  {item.label}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 

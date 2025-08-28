@@ -15,7 +15,20 @@ import {
   Truck,
   Shield,
   CreditCard,
+  Smartphone,
+  Monitor,
+  Camera,
+  Zap,
+  Battery,
+  Wifi,
 } from "lucide-react";
+
+// Import iPhone specifications database
+import { 
+  IPHONE_SPECS_DATABASE, 
+  getSpecsByModel, 
+  getAvailableModels
+} from '@/constants/iphone-specs';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -535,6 +548,254 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
               </div>
             </div>
           )}
+
+          {/* Technical Specifications - Only for iPhone products */}
+          {product.category?.toLowerCase().includes('iphone') && (
+            <TechnicalSpecs productName={product.productName} />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Technical Specifications Component
+const TechnicalSpecs: React.FC<{ productName: string }> = ({ productName }) => {
+  // Try to match product name with specs database
+  const availableModels = getAvailableModels();
+  const matchedModel = availableModels.find(model => 
+    productName.toLowerCase().includes(model.toLowerCase()) ||
+    model.toLowerCase().includes(productName.toLowerCase().split(' ').slice(0, 3).join(' ').toLowerCase())
+  );
+
+  if (!matchedModel) {
+    return null; // Don't show specs if no match found
+  }
+
+  const specs = getSpecsByModel(matchedModel);
+  if (!specs) {
+    return null;
+  }
+
+  return (
+    <div className="border-t border-gray-200 p-6 lg:p-8">
+      <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl p-6 border border-blue-200">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg">
+            <Smartphone className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
+              📱 Thông Số Kỹ Thuật
+            </h3>
+            <p className="text-sm text-gray-600">
+              {matchedModel} - Dữ liệu từ cơ sở dữ liệu kỹ thuật chính thức
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Display Section */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Monitor className="w-5 h-5 text-blue-600" />
+              <h4 className="font-semibold text-blue-800">Màn Hình</h4>
+            </div>
+            <div className="space-y-2 pl-7">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Kích thước:</span>
+                <span className="text-sm font-medium">{specs.display.size}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Loại:</span>
+                <span className="text-sm font-medium">{specs.display.type}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Độ phân giải:</span>
+                <span className="text-sm font-medium">{specs.display.resolution}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Tần số quét:</span>
+                <span className="text-sm font-medium">{specs.display.refreshRate}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Độ sáng:</span>
+                <span className="text-sm font-medium">{specs.display.brightness}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Camera Section */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Camera className="w-5 h-5 text-green-600" />
+              <h4 className="font-semibold text-green-800">Camera</h4>
+            </div>
+            <div className="space-y-2 pl-7">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Chính:</span>
+                <span className="text-sm font-medium">{specs.camera.main}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Góc rộng:</span>
+                <span className="text-sm font-medium">{specs.camera.ultrawide}</span>
+              </div>
+              {specs.camera.telephoto && (
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Telephoto:</span>
+                  <span className="text-sm font-medium">{specs.camera.telephoto}</span>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Zoom:</span>
+                <span className="text-sm font-medium">{specs.camera.zoom}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Selfie:</span>
+                <span className="text-sm font-medium">{specs.camera.selfie}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Performance Section */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Zap className="w-5 h-5 text-purple-600" />
+              <h4 className="font-semibold text-purple-800">Hiệu Năng</h4>
+            </div>
+            <div className="space-y-2 pl-7">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Chip:</span>
+                <span className="text-sm font-medium">{specs.performance.chip}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">CPU:</span>
+                <span className="text-sm font-medium">{specs.performance.cpu}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">GPU:</span>
+                <span className="text-sm font-medium">{specs.performance.gpu}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">RAM:</span>
+                <span className="text-sm font-medium">{specs.performance.ram}</span>
+              </div>
+              {specs.performance.benchmark.antutu && (
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">AnTuTu:</span>
+                  <span className="text-sm font-medium">{specs.performance.benchmark.antutu}</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Design & Battery Section */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Battery className="w-5 h-5 text-orange-600" />
+              <h4 className="font-semibold text-orange-800">Thiết Kế & Pin</h4>
+            </div>
+            <div className="space-y-2 pl-7">
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Kích thước:</span>
+                <span className="text-sm font-medium">{specs.design.dimensions}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Trọng lượng:</span>
+                <span className="text-sm font-medium">{specs.design.weight}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Vật liệu:</span>
+                <span className="text-sm font-medium">{specs.design.materials}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Dung lượng pin:</span>
+                <span className="text-sm font-medium">{specs.battery.capacity}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Thời gian sử dụng:</span>
+                <span className="text-sm font-medium">{specs.battery.life}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Connectivity Section */}
+          <div className="space-y-4 md:col-span-2">
+            <div className="flex items-center gap-2 mb-3">
+              <Wifi className="w-5 h-5 text-cyan-600" />
+              <h4 className="font-semibold text-cyan-800">Kết Nối & Hệ Điều Hành</h4>
+            </div>
+            <div className="grid grid-cols-2 gap-4 pl-7">
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">SIM:</span>
+                  <span className="text-sm font-medium">{specs.connectivity.sim}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Cổng sạc:</span>
+                  <span className="text-sm font-medium">{specs.connectivity.port}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Wi-Fi:</span>
+                  <span className="text-sm font-medium">{specs.connectivity.wifi}</span>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Bluetooth:</span>
+                  <span className="text-sm font-medium">{specs.connectivity.bluetooth}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Hệ điều hành:</span>
+                  <span className="text-sm font-medium">{specs.other.os}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Kháng nước:</span>
+                  <span className="text-sm font-medium">{specs.other.waterResistance}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Colors and Storage */}
+          <div className="space-y-4 md:col-span-2">
+            <div className="bg-white/60 rounded-lg p-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <h5 className="font-semibold text-gray-800 mb-2">Màu sắc có sẵn:</h5>
+                  <div className="flex flex-wrap gap-2">
+                    {specs.design.colors.map((color, index) => (
+                      <span key={index} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">
+                        {color}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <h5 className="font-semibold text-gray-800 mb-2">Tùy chọn dung lượng:</h5>
+                  <div className="flex flex-wrap gap-2">
+                    {specs.other.storage.map((storage, index) => (
+                      <span key={index} className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+                        {storage}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 pt-4 border-t border-blue-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              Thông số kỹ thuật chính thức từ Apple - Cập nhật mới nhất
+            </div>
+            <div className="text-xs text-gray-500">
+              Model: {matchedModel}
+            </div>
+          </div>
         </div>
       </div>
     </div>

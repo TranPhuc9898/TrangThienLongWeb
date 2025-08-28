@@ -1,5 +1,17 @@
+import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 
+// SEO-optimized Google Font
+const inter = Inter({
+  subsets: ["latin", "vietnamese"],
+  weight: ["300", "400", "500", "600", "700"],
+  style: ["normal"],
+  display: "swap",
+  variable: "--font-inter",
+  fallback: ["system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
+});
+
+// Keep Satoshi as fallback for specific components if needed
 const satoshi = localFont({
   src: [
     {
@@ -18,9 +30,9 @@ const satoshi = localFont({
       style: "normal",
     },
   ],
-  fallback: ["-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
+  fallback: ["system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
   variable: "--font-satoshi",
   display: "swap",
 });
 
-export { satoshi };
+export { inter, satoshi };

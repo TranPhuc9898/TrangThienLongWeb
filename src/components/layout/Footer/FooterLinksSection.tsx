@@ -20,8 +20,8 @@ const policies = [
 const guides = [
   { label: "Hướng Dẫn Mua Hàng", url: "/huong-dan-mua-hang" },
   { label: "Hướng Dẫn Thanh Toán", url: "/huong-dan-thanh-toan" },
-  { label: "Hướng Dẫn Mua Hàng Trả Góp", url: "/huong-dan-tra-gop" },
-  { label: "Điều Khoản Sử Dụng", url: "/dieu-khoan" },
+  { label: "Hướng Dẫn Mua Hàng Trả Góp", url: "/huong-dan-mua-hang-tra-gop" },
+  { label: "Điều Khoản Sử Dụng", url: "/dieu-khoan-su-dung" },
   { label: "Liên Hệ", url: "/lien-he" },
 ];
 

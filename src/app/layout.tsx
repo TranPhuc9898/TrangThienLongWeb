@@ -2,7 +2,7 @@
 
 import type { Metadata, Viewport } from "next";
 import "@/styles/globals.css";
-import { satoshi } from "@/styles/fonts";
+import { inter } from "@/styles/fonts";
 import CleanShopDunkNavbar from "@/components/layout/Navbar/CleanShopDunkNavbar";
 import Footer from "@/components/layout/Footer";
 import HolyLoader from "holy-loader";
@@ -92,7 +92,7 @@ export default function RootLayout({
         <link rel="shortcut icon" href="/images/ttl.png" type="image/png" />
         <link rel="apple-touch-icon" href="/images/ttl.png" />
       </head>
-      <body className={satoshi.className}>
+      <body className={inter.className}>
         <OrganizationSchema />
         <LocalBusinessSchema />
         <HolyLoader color="#007AFF" />

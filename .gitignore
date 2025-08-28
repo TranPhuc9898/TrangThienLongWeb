@@ -9,3 +9,7 @@ out/
 .env.local
 
 /src/generated/prisma
+
+# Claude Code local settings (don't commit personal configs)
+.claude/settings.local.json
+.claude/memory/

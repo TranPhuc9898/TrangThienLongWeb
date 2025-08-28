@@ -15,9 +15,12 @@ model Product {
   // Basic Info
   productName      String           // "iPhone 15 Pro Max"
   brand            String           // "Apple"
-  condition        String           @default("99%") // "99%", "Like New", etc.
+  condition        String           @default("99%") // "99%", "New", "Refurbished"
   slug             String           @unique
   tag              String?          // "iPhone 15 Pro Max" - for filtering
+  
+  // Region Code for iPhone 14+ (LL/A, VN/A, etc.)
+  regionCode       String?          // "LL/A", "VN/A", null for < iPhone 14
   
   // Pricing & Currency
   basePrice        BigInt           // Base price in smallest unit
@@ -39,10 +42,12 @@ model Product {
   reviewCount      Int              @default(0)
   featured         Boolean          @default(false)
   inStock          Boolean          @default(true)
+  series           String?          // "iPhone 14", "iPhone 15", etc.
   
   // Relationships
   variants         ProductVariant[]
   colors           ProductColor[]
+  regionPrices     RegionPrice[]    // Giá khác nhau theo mã vùng
   
   // Timestamps
   createdAt        DateTime         @default(now())
@@ -88,6 +93,25 @@ model ProductColor {
 
   @@unique([productId, color])
   @@map("product_colors")
+}
+
+model RegionPrice {
+  id        String   @id @default(cuid())
+  
+  // Region pricing
+  regionCode String  // "LL/A", "VN/A", etc.
+  price     BigInt  // Price for this specific region
+  
+  // Relationship
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([productId, regionCode])
+  @@map("region_prices")
 }
 
 model AdminSession {

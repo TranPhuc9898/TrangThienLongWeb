@@ -86,19 +86,40 @@ const Footer = () => {
                     Thị Nhã Trang.
                   </div>
                 </div>
-                <div className="flex items-center gap-2 justify-start md:justify-end mt-8">
-                  <img
-                    src="/icons/bo-cong-thuong.png"
-                    alt="Đã thông báo Bộ Công Thương"
-                    className="h-8 w-auto"
-                    loading="lazy"
-                  />
-                  <img
-                    src="/icons/dmca-protected.png"
-                    alt="DMCA Protected"
-                    className="h-8 w-auto"
-                    loading="lazy"
-                  />
+                <div className="flex items-center gap-3 justify-start md:justify-end mt-8">
+                  {/* SEO-optimized badges với proper alt text */}
+                  <Link
+                    href="http://online.gov.vn/Home/WebDetails/131702"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Đã thông báo Bộ Công Thương"
+                  >
+                    <Image
+                      src="https://trangthienlong.com.vn/wp-content/uploads/2025/01/bo-cong-thuong.png"
+                      alt="Đã thông báo Bộ Công Thương - Website đã được đăng ký với Bộ Công Thương Việt Nam"
+                      width={150}
+                      height={57}
+                      className="h-10 w-auto object-contain"
+                      loading="lazy"
+                      title="Website được Bộ Công Thương chứng nhận"
+                    />
+                  </Link>
+                  <Link
+                    href="https://www.dmca.com/Protection/Status.aspx?ID=6f76663c-2dc1-4ae7-87ea-ebee849f73b4"
+                    target="_blank"
+                    rel="noopener noreferrer nofollow"
+                    aria-label="DMCA.com Protection Status"
+                  >
+                    <Image
+                      src="https://images.dmca.com/Badges/dmca_protected_sml_120c.png?ID=6f76663c-2dc1-4ae7-87ea-ebee849f73b4"
+                      alt="DMCA.com Protection Status - Website được bảo vệ bản quyền bởi DMCA"
+                      width={121}
+                      height={24}
+                      className="h-8 w-auto object-contain"
+                      loading="lazy"
+                      title="DMCA Protected - Nội dung được bảo vệ bản quyền"
+                    />
+                  </Link>
                 </div>
               </div>
             </div>

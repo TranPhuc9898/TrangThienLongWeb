@@ -20,7 +20,21 @@ import {
   ShoppingCart,
   Star,
   Eye,
+  Smartphone,
+  Monitor,
+  Camera,
+  Zap,
+  Battery,
+  Wifi,
 } from "lucide-react";
+
+// Import iPhone specifications database
+import { 
+  IPHONE_SPECS_DATABASE, 
+  getSpecsByModel, 
+  getAvailableModels,
+  formatSpecsForDisplay
+} from '@/constants/iphone-specs';
 
 interface ProductVariant {
   storage: string;
@@ -38,6 +52,8 @@ interface Product {
   condition: string;
   slug: string;
   tag?: string; // ✅ Add tag field
+  regionCode?: string; // NEW: Region code (LL/A, VN/A)
+  series?: string; // NEW: iPhone series
   basePrice: string;
   currency: string;
   discount?: string;
@@ -53,6 +69,7 @@ interface Product {
   inStock: boolean;
   variants: ProductVariant[];
   colors?: { color: string; images: string[] }[];
+  regionPrices?: { regionCode: string; price: string }[];
   createdAt: string;
   updatedAt: string;
 }
@@ -69,9 +86,13 @@ export default function EditProductPage() {
     // Basic Info
     productName: "",
     brand: "Apple",
-    condition: "99%",
+    condition: "99%", // 99%, New, Refurbished
     slug: "",
     tag: "", // ✅ NEW: Auto-fill from productName
+    regionCode: "", // NEW: Region code (LL/A, VN/A) for iPhone 14+
+    series: "", // NEW: iPhone series
+    iphoneModel: "", // NEW: iPhone model for auto-fill specs
+    technicalSpecs: "", // NEW: Technical specifications
 
     // Pricing
     basePrice: "",
@@ -96,6 +117,7 @@ export default function EditProductPage() {
 
     // Variants
     variants: [] as ProductVariant[],
+    regionPrices: [] as { regionCode: string; price: string }[],
   });
 
   // Helpers: VND formatting
@@ -125,6 +147,19 @@ export default function EditProductPage() {
 
   // Storage presets
   const STORAGE_OPTIONS = ["128GB", "256GB", "512GB", "1TB"];
+
+  // iPhone model options from specs database
+  const IPHONE_MODELS = getAvailableModels();
+
+  // Handle iPhone model selection and auto-fill specs
+  const handleiPhoneModelChange = (selectedModel: string) => {
+    setFormData({
+      ...formData,
+      iphoneModel: selectedModel,
+      technicalSpecs: selectedModel ? JSON.stringify(formatSpecsForDisplay(getSpecsByModel(selectedModel)!)) : "",
+      productName: selectedModel || formData.productName
+    });
+  };
 
   // Color and Storage selections
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
@@ -379,6 +414,10 @@ export default function EditProductPage() {
         condition: product.condition,
         slug: product.slug || "",
         tag: product.tag || product.productName,
+        regionCode: (product as any).regionCode || "",
+        series: (product as any).series || "",
+        iphoneModel: (product as any).iphoneModel || "",
+        technicalSpecs: (product as any).technicalSpecs || "",
         basePrice: product.basePrice.toString(),
         currency: product.currency,
         discount: product.discount || "",
@@ -393,6 +432,7 @@ export default function EditProductPage() {
         featured: product.featured,
         inStock: product.inStock,
         variants: product.variants || [],
+        regionPrices: (product as any).regionPrices || [],
       });
 
       // Populate matrix from existing variants
@@ -654,6 +694,10 @@ export default function EditProductPage() {
       condition: "99%",
       slug: "",
       tag: "",
+      regionCode: "",
+      series: "",
+      iphoneModel: "",
+      technicalSpecs: "",
       basePrice: "",
       currency: "VND",
       discount: "",
@@ -668,6 +712,7 @@ export default function EditProductPage() {
       featured: false,
       inStock: true,
       variants: [],
+      regionPrices: [],
     });
 
     // Reset matrix data
@@ -893,12 +938,15 @@ export default function EditProductPage() {
                         <select
                           required
                           value={formData.category}
-                          onChange={(e) =>
+                          onChange={(e) => {
+                            const category = e.target.value;
                             setFormData({
                               ...formData,
-                              category: e.target.value,
-                            })
-                          }
+                              category,
+                              series: "", // Reset series when category changes
+                              regionCode: "", // Reset region code
+                            });
+                          }}
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
                           <option value="">Chọn danh mục</option>
@@ -909,6 +957,99 @@ export default function EditProductPage() {
                           <option value="AirPods">AirPods</option>
                         </select>
                       </div>
+                      
+                      {/* iPhone Series - Only show for iPhone category */}
+                      {formData.category === "iPhone" && (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Dòng iPhone
+                          </label>
+                          <select
+                            value={formData.series}
+                            onChange={(e) => {
+                              const series = e.target.value;
+                              setFormData({
+                                ...formData,
+                                series,
+                                // Only enable region code for iPhone 14+
+                                regionCode: series && parseInt(series.replace("iPhone ", "")) < 14 ? "" : formData.regionCode,
+                              });
+                            }}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          >
+                            <option value="">Chọn dòng iPhone</option>
+                            <option value="iPhone 11">iPhone 11</option>
+                            <option value="iPhone 12">iPhone 12</option>
+                            <option value="iPhone 13">iPhone 13</option>
+                            <option value="iPhone 14">iPhone 14</option>
+                            <option value="iPhone 15">iPhone 15</option>
+                            <option value="iPhone 16">iPhone 16</option>
+                          </select>
+                        </div>
+                      )}
+
+                      {/* iPhone Model - Only show for iPhone category */}
+                      {formData.category === "iPhone" && (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <Smartphone className="w-4 h-4 inline mr-1" />
+                            Model iPhone *
+                            <span className="text-xs text-gray-500 ml-2">
+                              (Tự động điền thông số kỹ thuật)
+                            </span>
+                          </label>
+                          <select
+                            required
+                            value={formData.iphoneModel}
+                            onChange={(e) => handleiPhoneModelChange(e.target.value)}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          >
+                            <option value="">Chọn model iPhone</option>
+                            {IPHONE_MODELS.map((model) => (
+                              <option key={model} value={model}>
+                                {model}
+                              </option>
+                            ))}
+                          </select>
+                          {formData.iphoneModel && (
+                            <div className="mt-2 text-sm text-green-600 flex items-center gap-1">
+                              <Zap className="w-4 h-4" />
+                              Thông số kỹ thuật đã được tự động điền
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Region Code - Only for iPhone 14+ */}
+                      {formData.category === "iPhone" && 
+                       formData.series && 
+                       parseInt(formData.series.replace("iPhone ", "")) >= 14 && (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Mã vùng
+                            <span className="text-xs text-gray-500 ml-2">
+                              (iPhone 14+ có giá khác nhau theo mã vùng)
+                            </span>
+                          </label>
+                          <select
+                            value={formData.regionCode}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                regionCode: e.target.value,
+                              })
+                            }
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          >
+                            <option value="">Chọn mã vùng</option>
+                            <option value="VN/A">VN/A (Việt Nam - Giá cao hơn)</option>
+                            <option value="LL/A">LL/A (Mỹ - Giá rẻ hơn)</option>
+                            <option value="ZP/A">ZP/A (Hong Kong)</option>
+                            <option value="CH/A">CH/A (Trung Quốc)</option>
+                            <option value="J/A">J/A (Nhật Bản)</option>
+                          </select>
+                        </div>
+                      )}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           Tình trạng
@@ -923,10 +1064,9 @@ export default function EditProductPage() {
                           }
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
-                          <option value="99%">99%</option>
-                          <option value="Like New">Like New</option>
-                          <option value="Chính hãng">Chính hãng</option>
-                          <option value="Refurbished">Refurbished</option>
+                          <option value="99%">99% (Like New)</option>
+                          <option value="New">Mới 100%</option>
+                          <option value="Refurbished">Refurbished (Tân trang)</option>
                         </select>
                       </div>
                     </div>
@@ -994,6 +1134,61 @@ export default function EditProductPage() {
                         />
                       </div>
                     </div>
+                    
+                    {/* Region-based Pricing - Only for iPhone 14+ with region code */}
+                    {formData.category === "iPhone" && 
+                     formData.series && 
+                     parseInt(formData.series.replace("iPhone ", "")) >= 14 && 
+                     formData.regionCode && (
+                      <div className="mt-4">
+                        <h4 className="text-sm font-medium text-gray-700 mb-2">
+                          Giá theo mã vùng (tùy chọn)
+                        </h4>
+                        <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
+                          <p className="text-xs text-gray-600 mb-2">
+                            Bạn có thể thiết lập giá khác nhau cho từng mã vùng. Nếu không thiết lập, sẽ sử dụng giá cơ bản.
+                          </p>
+                          {["VN/A", "LL/A", "ZP/A", "CH/A", "J/A"].map((code) => (
+                            <div key={code} className="flex items-center gap-2">
+                              <span className="w-16 text-sm font-medium">{code}:</span>
+                              <input
+                                type="text"
+                                inputMode="numeric"
+                                value={formatVND(formData.regionPrices?.find(rp => rp.regionCode === code)?.price || "")}
+                                onChange={(e) => {
+                                  const price = parseDigits(e.target.value);
+                                  const updatedPrices = [...(formData.regionPrices || [])];
+                                  const existingIndex = updatedPrices.findIndex(rp => rp.regionCode === code);
+                                  
+                                  if (price) {
+                                    if (existingIndex >= 0) {
+                                      updatedPrices[existingIndex].price = price;
+                                    } else {
+                                      updatedPrices.push({ regionCode: code, price });
+                                    }
+                                  } else if (existingIndex >= 0) {
+                                    updatedPrices.splice(existingIndex, 1);
+                                  }
+                                  
+                                  setFormData({
+                                    ...formData,
+                                    regionPrices: updatedPrices,
+                                  });
+                                }}
+                                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder={code === "VN/A" ? "Giá cao hơn" : code === "LL/A" ? "Giá rẻ hơn" : "Giá tùy chọn"}
+                              />
+                              <span className="text-sm text-gray-500">
+                                {code === "VN/A" ? "(Việt Nam)" :
+                                 code === "LL/A" ? "(Mỹ)" :
+                                 code === "ZP/A" ? "(Hong Kong)" :
+                                 code === "CH/A" ? "(Trung Quốc)" : "(Nhật Bản)"}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Thumbnail */}
@@ -1511,6 +1706,134 @@ export default function EditProductPage() {
                       thông tin bảo hành
                     </p>
                   </div>
+
+                  {/* Technical Specifications - Only show for iPhone with selected model */}
+                  {formData.category === "iPhone" && formData.iphoneModel && (
+                    <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl p-6 border border-blue-200">
+                      <div className="flex items-center gap-3 mb-6">
+                        <div className="p-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg">
+                          <Smartphone className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-bold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
+                            📱 Thông Số Kỹ Thuật
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            {formData.iphoneModel} - Tự động điền từ cơ sở dữ liệu
+                          </p>
+                        </div>
+                      </div>
+
+                      {(() => {
+                        const specs = getSpecsByModel(formData.iphoneModel);
+                        if (!specs) return null;
+
+                        return (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Display Section */}
+                            <div className="space-y-4">
+                              <div className="flex items-center gap-2 mb-3">
+                                <Monitor className="w-5 h-5 text-blue-600" />
+                                <h4 className="font-semibold text-blue-800">Màn Hình</h4>
+                              </div>
+                              <div className="space-y-2 pl-7">
+                                <div className="flex justify-between">
+                                  <span className="text-sm text-gray-600">Kích thước:</span>
+                                  <span className="text-sm font-medium">{specs.display.size}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-sm text-gray-600">Độ phân giải:</span>
+                                  <span className="text-sm font-medium">{specs.display.resolution}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-sm text-gray-600">Tần số quét:</span>
+                                  <span className="text-sm font-medium">{specs.display.refreshRate}</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Camera Section */}
+                            <div className="space-y-4">
+                              <div className="flex items-center gap-2 mb-3">
+                                <Camera className="w-5 h-5 text-green-600" />
+                                <h4 className="font-semibold text-green-800">Camera</h4>
+                              </div>
+                              <div className="space-y-2 pl-7">
+                                <div className="flex justify-between">
+                                  <span className="text-sm text-gray-600">Chính:</span>
+                                  <span className="text-sm font-medium">{specs.camera.main}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-sm text-gray-600">Góc rộng:</span>
+                                  <span className="text-sm font-medium">{specs.camera.ultrawide}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-sm text-gray-600">Zoom:</span>
+                                  <span className="text-sm font-medium">{specs.camera.zoom}</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Performance Section */}
+                            <div className="space-y-4">
+                              <div className="flex items-center gap-2 mb-3">
+                                <Zap className="w-5 h-5 text-purple-600" />
+                                <h4 className="font-semibold text-purple-800">Hiệu Năng</h4>
+                              </div>
+                              <div className="space-y-2 pl-7">
+                                <div className="flex justify-between">
+                                  <span className="text-sm text-gray-600">Chip:</span>
+                                  <span className="text-sm font-medium">{specs.performance.chip}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-sm text-gray-600">RAM:</span>
+                                  <span className="text-sm font-medium">{specs.performance.ram}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-sm text-gray-600">AnTuTu:</span>
+                                  <span className="text-sm font-medium">{specs.performance.benchmark.antutu}</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Battery & Connectivity Section */}
+                            <div className="space-y-4">
+                              <div className="flex items-center gap-2 mb-3">
+                                <Battery className="w-5 h-5 text-orange-600" />
+                                <h4 className="font-semibold text-orange-800">Pin & Kết Nối</h4>
+                              </div>
+                              <div className="space-y-2 pl-7">
+                                <div className="flex justify-between">
+                                  <span className="text-sm text-gray-600">Dung lượng pin:</span>
+                                  <span className="text-sm font-medium">{specs.battery.capacity}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-sm text-gray-600">Thời gian sử dụng:</span>
+                                  <span className="text-sm font-medium">{specs.battery.life}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-sm text-gray-600">Cổng kết nối:</span>
+                                  <span className="text-sm font-medium">{specs.connectivity.port}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })()}
+
+                      <div className="mt-6 pt-4 border-t border-blue-200">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            Dữ liệu được cập nhật tự động từ KyThuat database
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            Model: {formData.iphoneModel}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Metadata */}
                   <div>
