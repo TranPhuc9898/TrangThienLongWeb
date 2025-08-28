@@ -145,8 +145,8 @@ export default function EditProductPage() {
   // ✅ LOADING STATE: Prevent double submission
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Storage presets
-  const STORAGE_OPTIONS = ["128GB", "256GB", "512GB", "1TB"];
+  // Storage presets  
+  const STORAGE_OPTIONS = ["64GB", "128GB", "256GB", "512GB", "1TB"];
 
   // iPhone model options from specs database
   const IPHONE_MODELS = getAvailableModels();
