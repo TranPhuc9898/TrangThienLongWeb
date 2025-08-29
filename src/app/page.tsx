@@ -164,27 +164,43 @@ export default function Home() {
         <meta name="geo.position" content="10.762622,106.660172" />
       </Head>
 
-      {/* <FloatingToolbar /> */}
+      {/* MOBILE: Apple Thế Giới section first */}
+      <div className="block lg:hidden">
+        {/* 🎬 MOBILE: Video Hero Section with Apple World - Show first on mobile */}
+        <div className="relative">
+          <VideoHeroSection />
+          <EditButton
+            componentName="Video Hero"
+            onEdit={() => handleEditComponent("video-hero")}
+          />
+        </div>
 
-      {/* 🎯 NEW: Modern Hero Section with 3D iPhone */}
-      <div className="relative">
-        <ModernHeroSection />
-        <EditButton
-          componentName="Modern Hero"
-          onEdit={() => handleEditComponent("modern-hero")}
-        />
+        {/* 📸 MOBILE: Banner Carousel */}
+        <DynamicHeroSection />
       </div>
 
-      {/* 📸 DYNAMIC: Banner Carousel với Edit Mode */}
-      <DynamicHeroSection />
+      {/* DESKTOP: Original order */}
+      <div className="hidden lg:block">
+        {/* 🎯 DESKTOP: Modern Hero Section with 3D iPhone */}
+        <div className="relative">
+          <ModernHeroSection />
+          <EditButton
+            componentName="Modern Hero"
+            onEdit={() => handleEditComponent("modern-hero")}
+          />
+        </div>
 
-      {/* 🎬 ORIGINAL: Video Hero Section with Apple World */}
-      <div className="relative">
-        <VideoHeroSection />
-        <EditButton
-          componentName="Video Hero"
-          onEdit={() => handleEditComponent("video-hero")}
-        />
+        {/* 📸 DESKTOP: Banner Carousel */}
+        <DynamicHeroSection />
+
+        {/* 🎬 DESKTOP: Video Hero Section with Apple World */}
+        <div className="relative">
+          <VideoHeroSection />
+          <EditButton
+            componentName="Video Hero"
+            onEdit={() => handleEditComponent("video-hero")}
+          />
+        </div>
       </div>
 
       {/* 🎠 NEW: Enhanced Carousel với ALL products */}

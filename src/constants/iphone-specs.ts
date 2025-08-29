@@ -64,6 +64,309 @@ interface iPhoneSpec {
 }
 
 export const IPHONE_SPECS_DATABASE: Record<string, iPhoneSpec> = {
+  "iPhone 8": {
+    model: "iPhone 8",
+    codeName: "8",
+    display: {
+      size: "4.7 inches",
+      type: "Retina HD LCD",
+      resolution: "1334 x 750 pixels",
+      ppi: "~326 ppi",
+      brightness: "625 nits (typical)",
+      refreshRate: "60 Hz"
+    },
+    camera: {
+      main: "12 MP, f/1.8, 28mm (wide)",
+      ultrawide: "",
+      zoom: "Digital zoom x5",
+      video: "4K@24/30/60fps, 1080p@30/60/120/240fps",
+      selfie: "7 MP, f/2.2, 32mm (wide)"
+    },
+    performance: {
+      chip: "Apple A11 Bionic (10 nm)",
+      cpu: "Hexa-core (2×2.39 GHz + 4×1.42 GHz)",
+      gpu: "Apple GPU (3-core graphics)",
+      ram: "2GB (LPDDR4X)",
+      neural: "Neural Engine",
+      benchmark: {
+        antutu: "230,000 (v7)",
+        geekbench: "4,200 (v4)"
+      }
+    },
+    design: {
+      dimensions: "138.4 x 67.3 x 7.3 mm",
+      weight: "148g",
+      materials: "Ion-strengthened glass, Glass back, Aluminum frame",
+      colors: ["Space Gray", "Silver", "Gold", "Red"]
+    },
+    battery: {
+      capacity: "1821 mAh",
+      life: "14 tiếng",
+      charging: {
+        wired: "15W",
+        wireless: "7.5W (Qi)",
+        magsafe: ""
+      }
+    },
+    connectivity: {
+      sim: "Nano SIM",
+      port: "Lightning",
+      wifi: "Wi-Fi 802.11 a/b/g/n/ac",
+      bluetooth: "Bluetooth 5.0",
+      cellular: "4G/LTE",
+      nfc: true
+    },
+    other: {
+      os: "iOS 11",
+      waterResistance: "IP67",
+      faceID: false,
+      storage: ["64GB", "128GB", "256GB"]
+    }
+  },
+
+  "iPhone 8 Plus": {
+    model: "iPhone 8 Plus",
+    codeName: "8PLUS",
+    display: {
+      size: "5.5 inches",
+      type: "Retina HD LCD",
+      resolution: "1920 x 1080 pixels",
+      ppi: "~401 ppi",
+      brightness: "625 nits (typical)",
+      refreshRate: "60 Hz"
+    },
+    camera: {
+      main: "12 MP, f/1.8, 28mm (wide)",
+      ultrawide: "",
+      telephoto: "12 MP, f/2.8, 57mm (telephoto)",
+      zoom: "Optical zoom x2",
+      video: "4K@24/30/60fps, 1080p@30/60/120/240fps",
+      selfie: "7 MP, f/2.2, 32mm (wide)"
+    },
+    performance: {
+      chip: "Apple A11 Bionic (10 nm)",
+      cpu: "Hexa-core (2×2.39 GHz + 4×1.42 GHz)",
+      gpu: "Apple GPU (3-core graphics)",
+      ram: "3GB (LPDDR4X)",
+      neural: "Neural Engine",
+      benchmark: {
+        antutu: "230,000 (v7)",
+        geekbench: "4,200 (v4)"
+      }
+    },
+    design: {
+      dimensions: "158.4 x 78.1 x 7.5 mm",
+      weight: "202g",
+      materials: "Ion-strengthened glass, Glass back, Aluminum frame",
+      colors: ["Space Gray", "Silver", "Gold", "Red"]
+    },
+    battery: {
+      capacity: "2691 mAh",
+      life: "16 tiếng",
+      charging: {
+        wired: "15W",
+        wireless: "7.5W (Qi)",
+        magsafe: ""
+      }
+    },
+    connectivity: {
+      sim: "Nano SIM",
+      port: "Lightning",
+      wifi: "Wi-Fi 802.11 a/b/g/n/ac",
+      bluetooth: "Bluetooth 5.0",
+      cellular: "4G/LTE",
+      nfc: true
+    },
+    other: {
+      os: "iOS 11",
+      waterResistance: "IP67",
+      faceID: false,
+      storage: ["64GB", "128GB", "256GB"]
+    }
+  },
+
+  "iPhone XS": {
+    model: "iPhone XS",
+    codeName: "XS",
+    display: {
+      size: "5.8 inches",
+      type: "Super Retina OLED",
+      resolution: "1125 x 2436 pixels",
+      ppi: "~458 ppi",
+      brightness: "625 nits (typical)",
+      refreshRate: "60 Hz"
+    },
+    camera: {
+      main: "12 MP, f/1.8, 26mm (wide)",
+      ultrawide: "",
+      telephoto: "12 MP, f/2.4, 52mm (telephoto)",
+      zoom: "Optical zoom x2",
+      video: "4K@24/30/60fps, 1080p@30/60/120/240fps",
+      selfie: "7 MP, f/2.2, 32mm (wide)"
+    },
+    performance: {
+      chip: "Apple A12 Bionic (7 nm)",
+      cpu: "Hexa-core (2×2.5 GHz Vortex + 4×1.6 GHz Tempest)",
+      gpu: "Apple GPU (4-core graphics)",
+      ram: "4GB (LPDDR4X)",
+      neural: "Neural Engine (8-core)",
+      benchmark: {
+        antutu: "364,000 (v7)",
+        geekbench: "4,800 (v4)"
+      }
+    },
+    design: {
+      dimensions: "143.6 x 70.9 x 7.7 mm",
+      weight: "177g",
+      materials: "Ion-X strengthened glass, Glass back, Stainless steel frame",
+      colors: ["Space Gray", "Silver", "Gold"]
+    },
+    battery: {
+      capacity: "2658 mAh",
+      life: "14-20 tiếng",
+      charging: {
+        wired: "15W",
+        wireless: "7.5W (Qi)",
+        magsafe: ""
+      }
+    },
+    connectivity: {
+      sim: "Nano-SIM & eSIM (Dual SIM)",
+      port: "Lightning",
+      wifi: "Wi-Fi 802.11 a/b/g/n/ac",
+      bluetooth: "Bluetooth 5.0",
+      cellular: "4G/LTE",
+      nfc: true
+    },
+    other: {
+      os: "iOS 12",
+      waterResistance: "IP68",
+      faceID: true,
+      storage: ["64GB", "256GB", "512GB"]
+    }
+  },
+
+  "iPhone XS Max": {
+    model: "iPhone XS Max",
+    codeName: "XSMAX",
+    display: {
+      size: "6.5 inches",
+      type: "Super Retina OLED",
+      resolution: "1242 x 2688 pixels",
+      ppi: "~458 ppi",
+      brightness: "625 nits (typical)",
+      refreshRate: "60 Hz"
+    },
+    camera: {
+      main: "12 MP, f/1.8, 26mm (wide)",
+      ultrawide: "",
+      telephoto: "12 MP, f/2.4, 52mm (telephoto)",
+      zoom: "Optical zoom x2",
+      video: "4K@24/30/60fps, 1080p@30/60/120/240fps",
+      selfie: "7 MP, f/2.2, 32mm (wide)"
+    },
+    performance: {
+      chip: "Apple A12 Bionic (7 nm)",
+      cpu: "Hexa-core (2×2.5 GHz Vortex + 4×1.6 GHz Tempest)",
+      gpu: "Apple GPU (4-core graphics)",
+      ram: "4GB (LPDDR4X)",
+      neural: "Neural Engine (8-core)",
+      benchmark: {
+        antutu: "364,000 (v7)",
+        geekbench: "4,800 (v4)"
+      }
+    },
+    design: {
+      dimensions: "157.5 x 77.4 x 7.7 mm",
+      weight: "208g",
+      materials: "Ion-X strengthened glass, Glass back, Stainless steel frame",
+      colors: ["Space Gray", "Silver", "Gold"]
+    },
+    battery: {
+      capacity: "3174 mAh",
+      life: "15-25 tiếng",
+      charging: {
+        wired: "15W",
+        wireless: "7.5W (Qi)",
+        magsafe: ""
+      }
+    },
+    connectivity: {
+      sim: "Nano-SIM & eSIM (Dual SIM)",
+      port: "Lightning",
+      wifi: "Wi-Fi 802.11 a/b/g/n/ac",
+      bluetooth: "Bluetooth 5.0",
+      cellular: "4G/LTE",
+      nfc: true
+    },
+    other: {
+      os: "iOS 12",
+      waterResistance: "IP68",
+      faceID: true,
+      storage: ["64GB", "256GB", "512GB"]
+    }
+  },
+
+  "iPhone XR": {
+    model: "iPhone XR",
+    codeName: "XR",
+    display: {
+      size: "6.1 inches",
+      type: "Liquid Retina LCD",
+      resolution: "828 x 1792 pixels",
+      ppi: "~326 ppi",
+      brightness: "625 nits (typical)",
+      refreshRate: "60 Hz"
+    },
+    camera: {
+      main: "12 MP, f/1.8, 26mm (wide)",
+      ultrawide: "",
+      zoom: "Digital zoom x5",
+      video: "4K@24/30/60fps, 1080p@30/60/120/240fps",
+      selfie: "7 MP, f/2.2, 32mm (wide)"
+    },
+    performance: {
+      chip: "Apple A12 Bionic (7 nm)",
+      cpu: "Hexa-core (2×2.5 GHz Vortex + 4×1.6 GHz Tempest)",
+      gpu: "Apple GPU (4-core graphics)",
+      ram: "3GB (LPDDR4X)",
+      neural: "Neural Engine (8-core)",
+      benchmark: {
+        antutu: "364,000 (v7)",
+        geekbench: "4,800 (v4)"
+      }
+    },
+    design: {
+      dimensions: "150.9 x 75.7 x 8.3 mm",
+      weight: "194g",
+      materials: "Ion-X strengthened glass, Glass back, Aluminum frame",
+      colors: ["Black", "White", "Red", "Yellow", "Blue", "Coral"]
+    },
+    battery: {
+      capacity: "2942 mAh",
+      life: "15-25 tiếng",
+      charging: {
+        wired: "15W",
+        wireless: "7.5W (Qi)",
+        magsafe: ""
+      }
+    },
+    connectivity: {
+      sim: "Nano-SIM & eSIM (Dual SIM)",
+      port: "Lightning",
+      wifi: "Wi-Fi 802.11 a/b/g/n/ac",
+      bluetooth: "Bluetooth 5.0",
+      cellular: "4G/LTE",
+      nfc: true
+    },
+    other: {
+      os: "iOS 12",
+      waterResistance: "IP67",
+      faceID: true,
+      storage: ["64GB", "128GB", "256GB"]
+    }
+  },
+
   "iPhone 15 Plus": {
     model: "iPhone 15 Plus",
     codeName: "15PLUS",
@@ -427,6 +730,1223 @@ export const IPHONE_SPECS_DATABASE: Record<string, iPhoneSpec> = {
       waterResistance: "IP68",
       faceID: true,
       storage: ["256GB", "512GB", "1TB"]
+    }
+  },
+
+  "iPhone 11": {
+    model: "iPhone 11",
+    codeName: "11",
+    display: {
+      size: "6.1 inches",
+      type: "Liquid Retina IPS LCD",
+      resolution: "828 x 1792 pixels",
+      ppi: "~326 ppi",
+      brightness: "625 nits (typical)",
+      refreshRate: "60 Hz"
+    },
+    camera: {
+      main: "12 MP, f/1.8, 26mm (wide)",
+      ultrawide: "12 MP, f/2.4, 13mm, 120° (ultrawide)",
+      zoom: "Digital zoom x5",
+      video: "4K@24/30/60fps, 1080p@30/60/120/240fps",
+      selfie: "12 MP, f/2.2, 23mm (wide)"
+    },
+    performance: {
+      chip: "Apple A13 Bionic (7 nm+)",
+      cpu: "Hexa-core (2×2.65 GHz Lightning + 4×1.8 GHz Thunder)",
+      gpu: "Apple GPU (4-core graphics)",
+      ram: "4GB (LPDDR4X)",
+      neural: "Neural Engine (8-core)",
+      benchmark: {
+        antutu: "460,000 (v8)",
+        geekbench: "5,400 (v5)"
+      }
+    },
+    design: {
+      dimensions: "150.9 x 75.7 x 8.3 mm",
+      weight: "194g",
+      materials: "Ion-X strengthened glass, Glass back, Aluminum frame",
+      colors: ["Đen", "Xanh Lá", "Vàng", "Tím", "Đỏ", "Trắng"]
+    },
+    battery: {
+      capacity: "3110 mAh",
+      life: "15-17 tiếng",
+      charging: {
+        wired: "18W",
+        wireless: "7.5W (Qi)",
+        magsafe: ""
+      }
+    },
+    connectivity: {
+      sim: "Nano-SIM & eSIM (Dual SIM)",
+      port: "Lightning",
+      wifi: "Wi-Fi 6 (802.11ax) dual band",
+      bluetooth: "Bluetooth 5.0",
+      cellular: "4G/5G",
+      nfc: true
+    },
+    other: {
+      os: "iOS 13",
+      waterResistance: "IP68",
+      faceID: true,
+      storage: ["64GB", "128GB", "256GB"]
+    }
+  },
+
+  "iPhone 11 Pro": {
+    model: "iPhone 11 Pro",
+    codeName: "11PRO",
+    display: {
+      size: "5.8 inches",
+      type: "Super Retina XDR OLED",
+      resolution: "1125 x 2436 pixels",
+      ppi: "~458 ppi",
+      brightness: "800 nits (typical), 1200 nits (peak HDR)",
+      refreshRate: "60 Hz"
+    },
+    camera: {
+      main: "12 MP, f/1.8, 26mm (wide)",
+      ultrawide: "12 MP, f/2.4, 13mm, 120° (ultrawide)",
+      telephoto: "12 MP, f/2.0, 52mm (telephoto)",
+      zoom: "Optical zoom x2",
+      video: "4K@24/30/60fps, 1080p@30/60/120/240fps",
+      selfie: "12 MP, f/2.2, 23mm (wide)"
+    },
+    performance: {
+      chip: "Apple A13 Bionic (7 nm+)",
+      cpu: "Hexa-core (2×2.65 GHz Lightning + 4×1.8 GHz Thunder)",
+      gpu: "Apple GPU (4-core graphics)",
+      ram: "4GB (LPDDR4X)",
+      neural: "Neural Engine (8-core)",
+      benchmark: {
+        antutu: "524,000 (v8)",
+        geekbench: "5,472 (v5)"
+      }
+    },
+    design: {
+      dimensions: "144.0 x 71.4 x 8.1 mm",
+      weight: "188g",
+      materials: "Ceramic Shield front, Glass back, Stainless steel frame",
+      colors: ["Xanh Lá Đậm", "Không Gian Xám", "Bạc", "Vàng"]
+    },
+    battery: {
+      capacity: "3046 mAh",
+      life: "18 tiếng",
+      charging: {
+        wired: "18W",
+        wireless: "7.5W (Qi)",
+        magsafe: ""
+      }
+    },
+    connectivity: {
+      sim: "Nano-SIM & eSIM (Dual SIM)",
+      port: "Lightning",
+      wifi: "Wi-Fi 6 (802.11ax)",
+      bluetooth: "Bluetooth 5.0",
+      cellular: "4G/LTE",
+      nfc: true
+    },
+    other: {
+      os: "iOS 13",
+      waterResistance: "IP68",
+      faceID: true,
+      storage: ["64GB", "256GB", "512GB"]
+    }
+  },
+
+  "iPhone 11 Pro Max": {
+    model: "iPhone 11 Pro Max",
+    codeName: "11PROMAX",
+    display: {
+      size: "6.5 inches",
+      type: "Super Retina XDR OLED",
+      resolution: "1242 x 2688 pixels",
+      ppi: "~458 ppi",
+      brightness: "800 nits (typical), 1200 nits (peak HDR)",
+      refreshRate: "60 Hz"
+    },
+    camera: {
+      main: "12 MP, f/1.8, 26mm (wide)",
+      ultrawide: "12 MP, f/2.4, 13mm, 120° (ultrawide)",
+      telephoto: "12 MP, f/2.0, 52mm (telephoto)",
+      zoom: "Optical zoom x2",
+      video: "4K@24/30/60fps, 1080p@30/60/120/240fps",
+      selfie: "12 MP, f/2.2, 23mm (wide)"
+    },
+    performance: {
+      chip: "Apple A13 Bionic (7 nm+)",
+      cpu: "Hexa-core (2×2.65 GHz Lightning + 4×1.8 GHz Thunder)",
+      gpu: "Apple GPU (4-core graphics)",
+      ram: "4GB (LPDDR4X)",
+      neural: "Neural Engine (8-core)",
+      benchmark: {
+        antutu: "524,000 (v8)",
+        geekbench: "5,472 (v5)"
+      }
+    },
+    design: {
+      dimensions: "158.0 x 77.8 x 8.1 mm",
+      weight: "226g",
+      materials: "Ceramic Shield front, Glass back, Stainless steel frame",
+      colors: ["Xanh Lá Đậm", "Không Gian Xám", "Bạc", "Vàng"]
+    },
+    battery: {
+      capacity: "3969 mAh",
+      life: "20 tiếng",
+      charging: {
+        wired: "18W",
+        wireless: "7.5W (Qi)",
+        magsafe: ""
+      }
+    },
+    connectivity: {
+      sim: "Nano-SIM & eSIM (Dual SIM)",
+      port: "Lightning",
+      wifi: "Wi-Fi 6 (802.11ax)",
+      bluetooth: "Bluetooth 5.0",
+      cellular: "4G/LTE",
+      nfc: true
+    },
+    other: {
+      os: "iOS 13",
+      waterResistance: "IP68",
+      faceID: true,
+      storage: ["64GB", "256GB", "512GB"]
+    }
+  },
+
+  "iPhone 12": {
+    model: "iPhone 12",
+    codeName: "12",
+    display: {
+      size: "6.1 inches",
+      type: "Super Retina XDR OLED",
+      resolution: "1170 x 2532 pixels",
+      ppi: "~460 ppi",
+      brightness: "625 nits (typical), 1200 nits (peak HDR)",
+      refreshRate: "60 Hz"
+    },
+    camera: {
+      main: "12 MP, f/1.6, 26mm (wide)",
+      ultrawide: "12 MP, f/2.4, 13mm, 120° (ultrawide)",
+      zoom: "Digital zoom x5",
+      video: "4K@24/30/60fps, 1080p@30/60/120/240fps",
+      selfie: "12 MP, f/2.2, 23mm (wide)"
+    },
+    performance: {
+      chip: "Apple A14 Bionic (5 nm)",
+      cpu: "Hexa-core (2×3.1 GHz Firestorm + 4×1.8 GHz Icestorm)",
+      gpu: "Apple GPU (4-core graphics)",
+      ram: "4GB (LPDDR4X)",
+      neural: "Neural Engine (16-core)",
+      benchmark: {
+        antutu: "638,000 (v8)",
+        geekbench: "6,174 (v5)"
+      }
+    },
+    design: {
+      dimensions: "146.7 x 71.5 x 7.4 mm",
+      weight: "164g",
+      materials: "Ceramic Shield front, Glass back, Aluminum frame",
+      colors: ["Đen", "Trắng", "Đỏ", "Xanh Lá", "Xanh Dương", "Tím"]
+    },
+    battery: {
+      capacity: "2815 mAh",
+      life: "11-17 tiếng",
+      charging: {
+        wired: "20W",
+        wireless: "15W (MagSafe)",
+        magsafe: "15W (MagSafe)"
+      }
+    },
+    connectivity: {
+      sim: "Nano-SIM & eSIM (Dual SIM)",
+      port: "Lightning",
+      wifi: "Wi-Fi 6 (802.11ax)",
+      bluetooth: "Bluetooth 5.0",
+      cellular: "4G/5G",
+      nfc: true
+    },
+    other: {
+      os: "iOS 14",
+      waterResistance: "IP68",
+      faceID: true,
+      storage: ["64GB", "128GB", "256GB"]
+    }
+  },
+
+  "iPhone 12 Pro": {
+    model: "iPhone 12 Pro",
+    codeName: "12PRO",
+    display: {
+      size: "6.1 inches",
+      type: "Super Retina XDR OLED",
+      resolution: "1170 x 2532 pixels",
+      ppi: "~460 ppi",
+      brightness: "800 nits (typical), 1200 nits (peak HDR)",
+      refreshRate: "60 Hz"
+    },
+    camera: {
+      main: "12 MP, f/1.6, 26mm (wide)",
+      ultrawide: "12 MP, f/2.4, 13mm, 120° (ultrawide)",
+      telephoto: "12 MP, f/2.0, 52mm (telephoto)",
+      lidar: "LiDAR scanner",
+      zoom: "Optical zoom x4",
+      video: "4K@24/30/60fps, 1080p@30/60/120/240fps",
+      selfie: "12 MP, f/2.2, 23mm (wide)"
+    },
+    performance: {
+      chip: "Apple A14 Bionic (5 nm)",
+      cpu: "Hexa-core (2×3.1 GHz Firestorm + 4×1.8 GHz Icestorm)",
+      gpu: "Apple GPU (4-core graphics)",
+      ram: "6GB (LPDDR4X)",
+      neural: "Neural Engine (16-core)",
+      benchmark: {
+        antutu: "695,000 (v8)",
+        geekbench: "6,310 (v5)"
+      }
+    },
+    design: {
+      dimensions: "146.7 x 71.5 x 7.4 mm",
+      weight: "187g",
+      materials: "Ceramic Shield front, Glass back, Stainless steel frame",
+      colors: ["Xanh Thái Bình Dương", "Vàng", "Graphite", "Bạc"]
+    },
+    battery: {
+      capacity: "2815 mAh",
+      life: "11-17 tiếng",
+      charging: {
+        wired: "20W",
+        wireless: "15W (MagSafe)",
+        magsafe: "15W (MagSafe)"
+      }
+    },
+    connectivity: {
+      sim: "Nano-SIM & eSIM (Dual SIM)",
+      port: "Lightning",
+      wifi: "Wi-Fi 6 (802.11ax)",
+      bluetooth: "Bluetooth 5.0",
+      cellular: "4G/5G",
+      nfc: true
+    },
+    other: {
+      os: "iOS 14",
+      waterResistance: "IP68",
+      faceID: true,
+      storage: ["128GB", "256GB", "512GB"]
+    }
+  },
+
+  "iPhone 12 Pro Max": {
+    model: "iPhone 12 Pro Max",
+    codeName: "12PROMAX",
+    display: {
+      size: "6.7 inches",
+      type: "Super Retina XDR OLED",
+      resolution: "1284 x 2778 pixels",
+      ppi: "~458 ppi",
+      brightness: "800 nits (typical), 1200 nits (peak HDR)",
+      refreshRate: "60 Hz"
+    },
+    camera: {
+      main: "12 MP, f/1.6, 26mm (wide)",
+      ultrawide: "12 MP, f/2.4, 13mm, 120° (ultrawide)",
+      telephoto: "12 MP, f/2.2, 65mm (telephoto)",
+      lidar: "LiDAR scanner",
+      zoom: "Optical zoom x5",
+      video: "4K@24/30/60fps, 1080p@30/60/120/240fps",
+      selfie: "12 MP, f/2.2, 23mm (wide)"
+    },
+    performance: {
+      chip: "Apple A14 Bionic (5 nm)",
+      cpu: "Hexa-core (2×3.1 GHz Firestorm + 4×1.8 GHz Icestorm)",
+      gpu: "Apple GPU (4-core graphics)",
+      ram: "6GB (LPDDR4X)",
+      neural: "Neural Engine (16-core)",
+      benchmark: {
+        antutu: "695,000 (v8)",
+        geekbench: "6,310 (v5)"
+      }
+    },
+    design: {
+      dimensions: "160.8 x 78.1 x 7.4 mm",
+      weight: "228g",
+      materials: "Ceramic Shield front, Glass back, Stainless steel frame",
+      colors: ["Xanh Thái Bình Dương", "Vàng", "Graphite", "Bạc"]
+    },
+    battery: {
+      capacity: "3687 mAh",
+      life: "12-20 tiếng",
+      charging: {
+        wired: "20W",
+        wireless: "15W (MagSafe)",
+        magsafe: "15W (MagSafe)"
+      }
+    },
+    connectivity: {
+      sim: "Nano-SIM & eSIM (Dual SIM)",
+      port: "Lightning",
+      wifi: "Wi-Fi 6 (802.11ax)",
+      bluetooth: "Bluetooth 5.0",
+      cellular: "4G/5G",
+      nfc: true
+    },
+    other: {
+      os: "iOS 14",
+      waterResistance: "IP68",
+      faceID: true,
+      storage: ["128GB", "256GB", "512GB"]
+    }
+  },
+
+  "iPhone 13 Pro": {
+    model: "iPhone 13 Pro",
+    codeName: "13PRO",
+    display: {
+      size: "6.1 inches",
+      type: "Super Retina XDR OLED",
+      resolution: "1170 x 2532 pixels",
+      ppi: "~460 ppi",
+      brightness: "1000 nits (typical), 1200 nits (peak HDR)",
+      refreshRate: "120 Hz ProMotion"
+    },
+    camera: {
+      main: "12 MP, f/1.5, 26mm (wide)",
+      ultrawide: "12 MP, f/1.8, 13mm, 120° (ultrawide)",
+      telephoto: "12 MP, f/2.8, 77mm (telephoto)",
+      lidar: "LiDAR scanner",
+      zoom: "Optical zoom x6",
+      video: "4K@24/30/60fps, 1080p@30/60/120/240fps",
+      selfie: "12 MP, f/2.2, 23mm (wide)"
+    },
+    performance: {
+      chip: "Apple A15 Bionic (5 nm)",
+      cpu: "Hexa-core (2×3.23 GHz Avalanche + 4×1.82 GHz Blizzard)",
+      gpu: "Apple GPU (5-core graphics)",
+      ram: "6GB (LPDDR4X)",
+      neural: "Neural Engine (16-core)",
+      benchmark: {
+        antutu: "839,000 (v9)",
+        geekbench: "7,296 (v5)"
+      }
+    },
+    design: {
+      dimensions: "146.7 x 71.5 x 7.65 mm",
+      weight: "203g",
+      materials: "Ceramic Shield front, Glass back, Stainless steel frame",
+      colors: ["Xanh Núi", "Vàng", "Bạc", "Graphite", "Xanh Lá"]
+    },
+    battery: {
+      capacity: "3095 mAh",
+      life: "15-22 tiếng",
+      charging: {
+        wired: "23W",
+        wireless: "15W (MagSafe)",
+        magsafe: "15W (MagSafe)"
+      }
+    },
+    connectivity: {
+      sim: "Nano-SIM & eSIM (Dual SIM)",
+      port: "Lightning",
+      wifi: "Wi-Fi 6 (802.11ax)",
+      bluetooth: "Bluetooth 5.0",
+      cellular: "4G/5G",
+      nfc: true
+    },
+    other: {
+      os: "iOS 15",
+      waterResistance: "IP68",
+      faceID: true,
+      storage: ["128GB", "256GB", "512GB", "1TB"]
+    }
+  },
+
+  "iPhone 14 Pro": {
+    model: "iPhone 14 Pro",
+    codeName: "14PRO",
+    display: {
+      size: "6.1 inches",
+      type: "Super Retina XDR OLED",
+      resolution: "1179 x 2556 pixels",
+      ppi: "~460 ppi",
+      brightness: "1000 nits (typical), 2000 nits (peak HDR)",
+      refreshRate: "120 Hz ProMotion"
+    },
+    camera: {
+      main: "48 MP, f/1.78, 24mm (wide)",
+      ultrawide: "12 MP, f/2.2, 13mm, 120° (ultrawide)",
+      telephoto: "12 MP, f/2.8, 77mm (telephoto)",
+      lidar: "LiDAR scanner",
+      zoom: "Optical zoom x6",
+      video: "4K@24/30/60fps, 1080p@30/60/120/240fps",
+      selfie: "12 MP, f/1.9, 23mm (wide)"
+    },
+    performance: {
+      chip: "Apple A16 Bionic (4 nm)",
+      cpu: "Hexa-core (2×3.46 GHz Everest + 4×2.02 GHz Sawtooth)",
+      gpu: "Apple GPU (5-core graphics)",
+      ram: "6GB (LPDDR5)",
+      neural: "Neural Engine (16-core)",
+      benchmark: {
+        antutu: "948,000 (v9)",
+        geekbench: "7,733 (v5)"
+      }
+    },
+    design: {
+      dimensions: "147.5 x 71.5 x 7.85 mm",
+      weight: "206g",
+      materials: "Ceramic Shield front, Glass back, Stainless steel frame",
+      colors: ["Tím Đậm", "Vàng", "Bạc", "Đen"]
+    },
+    battery: {
+      capacity: "3200 mAh",
+      life: "16-23 tiếng",
+      charging: {
+        wired: "27W",
+        wireless: "15W (MagSafe)",
+        magsafe: "15W (MagSafe)"
+      }
+    },
+    connectivity: {
+      sim: "Nano-SIM & eSIM (Dual SIM)",
+      port: "Lightning",
+      wifi: "Wi-Fi 6 (802.11ax)",
+      bluetooth: "Bluetooth 5.3",
+      cellular: "4G/5G",
+      nfc: true
+    },
+    other: {
+      os: "iOS 16",
+      waterResistance: "IP68",
+      faceID: true,
+      storage: ["128GB", "256GB", "512GB", "1TB"]
+    }
+  },
+
+  "iPhone 15 Pro Max": {
+    model: "iPhone 15 Pro Max",
+    codeName: "15PROMAX",
+    display: {
+      size: "6.7 inches",
+      type: "LTPO Super Retina XDR OLED",
+      resolution: "1290 x 2796 pixels",
+      ppi: "~460 ppi",
+      brightness: "1000 nits (base), 2000 nits (peak)",
+      refreshRate: "120 Hz"
+    },
+    camera: {
+      main: "48 MP, f/1.8, 24mm (wide)",
+      ultrawide: "48 MP, f/2.2, 13mm, 120° (ultrawide)",
+      telephoto: "12 MP, f/2.8, 77mm (periscope telephoto)",
+      lidar: "TOF 3D LiDAR scanner",
+      zoom: "Optical zoom x5",
+      video: "4K@24/25/30/60/100/120fps, 1080p@25/30/60/120/240fps",
+      selfie: "12 MP, f/1.9, 23mm (wide)"
+    },
+    performance: {
+      chip: "Apple A17 Pro (3 nm)",
+      cpu: "Hexa-core (2×3.78 GHz + 4×2.11 GHz)",
+      gpu: "Apple GPU (6-core graphics)",
+      ram: "8GB (LPDDR5)",
+      neural: "Neural Engine (16-core)",
+      benchmark: {
+        antutu: "1,487,203 (v10)",
+        geekbench: "7,237 (v6)"
+      }
+    },
+    design: {
+      dimensions: "159.9 x 76.7 x 8.3 mm",
+      weight: "221g",
+      materials: "Ceramic Shield front, Titanium frame",
+      colors: ["Titan Tự Nhiên", "Titan Xanh Dương", "Titan Trắng", "Titan Đen"]
+    },
+    battery: {
+      capacity: "4441 mAh",
+      life: "17-29 tiếng",
+      charging: {
+        wired: "35W",
+        wireless: "15W (Qi2)",
+        magsafe: "25W (MagSafe)"
+      }
+    },
+    connectivity: {
+      sim: "Nano-SIM & eSIM (Dual SIM)",
+      port: "USB Type-C 3.2 Gen 2",
+      wifi: "Wi-Fi 6E (802.11ax) tri-band",
+      bluetooth: "Bluetooth 5.3",
+      cellular: "4G/5G",
+      nfc: true
+    },
+    other: {
+      os: "iOS 17",
+      waterResistance: "IP68",
+      faceID: true,
+      storage: ["256GB", "512GB", "1TB"]
+    }
+  },
+
+  "iPhone 12 mini": {
+    model: "iPhone 12 mini",
+    codeName: "12MINI",
+    display: {
+      size: "5.4 inches",
+      type: "Super Retina XDR OLED",
+      resolution: "1080 x 2340 pixels",
+      ppi: "~476 ppi",
+      brightness: "625 nits (typical), 1200 nits (peak HDR)",
+      refreshRate: "60 Hz"
+    },
+    camera: {
+      main: "12 MP, f/1.6, 26mm (wide)",
+      ultrawide: "12 MP, f/2.4, 13mm, 120° (ultrawide)",
+      zoom: "Digital zoom x5",
+      video: "4K@24/30/60fps, 1080p@30/60/120/240fps",
+      selfie: "12 MP, f/2.2, 23mm (wide)"
+    },
+    performance: {
+      chip: "Apple A14 Bionic (5 nm)",
+      cpu: "Hexa-core (2×3.1 GHz Firestorm + 4×1.8 GHz Icestorm)",
+      gpu: "Apple GPU (4-core graphics)",
+      ram: "4GB (LPDDR4X)",
+      neural: "Neural Engine (16-core)",
+      benchmark: {
+        antutu: "638,000 (v8)",
+        geekbench: "6,174 (v5)"
+      }
+    },
+    design: {
+      dimensions: "131.5 x 64.2 x 7.4 mm",
+      weight: "135g",
+      materials: "Ceramic Shield front, Glass back, Aluminum frame",
+      colors: ["Đen", "Trắng", "Đỏ", "Xanh Lá", "Xanh Dương", "Tím"]
+    },
+    battery: {
+      capacity: "2227 mAh",
+      life: "10-15 tiếng",
+      charging: {
+        wired: "20W",
+        wireless: "15W (MagSafe)",
+        magsafe: "15W (MagSafe)"
+      }
+    },
+    connectivity: {
+      sim: "Nano-SIM & eSIM (Dual SIM)",
+      port: "Lightning",
+      wifi: "Wi-Fi 6 (802.11ax)",
+      bluetooth: "Bluetooth 5.0",
+      cellular: "4G/5G",
+      nfc: true
+    },
+    other: {
+      os: "iOS 14",
+      waterResistance: "IP68",
+      faceID: true,
+      storage: ["64GB", "128GB", "256GB"]
+    }
+  },
+
+  "iPhone 13": {
+    model: "iPhone 13",
+    codeName: "13",
+    display: {
+      size: "6.1 inches",
+      type: "Super Retina XDR OLED",
+      resolution: "1170 x 2532 pixels",
+      ppi: "~460 ppi",
+      brightness: "800 nits (typical), 1200 nits (peak HDR)",
+      refreshRate: "60 Hz"
+    },
+    camera: {
+      main: "12 MP, f/1.6, 26mm (wide)",
+      ultrawide: "12 MP, f/2.4, 13mm, 120° (ultrawide)",
+      zoom: "Digital zoom x5",
+      video: "4K@24/30/60fps, 1080p@30/60/120/240fps",
+      selfie: "12 MP, f/2.2, 23mm (wide)"
+    },
+    performance: {
+      chip: "Apple A15 Bionic (5 nm)",
+      cpu: "Hexa-core (2×3.23 GHz Avalanche + 4×1.82 GHz Blizzard)",
+      gpu: "Apple GPU (4-core graphics)",
+      ram: "4GB (LPDDR4X)",
+      neural: "Neural Engine (16-core)",
+      benchmark: {
+        antutu: "839,000 (v9)",
+        geekbench: "7,296 (v5)"
+      }
+    },
+    design: {
+      dimensions: "146.7 x 71.5 x 7.65 mm",
+      weight: "174g",
+      materials: "Ceramic Shield front, Glass back, Aluminum frame",
+      colors: ["Hồng", "Xanh Dương", "Midnight", "Starlight", "Đỏ"]
+    },
+    battery: {
+      capacity: "3240 mAh",
+      life: "15-19 tiếng",
+      charging: {
+        wired: "20W",
+        wireless: "15W (MagSafe)",
+        magsafe: "15W (MagSafe)"
+      }
+    },
+    connectivity: {
+      sim: "Nano-SIM & eSIM (Dual SIM)",
+      port: "Lightning",
+      wifi: "Wi-Fi 6 (802.11ax)",
+      bluetooth: "Bluetooth 5.0",
+      cellular: "4G/5G",
+      nfc: true
+    },
+    other: {
+      os: "iOS 15",
+      waterResistance: "IP68",
+      faceID: true,
+      storage: ["128GB", "256GB", "512GB"]
+    }
+  },
+
+  "iPhone 13 mini": {
+    model: "iPhone 13 mini",
+    codeName: "13MINI",
+    display: {
+      size: "5.4 inches",
+      type: "Super Retina XDR OLED",
+      resolution: "1080 x 2340 pixels",
+      ppi: "~476 ppi",
+      brightness: "800 nits (typical), 1200 nits (peak HDR)",
+      refreshRate: "60 Hz"
+    },
+    camera: {
+      main: "12 MP, f/1.6, 26mm (wide)",
+      ultrawide: "12 MP, f/2.4, 13mm, 120° (ultrawide)",
+      zoom: "Digital zoom x5",
+      video: "4K@24/30/60fps, 1080p@30/60/120/240fps",
+      selfie: "12 MP, f/2.2, 23mm (wide)"
+    },
+    performance: {
+      chip: "Apple A15 Bionic (5 nm)",
+      cpu: "Hexa-core (2×3.23 GHz Avalanche + 4×1.82 GHz Blizzard)",
+      gpu: "Apple GPU (4-core graphics)",
+      ram: "4GB (LPDDR4X)",
+      neural: "Neural Engine (16-core)",
+      benchmark: {
+        antutu: "839,000 (v9)",
+        geekbench: "7,296 (v5)"
+      }
+    },
+    design: {
+      dimensions: "131.5 x 64.2 x 7.65 mm",
+      weight: "141g",
+      materials: "Ceramic Shield front, Glass back, Aluminum frame",
+      colors: ["Hồng", "Xanh Dương", "Midnight", "Starlight", "Đỏ"]
+    },
+    battery: {
+      capacity: "2406 mAh",
+      life: "13-17 tiếng",
+      charging: {
+        wired: "20W",
+        wireless: "15W (MagSafe)",
+        magsafe: "15W (MagSafe)"
+      }
+    },
+    connectivity: {
+      sim: "Nano-SIM & eSIM (Dual SIM)",
+      port: "Lightning",
+      wifi: "Wi-Fi 6 (802.11ax)",
+      bluetooth: "Bluetooth 5.0",
+      cellular: "4G/5G",
+      nfc: true
+    },
+    other: {
+      os: "iOS 15",
+      waterResistance: "IP68",
+      faceID: true,
+      storage: ["128GB", "256GB", "512GB"]
+    }
+  },
+
+  "iPhone 13 Pro Max": {
+    model: "iPhone 13 Pro Max",
+    codeName: "13PROMAX",
+    display: {
+      size: "6.7 inches",
+      type: "Super Retina XDR OLED",
+      resolution: "1284 x 2778 pixels",
+      ppi: "~458 ppi",
+      brightness: "1000 nits (typical), 1200 nits (peak HDR)",
+      refreshRate: "120 Hz ProMotion"
+    },
+    camera: {
+      main: "12 MP, f/1.5, 26mm (wide)",
+      ultrawide: "12 MP, f/1.8, 13mm, 120° (ultrawide)",
+      telephoto: "12 MP, f/2.8, 77mm (telephoto)",
+      lidar: "LiDAR scanner",
+      zoom: "Optical zoom x6",
+      video: "4K@24/30/60fps, 1080p@30/60/120/240fps",
+      selfie: "12 MP, f/2.2, 23mm (wide)"
+    },
+    performance: {
+      chip: "Apple A15 Bionic (5 nm)",
+      cpu: "Hexa-core (2×3.23 GHz Avalanche + 4×1.82 GHz Blizzard)",
+      gpu: "Apple GPU (5-core graphics)",
+      ram: "6GB (LPDDR4X)",
+      neural: "Neural Engine (16-core)",
+      benchmark: {
+        antutu: "839,000 (v9)",
+        geekbench: "7,296 (v5)"
+      }
+    },
+    design: {
+      dimensions: "160.8 x 78.1 x 7.65 mm",
+      weight: "240g",
+      materials: "Ceramic Shield front, Glass back, Stainless steel frame",
+      colors: ["Graphite", "Vàng", "Bạc", "Sierra Blue", "Alpine Green"]
+    },
+    battery: {
+      capacity: "4352 mAh",
+      life: "22-28 tiếng",
+      charging: {
+        wired: "27W",
+        wireless: "15W (MagSafe)",
+        magsafe: "15W (MagSafe)"
+      }
+    },
+    connectivity: {
+      sim: "Nano-SIM & eSIM (Dual SIM)",
+      port: "Lightning",
+      wifi: "Wi-Fi 6 (802.11ax)",
+      bluetooth: "Bluetooth 5.0",
+      cellular: "4G/5G",
+      nfc: true
+    },
+    other: {
+      os: "iOS 15",
+      waterResistance: "IP68",
+      faceID: true,
+      storage: ["128GB", "256GB", "512GB", "1TB"]
+    }
+  },
+
+  "iPhone 14": {
+    model: "iPhone 14",
+    codeName: "14",
+    display: {
+      size: "6.1 inches",
+      type: "Super Retina XDR OLED",
+      resolution: "1170 x 2532 pixels",
+      ppi: "~460 ppi",
+      brightness: "800 nits (typical), 1200 nits (peak HDR)",
+      refreshRate: "60 Hz"
+    },
+    camera: {
+      main: "12 MP, f/1.5, 26mm (wide)",
+      ultrawide: "12 MP, f/2.4, 13mm, 120° (ultrawide)",
+      zoom: "Digital zoom x5",
+      video: "4K@24/30/60fps, 1080p@30/60/120/240fps",
+      selfie: "12 MP, f/1.9, 23mm (wide)"
+    },
+    performance: {
+      chip: "Apple A15 Bionic (5 nm)",
+      cpu: "Hexa-core (2×3.23 GHz Avalanche + 4×1.82 GHz Blizzard)",
+      gpu: "Apple GPU (5-core graphics)",
+      ram: "6GB (LPDDR4X)",
+      neural: "Neural Engine (16-core)",
+      benchmark: {
+        antutu: "948,000 (v9)",
+        geekbench: "7,733 (v5)"
+      }
+    },
+    design: {
+      dimensions: "146.7 x 71.5 x 7.8 mm",
+      weight: "172g",
+      materials: "Ceramic Shield front, Glass back, Aluminum frame",
+      colors: ["Xanh Dương", "Tím", "Midnight", "Starlight", "Vàng", "Đỏ"]
+    },
+    battery: {
+      capacity: "3279 mAh",
+      life: "15-20 tiếng",
+      charging: {
+        wired: "20W",
+        wireless: "15W (MagSafe)",
+        magsafe: "15W (MagSafe)"
+      }
+    },
+    connectivity: {
+      sim: "Nano-SIM & eSIM (Dual SIM)",
+      port: "Lightning",
+      wifi: "Wi-Fi 6 (802.11ax)",
+      bluetooth: "Bluetooth 5.3",
+      cellular: "4G/5G",
+      nfc: true
+    },
+    other: {
+      os: "iOS 16",
+      waterResistance: "IP68",
+      faceID: true,
+      storage: ["128GB", "256GB", "512GB"]
+    }
+  },
+
+  "iPhone 14 Plus": {
+    model: "iPhone 14 Plus",
+    codeName: "14PLUS",
+    display: {
+      size: "6.7 inches",
+      type: "Super Retina XDR OLED",
+      resolution: "1284 x 2778 pixels",
+      ppi: "~458 ppi",
+      brightness: "800 nits (typical), 1200 nits (peak HDR)",
+      refreshRate: "60 Hz"
+    },
+    camera: {
+      main: "12 MP, f/1.5, 26mm (wide)",
+      ultrawide: "12 MP, f/2.4, 13mm, 120° (ultrawide)",
+      zoom: "Digital zoom x5",
+      video: "4K@24/30/60fps, 1080p@30/60/120/240fps",
+      selfie: "12 MP, f/1.9, 23mm (wide)"
+    },
+    performance: {
+      chip: "Apple A15 Bionic (5 nm)",
+      cpu: "Hexa-core (2×3.23 GHz Avalanche + 4×1.82 GHz Blizzard)",
+      gpu: "Apple GPU (5-core graphics)",
+      ram: "6GB (LPDDR4X)",
+      neural: "Neural Engine (16-core)",
+      benchmark: {
+        antutu: "948,000 (v9)",
+        geekbench: "7,733 (v5)"
+      }
+    },
+    design: {
+      dimensions: "160.8 x 78.1 x 7.8 mm",
+      weight: "203g",
+      materials: "Ceramic Shield front, Glass back, Aluminum frame",
+      colors: ["Xanh Dương", "Tím", "Midnight", "Starlight", "Vàng", "Đỏ"]
+    },
+    battery: {
+      capacity: "4325 mAh",
+      life: "20-26 tiếng",
+      charging: {
+        wired: "20W",
+        wireless: "15W (MagSafe)",
+        magsafe: "15W (MagSafe)"
+      }
+    },
+    connectivity: {
+      sim: "Nano-SIM & eSIM (Dual SIM)",
+      port: "Lightning",
+      wifi: "Wi-Fi 6 (802.11ax)",
+      bluetooth: "Bluetooth 5.3",
+      cellular: "4G/5G",
+      nfc: true
+    },
+    other: {
+      os: "iOS 16",
+      waterResistance: "IP68",
+      faceID: true,
+      storage: ["128GB", "256GB", "512GB"]
+    }
+  },
+
+  "iPhone 14 Pro Max": {
+    model: "iPhone 14 Pro Max",
+    codeName: "14PROMAX",
+    display: {
+      size: "6.7 inches",
+      type: "Super Retina XDR OLED",
+      resolution: "1290 x 2796 pixels",
+      ppi: "~460 ppi",
+      brightness: "1000 nits (typical), 2000 nits (peak HDR)",
+      refreshRate: "120 Hz ProMotion"
+    },
+    camera: {
+      main: "48 MP, f/1.78, 24mm (wide)",
+      ultrawide: "12 MP, f/2.2, 13mm, 120° (ultrawide)",
+      telephoto: "12 MP, f/2.8, 77mm (telephoto)",
+      lidar: "LiDAR scanner",
+      zoom: "Optical zoom x6",
+      video: "4K@24/30/60fps, 1080p@30/60/120/240fps",
+      selfie: "12 MP, f/1.9, 23mm (wide)"
+    },
+    performance: {
+      chip: "Apple A16 Bionic (4 nm)",
+      cpu: "Hexa-core (2×3.46 GHz Everest + 4×2.02 GHz Sawtooth)",
+      gpu: "Apple GPU (5-core graphics)",
+      ram: "6GB (LPDDR5)",
+      neural: "Neural Engine (16-core)",
+      benchmark: {
+        antutu: "948,000 (v9)",
+        geekbench: "7,733 (v5)"
+      }
+    },
+    design: {
+      dimensions: "160.7 x 77.6 x 7.85 mm",
+      weight: "240g",
+      materials: "Ceramic Shield front, Glass back, Stainless steel frame",
+      colors: ["Deep Purple", "Vàng", "Bạc", "Space Black"]
+    },
+    battery: {
+      capacity: "4323 mAh",
+      life: "25-29 tiếng",
+      charging: {
+        wired: "27W",
+        wireless: "15W (MagSafe)",
+        magsafe: "15W (MagSafe)"
+      }
+    },
+    connectivity: {
+      sim: "Nano-SIM & eSIM (Dual SIM)",
+      port: "Lightning",
+      wifi: "Wi-Fi 6 (802.11ax)",
+      bluetooth: "Bluetooth 5.3",
+      cellular: "4G/5G",
+      nfc: true
+    },
+    other: {
+      os: "iOS 16",
+      waterResistance: "IP68",
+      faceID: true,
+      storage: ["128GB", "256GB", "512GB", "1TB"]
+    }
+  },
+
+  "iPhone 15": {
+    model: "iPhone 15",
+    codeName: "15",
+    display: {
+      size: "6.1 inches",
+      type: "Super Retina XDR OLED",
+      resolution: "1179 x 2556 pixels",
+      ppi: "~460 ppi",
+      brightness: "1000 nits (base), 2000 nits (peak)",
+      refreshRate: "60 Hz"
+    },
+    camera: {
+      main: "48 MP, f/1.6, 26mm (wide)",
+      ultrawide: "12 MP, f/2.4, 13mm, 120° (ultrawide)",
+      zoom: "Optical zoom x2",
+      video: "4K@24/25/30/60fps, 1080p@25/30/60/120/240fps",
+      selfie: "12 MP, f/1.9, 23mm (wide)"
+    },
+    performance: {
+      chip: "Apple A16 Bionic (4 nm)",
+      cpu: "Hexa-core (2×3.46 GHz Everest + 4×2.02 GHz Sawtooth)",
+      gpu: "Apple GPU (5-core graphics)",
+      ram: "6GB (LPDDR5)",
+      neural: "Neural Engine (16-core)",
+      benchmark: {
+        antutu: "1,385,649 (v10)",
+        geekbench: "6,618 (v6)"
+      }
+    },
+    design: {
+      dimensions: "147.6 x 71.6 x 7.8 mm",
+      weight: "171g",
+      materials: "Ceramic Shield front, Glass back, Aluminum frame",
+      colors: ["Xanh Dương", "Hồng", "Vàng", "Xanh Lá", "Đen"]
+    },
+    battery: {
+      capacity: "3349 mAh",
+      life: "15-20 tiếng",
+      charging: {
+        wired: "35W",
+        wireless: "15W (Qi2)",
+        magsafe: "15W (MagSafe)"
+      }
+    },
+    connectivity: {
+      sim: "Nano-SIM & eSIM (Dual SIM)",
+      port: "USB Type-C 2.0",
+      wifi: "Wi-Fi 6 (802.11ax) dual band",
+      bluetooth: "Bluetooth 5.3",
+      cellular: "4G/5G",
+      nfc: true
+    },
+    other: {
+      os: "iOS 17",
+      waterResistance: "IP68",
+      faceID: true,
+      storage: ["128GB", "256GB", "512GB"]
+    }
+  },
+
+  "iPhone SE (2020)": {
+    model: "iPhone SE (2020)",
+    codeName: "SE2",
+    display: {
+      size: "4.7 inches",
+      type: "Retina HD LCD",
+      resolution: "1334 x 750 pixels",
+      ppi: "~326 ppi",
+      brightness: "625 nits (typical)",
+      refreshRate: "60 Hz"
+    },
+    camera: {
+      main: "12 MP, f/1.8, 28mm (wide)",
+      ultrawide: "",
+      zoom: "Digital zoom x5",
+      video: "4K@24/30/60fps, 1080p@30/60/120/240fps",
+      selfie: "7 MP, f/2.2, 32mm (wide)"
+    },
+    performance: {
+      chip: "Apple A13 Bionic (7 nm+)",
+      cpu: "Hexa-core (2×2.65 GHz Lightning + 4×1.8 GHz Thunder)",
+      gpu: "Apple GPU (4-core graphics)",
+      ram: "3GB (LPDDR4X)",
+      neural: "Neural Engine (8-core)",
+      benchmark: {
+        antutu: "460,000 (v8)",
+        geekbench: "5,400 (v5)"
+      }
+    },
+    design: {
+      dimensions: "138.4 x 67.3 x 7.3 mm",
+      weight: "148g",
+      materials: "Ion-X strengthened glass, Glass back, Aluminum frame",
+      colors: ["Đen", "Trắng", "Đỏ"]
+    },
+    battery: {
+      capacity: "1821 mAh",
+      life: "13 tiếng",
+      charging: {
+        wired: "18W",
+        wireless: "7.5W (Qi)",
+        magsafe: ""
+      }
+    },
+    connectivity: {
+      sim: "Nano-SIM & eSIM (Dual SIM)",
+      port: "Lightning",
+      wifi: "Wi-Fi 6 (802.11ax)",
+      bluetooth: "Bluetooth 5.0",
+      cellular: "4G/LTE",
+      nfc: true
+    },
+    other: {
+      os: "iOS 13",
+      waterResistance: "IP67",
+      faceID: false,
+      storage: ["64GB", "128GB", "256GB"]
+    }
+  },
+
+  "iPhone SE (2022)": {
+    model: "iPhone SE (2022)",
+    codeName: "SE3",
+    display: {
+      size: "4.7 inches",
+      type: "Retina HD LCD",
+      resolution: "1334 x 750 pixels",
+      ppi: "~326 ppi",
+      brightness: "625 nits (typical)",
+      refreshRate: "60 Hz"
+    },
+    camera: {
+      main: "12 MP, f/1.8, 28mm (wide)",
+      ultrawide: "",
+      zoom: "Digital zoom x5",
+      video: "4K@24/30/60fps, 1080p@30/60/120/240fps",
+      selfie: "7 MP, f/2.2, 32mm (wide)"
+    },
+    performance: {
+      chip: "Apple A15 Bionic (5 nm)",
+      cpu: "Hexa-core (2×3.23 GHz Avalanche + 4×1.82 GHz Blizzard)",
+      gpu: "Apple GPU (4-core graphics)",
+      ram: "4GB (LPDDR4X)",
+      neural: "Neural Engine (16-core)",
+      benchmark: {
+        antutu: "839,000 (v9)",
+        geekbench: "7,296 (v5)"
+      }
+    },
+    design: {
+      dimensions: "138.4 x 67.3 x 7.3 mm",
+      weight: "144g",
+      materials: "Ion-X strengthened glass, Glass back, Aluminum frame",
+      colors: ["Midnight", "Starlight", "Đỏ"]
+    },
+    battery: {
+      capacity: "2018 mAh",
+      life: "15 tiếng",
+      charging: {
+        wired: "20W",
+        wireless: "7.5W (Qi)",
+        magsafe: ""
+      }
+    },
+    connectivity: {
+      sim: "Nano-SIM & eSIM (Dual SIM)",
+      port: "Lightning",
+      wifi: "Wi-Fi 6 (802.11ax)",
+      bluetooth: "Bluetooth 5.0",
+      cellular: "4G/5G",
+      nfc: true
+    },
+    other: {
+      os: "iOS 15",
+      waterResistance: "IP67",
+      faceID: false,
+      storage: ["64GB", "128GB", "256GB"]
+    }
+  },
+
+  "iPhone X": {
+    model: "iPhone X",
+    codeName: "X",
+    display: {
+      size: "5.8 inches",
+      type: "Super Retina OLED",
+      resolution: "1125 x 2436 pixels",
+      ppi: "~458 ppi",
+      brightness: "625 nits (typical)",
+      refreshRate: "60 Hz"
+    },
+    camera: {
+      main: "12 MP, f/1.8, 28mm (wide)",
+      ultrawide: "",
+      telephoto: "12 MP, f/2.4, 52mm (telephoto)",
+      zoom: "Optical zoom x2",
+      video: "4K@24/30/60fps, 1080p@30/60/120/240fps",
+      selfie: "7 MP, f/2.2, 32mm (wide)"
+    },
+    performance: {
+      chip: "Apple A11 Bionic (10 nm)",
+      cpu: "Hexa-core (2×2.39 GHz + 4×1.42 GHz)",
+      gpu: "Apple GPU (3-core graphics)",
+      ram: "3GB (LPDDR4X)",
+      neural: "Neural Engine",
+      benchmark: {
+        antutu: "230,000 (v7)",
+        geekbench: "4,200 (v4)"
+      }
+    },
+    design: {
+      dimensions: "143.6 x 70.9 x 7.7 mm",
+      weight: "174g",
+      materials: "Ion-X strengthened glass, Glass back, Stainless steel frame",
+      colors: ["Không Gian Xám", "Bạc"]
+    },
+    battery: {
+      capacity: "2716 mAh",
+      life: "14-21 tiếng",
+      charging: {
+        wired: "15W",
+        wireless: "7.5W (Qi)",
+        magsafe: ""
+      }
+    },
+    connectivity: {
+      sim: "Nano SIM",
+      port: "Lightning",
+      wifi: "Wi-Fi 802.11 a/b/g/n/ac",
+      bluetooth: "Bluetooth 5.0",
+      cellular: "4G/LTE",
+      nfc: true
+    },
+    other: {
+      os: "iOS 11.1.1",
+      waterResistance: "IP67",
+      faceID: true,
+      storage: ["64GB", "256GB"]
     }
   }
 };

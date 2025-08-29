@@ -8,6 +8,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Search, ShoppingCart, ChevronDown, Menu, X } from "lucide-react";
 import CartBtn from "./TopNavbar/CartBtn";
+import SearchBar from "../../SearchBar";
 
 interface DropdownItem {
   label: string;
@@ -152,7 +153,7 @@ const navigationData: NavItem[] = [
 const CleanShopDunkNavbar = () => {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleMouseEnter = useCallback((label: string) => {
@@ -247,22 +248,20 @@ const CleanShopDunkNavbar = () => {
 
           {/* Search Bar */}
           <div className="flex-1 max-w-md mx-6 hidden md:block">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Tìm iPhone, iPad, MacBook..."
-                className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 rounded-full bg-gray-50 focus:bg-white focus:border-blue-500 focus:outline-none transition-all"
-              />
-            </div>
+            <SearchBar 
+              className="w-full"
+              placeholder="Tìm iPhone, iPad, MacBook..."
+              showSuggestions={true}
+            />
           </div>
 
           {/* Right Icons */}
           <div className="flex items-center space-x-4">
             {/* Mobile Search */}
-            <button className="md:hidden p-1.5 text-gray-600 hover:text-gray-900">
+            <button 
+              className="md:hidden p-1.5 text-gray-600 hover:text-gray-900"
+              onClick={() => setIsMobileSearchOpen(true)}
+            >
               <Search className="h-5 w-5" />
             </button>
 
@@ -308,15 +307,46 @@ const CleanShopDunkNavbar = () => {
 
             {/* Mobile Search */}
             <div className="mt-4 px-3">
-              <div className="relative">
-                <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Tìm sản phẩm..."
-                  className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 rounded-full bg-gray-50 focus:bg-white focus:border-blue-500 focus:outline-none"
-                />
-              </div>
+              <SearchBar 
+                className="w-full"
+                placeholder="Tìm iPhone, iPad, MacBook..."
+                showSuggestions={true}
+              />
             </div>
+          </motion.div>
+        )}
+
+        {/* Mobile Search Modal */}
+        {isMobileSearchOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 z-50 md:hidden"
+            onClick={() => setIsMobileSearchOpen(false)}
+          >
+            <motion.div
+              initial={{ y: -100, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -100, opacity: 0 }}
+              className="bg-white p-4 shadow-lg"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">Tìm kiếm sản phẩm</h3>
+                <button
+                  onClick={() => setIsMobileSearchOpen(false)}
+                  className="p-1 hover:bg-gray-100 rounded"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              <SearchBar 
+                className="w-full"
+                placeholder="Tìm iPhone, iPad, MacBook..."
+                showSuggestions={true}
+              />
+            </motion.div>
           </motion.div>
         )}
       </div>
