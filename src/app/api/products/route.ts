@@ -54,6 +54,9 @@ async function generateSlug(
 // GET - Lấy tất cả sản phẩm với variants
 export async function GET() {
   try {
+    // Test database connection first
+    await prisma.$connect();
+    
     const products = await prisma.product.findMany({
       include: {
         variants: {
@@ -66,19 +69,41 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(serializeBigInt(products));
+    // Ensure proper serialization
+    const serializedProducts = serializeBigInt(products);
+    
+    return NextResponse.json(serializedProducts, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   } catch (error) {
     console.error("Get products error:", error);
+    
+    // More detailed error logging
+    if (error instanceof Error) {
+      console.error("Error message:", error.message);
+      console.error("Error stack:", error.stack);
+    }
+    
     return NextResponse.json(
-      { error: "Không thể lấy danh sách sản phẩm" },
+      { 
+        error: "Không thể lấy danh sách sản phẩm",
+        details: error instanceof Error ? error.message : String(error)
+      },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
 // POST - Tạo sản phẩm mới với variants
 export async function POST(request: NextRequest) {
   try {
+    // Test database connection first
+    await prisma.$connect();
+    
     if (!verifyToken()) {
       return NextResponse.json(
         { error: "Không có quyền truy cập" },
@@ -208,10 +233,22 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(serializeBigInt(product));
   } catch (error) {
     console.error("Create product error:", error);
+    
+    // More detailed error logging
+    if (error instanceof Error) {
+      console.error("Error message:", error.message);
+      console.error("Error stack:", error.stack);
+    }
+    
     return NextResponse.json(
-      { error: "Không thể tạo sản phẩm" },
+      { 
+        error: "Không thể tạo sản phẩm",
+        details: error instanceof Error ? error.message : String(error)
+      },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
@@ -223,6 +260,9 @@ export async function PUT(request: NextRequest) {
   let colors: any[] = [];
 
   try {
+    // Test database connection first
+    await prisma.$connect();
+    
     if (!verifyToken()) {
       return NextResponse.json(
         { error: "Không có quyền truy cập" },
@@ -339,6 +379,8 @@ export async function PUT(request: NextRequest) {
       },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
@@ -366,6 +408,9 @@ function extractFilename(imagePath: string): string | null {
 // DELETE - Xóa sản phẩm và tất cả file ảnh liên quan
 export async function DELETE(request: NextRequest) {
   try {
+    // Test database connection first
+    await prisma.$connect();
+    
     if (!verifyToken()) {
       return NextResponse.json(
         { error: "Không có quyền truy cập" },
@@ -447,5 +492,7 @@ export async function DELETE(request: NextRequest) {
       { error: "Không thể xóa sản phẩm" },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }
