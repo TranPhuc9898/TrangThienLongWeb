@@ -14,10 +14,8 @@ import {
   Image as ImageIcon,
   Search,
   Palette,
-  HardDrive,
   Percent,
   DollarSign,
-  ShoppingCart,
   Star,
   Eye,
   Smartphone,
@@ -25,12 +23,10 @@ import {
   Camera,
   Zap,
   Battery,
-  Wifi,
 } from "lucide-react";
 
 // Import iPhone specifications database
 import { 
-  IPHONE_SPECS_DATABASE, 
   getSpecsByModel, 
   getAvailableModels,
   formatSpecsForDisplay
@@ -138,10 +134,6 @@ export default function EditProductPage() {
     });
   };
 
-  const [uploadingImage, setUploadingImage] = useState(false);
-  const [uploadingVariantImage, setUploadingVariantImage] = useState<
-    string | null
-  >(null);
   // ✅ LOADING STATE: Prevent double submission
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -153,12 +145,85 @@ export default function EditProductPage() {
 
   // Handle iPhone model selection and auto-fill specs
   const handleiPhoneModelChange = (selectedModel: string) => {
+    // Generate slug from model and condition
+    const generateSlug = (model: string, condition: string) => {
+      if (!model) return "";
+      
+      // Remove special characters and normalize
+      const modelSlug = model
+        .toLowerCase()
+        .replace(/\s+/g, "-");
+      
+      const conditionSlug = condition
+        .toLowerCase()
+        .replace(/[%()]/g, "")
+        .replace(/\s+/g, "-");
+      
+      return `${modelSlug}-${conditionSlug}`;
+    };
+    
+    // Generate product name from model and condition
+    const generateProductName = (model: string, condition: string) => {
+      if (!model) return "";
+      return `${model} ${condition}`;
+    };
+    
+    const newProductName = generateProductName(selectedModel, formData.condition);
+    const newSlug = generateSlug(selectedModel, formData.condition);
+    
     setFormData({
       ...formData,
       iphoneModel: selectedModel,
       technicalSpecs: selectedModel ? JSON.stringify(formatSpecsForDisplay(getSpecsByModel(selectedModel)!)) : "",
-      productName: selectedModel || formData.productName
+      productName: newProductName,
+      tag: newProductName, // Auto-fill tag from productName
+      slug: newSlug
     });
+  };;
+  // Handle condition change to update product name and slug
+  const handleConditionChange = (newCondition: string) => {
+    // Generate slug from model and condition
+    const generateSlug = (model: string, condition: string) => {
+      if (!model) return "";
+      
+      // Remove special characters and normalize
+      const modelSlug = model
+        .toLowerCase()
+        .replace(/\s+/g, "-");
+      
+      const conditionSlug = condition
+        .toLowerCase()
+        .replace(/[%()]/g, "")
+        .replace(/\s+/g, "-");
+      
+      return `${modelSlug}-${conditionSlug}`;
+    };
+    
+    // Generate product name from model and condition
+    const generateProductName = (model: string, condition: string) => {
+      if (!model) return "";
+      return `${model} ${condition}`;
+    };
+    
+    // Only update if we have an iPhone model selected
+    if (formData.iphoneModel) {
+      const newProductName = generateProductName(formData.iphoneModel, newCondition);
+      const newSlug = generateSlug(formData.iphoneModel, newCondition);
+      
+      setFormData({
+        ...formData,
+        condition: newCondition,
+        productName: newProductName,
+        tag: newProductName, // Auto-fill tag from productName
+        slug: newSlug
+      });
+    } else {
+      // Just update condition if no model is selected yet
+      setFormData({
+        ...formData,
+        condition: newCondition
+      });
+    }
   };
 
   // Color and Storage selections
@@ -432,11 +497,6 @@ export default function EditProductPage() {
         [field]: value,
       },
     }));
-  };
-
-  // Convert matrix to variants array for API submission
-  const generateVariantsFromMatrix = (): ProductVariant[] => {
-    return Object.values(variantsMatrix).filter((variant) => variant.price);
   };
 
   const applyPriceForColor = (color: string) => {
@@ -1188,12 +1248,7 @@ export default function EditProductPage() {
                         </label>
                         <select
                           value={formData.condition}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              condition: e.target.value,
-                            })
-                          }
+                          onChange={(e) => handleConditionChange(e.target.value)}
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
                           <option value="99%">99% (Like New)</option>
@@ -1201,6 +1256,35 @@ export default function EditProductPage() {
                           <option value="Refurbished">Refurbished (Tân trang)</option>
                         </select>
                       </div>
+                      
+                      {/* Slug (Auto-generated) */}
+                      {formData.slug && (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Slug URL
+                            <span className="text-xs text-gray-500 ml-2">
+                              (Tự động tạo từ Model + Tình trạng)
+                            </span>
+                          </label>
+                          <div className="relative">
+                            <input
+                              type="text"
+                              value={formData.slug}
+                              readOnly
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 pr-10"
+                              placeholder="iphone-15-pro-99-like-new"
+                            />
+                            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                              <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                            </div>
+                          </div>
+                          <p className="text-xs text-gray-500 mt-1">
+                            URL sản phẩm: /shop/product/{formData.slug}
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -1431,7 +1515,12 @@ export default function EditProductPage() {
                           onChange={(e) => setNewColor(e.target.value)}
                           placeholder="Nhập tên màu (Black Titanium)"
                           className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          onKeyPress={(e) => e.key === "Enter" && addColor()}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              addColor();
+                            }
+                          }}
                         />
                         <button
                           type="button"
