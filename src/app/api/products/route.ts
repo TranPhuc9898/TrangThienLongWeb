@@ -146,12 +146,12 @@ export async function POST(request: NextRequest) {
       tag,
     } = await request.json();
 
-    // Validate required fields
-    if (!productName || !basePrice || !brand || !thumbnail) {
+    // Validate required fields (thumbnail is optional now)
+    if (!productName || !basePrice || !brand) {
       return NextResponse.json(
         {
           error:
-            "Thiếu thông tin bắt buộc: productName, basePrice, brand, thumbnail",
+            "Thiếu thông tin bắt buộc: productName, basePrice, brand",
         },
         { status: 400 }
       );
@@ -196,7 +196,7 @@ export async function POST(request: NextRequest) {
         image:
           variant.image ||
           (colorGallery && (colorGallery.images as any[])[0]) ||
-          thumbnail,
+          thumbnail || "",
       });
     }
 
@@ -330,7 +330,7 @@ export async function PUT(request: NextRequest) {
           image:
             variant.image ||
             (colorGallery && (colorGallery.images as any[])[0]) ||
-            productData.thumbnail,
+            productData.thumbnail || "",
         });
       } catch (error) {
         return NextResponse.json(

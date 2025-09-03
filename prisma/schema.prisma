@@ -43,6 +43,8 @@ model Product {
   featured         Boolean          @default(false)
   inStock          Boolean          @default(true)
   series           String?          // "iPhone 14", "iPhone 15", etc.
+  iphoneModel      String?          // "iPhone 15 Pro", "iPhone 14 Pro Max", etc.
+  technicalSpecs   String?          // JSON string of technical specifications
   
   // Relationships
   variants         ProductVariant[]

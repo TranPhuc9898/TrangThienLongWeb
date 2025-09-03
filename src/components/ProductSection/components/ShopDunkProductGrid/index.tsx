@@ -243,9 +243,34 @@ const ShopDunkProductGrid: React.FC<ShopDunkProductGridProps> = ({
                   </div>
 
                   {/* Product Title */}
-                  <h3 className="font-bold text-lg text-gray-900 mb-4 line-clamp-2">
+                  <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2">
                     {product.productName}
                   </h3>
+
+                  {/* Product Condition Badge */}
+                  {product.condition && (
+                    <div className="mb-3">
+                      <span 
+                        className={`inline-block px-2.5 py-1 text-xs font-medium rounded-full ${
+                          product.condition === "New" || product.condition === "100%" 
+                            ? "bg-green-100 text-green-800 border border-green-200"
+                            : product.condition === "99%" 
+                            ? "bg-blue-100 text-blue-800 border border-blue-200"
+                            : product.condition === "Refurbished"
+                            ? "bg-gray-100 text-gray-800 border border-gray-200"
+                            : "bg-gray-100 text-gray-800"
+                        }`}
+                      >
+                        {product.condition === "New" || product.condition === "100%" 
+                          ? "Máy mới 100%" 
+                          : product.condition === "99%" 
+                          ? "Like new 99%"
+                          : product.condition === "Refurbished"
+                          ? "Máy tân trang"
+                          : product.condition}
+                      </span>
+                    </div>
+                  )}
 
                   {/* Storage Options */}
                   <div className="mb-4">

@@ -54,12 +54,29 @@ const ProductCard = ({ data }: ProductCardProps) => {
       <Link href={`/${data.slug}`} className="block w-full">
         <strong className="text-black xl:text-xl hover:text-blue-600 transition-colors">
           {data.productName || data.title}
+          {(data as any).regionCode && ` (${(data as any).regionCode})`}
         </strong>
 
         {data.condition && (
           <div className="mt-1">
-            <span className="inline-block px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
-              {data.condition}
+            <span 
+              className={`inline-block px-2.5 py-1 text-xs font-medium rounded-full ${
+                data.condition === "New" || data.condition === "100%" 
+                  ? "bg-green-100 text-green-800 border border-green-200"
+                  : data.condition === "99%" 
+                  ? "bg-blue-100 text-blue-800 border border-blue-200"
+                  : data.condition === "Refurbished"
+                  ? "bg-gray-100 text-gray-800 border border-gray-200"
+                  : "bg-gray-100 text-gray-800"
+              }`}
+            >
+              {data.condition === "New" || data.condition === "100%" 
+                ? "Máy mới 100%" 
+                : data.condition === "99%" 
+                ? "Like new 99%"
+                : data.condition === "Refurbished"
+                ? "Máy tân trang"
+                : data.condition}
             </span>
           </div>
         )}

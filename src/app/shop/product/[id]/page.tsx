@@ -101,6 +101,7 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
   const [selectedStorage, setSelectedStorage] = useState<string>("");
   const [selectedColor, setSelectedColor] = useState<string>("");
   const [activeImage, setActiveImage] = useState<string>("");
+  const [selectedRegion, setSelectedRegion] = useState<string>("VN/A"); // Default to VN/A
   const router = useRouter();
   const dispatch = useAppDispatch();
 
@@ -116,6 +117,11 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
       setSelectedStorage(firstVariant.storage);
       setSelectedColor(firstVariant.color);
       setSelectedVariant(firstVariant);
+
+      // Set default region code if available
+      if ((product as any).regionCode) {
+        setSelectedRegion((product as any).regionCode);
+      }
 
       // ✅ Get first image from color gallery, not variant
       const colorData = product.colors.find(
@@ -158,6 +164,17 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
     return colorData?.images || [];
   };
 
+  // Get price for selected region
+  const getRegionPrice = () => {
+    if (!product || !selectedRegion || !selectedVariant) return selectedVariant?.price;
+    
+    const regionPrices = (product as any).regionPrices;
+    if (!regionPrices || !Array.isArray(regionPrices)) return selectedVariant?.price;
+    
+    const regionPrice = regionPrices.find((rp: any) => rp.regionCode === selectedRegion);
+    return regionPrice?.price || selectedVariant?.price;
+  };
+
   const loadProduct = async () => {
     try {
       const response = await fetch(`/api/products/${params.id}`);
@@ -179,14 +196,15 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
 
     const discountMatch = product.discount?.match(/-(\d+)%/);
     const discountPercent = discountMatch ? parseInt(discountMatch[1]) : 0;
+    const regionPrice = getRegionPrice();
 
     dispatch(
       addToCart({
         id: Number(product.id),
-        name: `${product.productName} ${selectedVariant.storage} ${selectedVariant.color}`,
+        name: `${product.productName} ${selectedVariant.storage} ${selectedVariant.color} (${selectedRegion})`,
         srcUrl: selectedVariant.image,
-        price: Number(selectedVariant.price),
-        attributes: [selectedVariant.storage, selectedVariant.color],
+        price: Number(regionPrice || selectedVariant.price),
+        attributes: [selectedVariant.storage, selectedVariant.color, selectedRegion],
         discount: { amount: 0, percentage: discountPercent },
         quantity: 1,
       })
@@ -197,15 +215,17 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
 
   const handleBuyNow = () => {
     if (!product || !selectedVariant) return;
+    const regionPrice = getRegionPrice();
 
     const productData = {
       id: product.id,
-      title: `${product.productName} ${selectedVariant.storage} ${selectedVariant.color}`,
-      price: Number(selectedVariant.price),
+      title: `${product.productName} ${selectedVariant.storage} ${selectedVariant.color} (${selectedRegion})`,
+      price: Number(regionPrice || selectedVariant.price),
       originalPrice: Number(product.basePrice),
       image: selectedVariant.image,
       storage: selectedVariant.storage,
       color: selectedVariant.color,
+      regionCode: selectedRegion,
     };
 
     const params = new URLSearchParams({
@@ -229,7 +249,7 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
     return colors;
   };
 
-  const calculateDiscountedPrice = (basePrice: string, discount?: string) => {
+  const calculateDiscountedPrice = (basePrice: string | number, discount?: string) => {
     if (!discount) return Number(basePrice);
 
     const discountMatch = discount.match(/-(\d+)%/);
@@ -361,7 +381,33 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
 
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">
                   {product.productName}
+                  {(product as any).regionCode && ` (${(product as any).regionCode})`}
                 </h1>
+
+                {/* Product Condition Badge */}
+                {product.condition && (
+                  <div className="mb-3">
+                    <span 
+                      className={`inline-block px-3 py-1.5 text-sm font-medium rounded-full ${
+                        product.condition === "New" || product.condition === "100%" 
+                          ? "bg-green-100 text-green-800 border border-green-200"
+                          : product.condition === "99%" 
+                          ? "bg-blue-100 text-blue-800 border border-blue-200"
+                          : product.condition === "Refurbished"
+                          ? "bg-gray-100 text-gray-800 border border-gray-200"
+                          : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {product.condition === "New" || product.condition === "100%" 
+                        ? "🆕 Máy mới 100%" 
+                        : product.condition === "99%" 
+                        ? "✨ Like new 99%"
+                        : product.condition === "Refurbished"
+                        ? "♻️ Máy tân trang"
+                        : product.condition}
+                    </span>
+                  </div>
+                )}
 
                 <div className="flex items-center gap-4 mb-4">
                   <div className="flex items-center gap-1">
@@ -473,6 +519,74 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
                     ))}
                   </div>
                 </div>
+
+                {/* Region Code Selection - NEW */}
+                {(product as any).regionPrices && (product as any).regionPrices.length > 0 && (
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                      Phiên bản (Mã vùng)
+                    </h3>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {/* Default region from product */}
+                      {(product as any).regionCode && (
+                        <button
+                          onClick={() => setSelectedRegion((product as any).regionCode)}
+                          className={`px-4 py-3 text-sm font-medium rounded-lg border-2 transition-colors ${
+                            selectedRegion === (product as any).regionCode
+                              ? "border-blue-500 bg-blue-50 text-blue-700"
+                              : "border-gray-200 hover:border-gray-300 text-gray-700"
+                          }`}
+                        >
+                          <div className="text-center">
+                            <div className="font-semibold">{(product as any).regionCode}</div>
+                            <div className="text-xs text-gray-500">
+                              {(product as any).regionCode === "VN/A" ? "Việt Nam" : 
+                               (product as any).regionCode === "LL/A" ? "Mỹ" :
+                               (product as any).regionCode === "ZP/A" ? "Hong Kong" :
+                               (product as any).regionCode === "CH/A" ? "Trung Quốc" :
+                               (product as any).regionCode === "J/A" ? "Nhật Bản" : ""}
+                            </div>
+                            {selectedVariant && (
+                              <div className="text-xs font-semibold text-blue-600 mt-1">
+                                {Number(selectedVariant.price).toLocaleString()}đ
+                              </div>
+                            )}
+                          </div>
+                        </button>
+                      )}
+                      
+                      {/* Additional regions from regionPrices */}
+                      {(product as any).regionPrices.map((rp: any) => (
+                        <button
+                          key={rp.regionCode}
+                          onClick={() => setSelectedRegion(rp.regionCode)}
+                          className={`px-4 py-3 text-sm font-medium rounded-lg border-2 transition-colors ${
+                            selectedRegion === rp.regionCode
+                              ? "border-blue-500 bg-blue-50 text-blue-700"
+                              : "border-gray-200 hover:border-gray-300 text-gray-700"
+                          }`}
+                        >
+                          <div className="text-center">
+                            <div className="font-semibold">{rp.regionCode}</div>
+                            <div className="text-xs text-gray-500">
+                              {rp.regionCode === "VN/A" ? "Việt Nam" : 
+                               rp.regionCode === "LL/A" ? "Mỹ" :
+                               rp.regionCode === "ZP/A" ? "Hong Kong" :
+                               rp.regionCode === "CH/A" ? "Trung Quốc" :
+                               rp.regionCode === "J/A" ? "Nhật Bản" : ""}
+                            </div>
+                            <div className="text-xs font-semibold text-blue-600 mt-1">
+                              {Number(rp.price).toLocaleString()}đ
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-2">
+                      * Bạn có thể thiết lập giá khác nhau cho từng mã vùng. Nếu không thiết lập, sẽ sử dụng giá cơ bản.
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Promotions */}

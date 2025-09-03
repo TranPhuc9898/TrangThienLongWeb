@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
@@ -195,8 +195,54 @@ export default function EditProductPage() {
   const [defaultRowPrice, setDefaultRowPrice] = useState<
     Record<string, string>
   >({});
+  
+  // 🔍 NEW: Search and sort states  
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<"name" | "price" | "date" | "featured">("date");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   const router = useRouter();
+  
+  // 🔍 Filter and sort products
+  const filteredAndSortedProducts = useMemo(() => {
+    let filtered = products;
+    
+    // Search filter
+    if (searchQuery) {
+      filtered = products.filter((product) =>
+        product.productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.brand?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.slug?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    
+    // Sort
+    const sorted = [...filtered].sort((a, b) => {
+      let compareValue = 0;
+      
+      switch (sortBy) {
+        case "name":
+          compareValue = a.productName.localeCompare(b.productName);
+          break;
+        case "price":
+          compareValue = Number(a.basePrice) - Number(b.basePrice);
+          break;
+        case "featured":
+          compareValue = (a.featured ? 1 : 0) - (b.featured ? 1 : 0);
+          break;
+        case "date":
+        default:
+          // Assuming products have an ID that increases with time
+          compareValue = Number(a.id) - Number(b.id);
+          break;
+      }
+      
+      return sortOrder === "asc" ? compareValue : -compareValue;
+    });
+    
+    return sorted;
+  }, [products, searchQuery, sortBy, sortOrder]);
 
   // Load products
   useEffect(() => {
@@ -553,6 +599,23 @@ export default function EditProductPage() {
 
     // ✅ PREVENT DOUBLE SUBMISSION
     if (isSubmitting) return;
+    
+    // 🔍 VALIDATION: Check required fields
+    if (!formData.productName?.trim()) {
+      alert("Vui lòng nhập tên sản phẩm");
+      return;
+    }
+    
+    if (!formData.category) {
+      alert("Vui lòng chọn danh mục sản phẩm");
+      return;
+    }
+    
+    if (!formData.basePrice || parseDigits(formData.basePrice) === "0") {
+      alert("Vui lòng nhập giá sản phẩm");
+      return;
+    }
+    
     setIsSubmitting(true);
 
       try {
@@ -564,7 +627,8 @@ export default function EditProductPage() {
         // Điền fallback cho các trường bắt buộc nếu trống
         const fallbackName = formData.productName || "Sản phẩm mới";
         const fallbackCategory = formData.category || "iPhone";
-        const fallbackThumb = newThumbnailUrl || (formData.thumbnail && !formData.thumbnail.includes('blob:') ? formData.thumbnail : "/images/iphone14.png");
+        // 🔴 FIX: Không hardcode iPhone 14 Pro, dùng thumbnail hiện tại hoặc để trống
+        const fallbackThumb = newThumbnailUrl || formData.thumbnail || "";
         const fallbackBasePrice = parseDigits(formData.basePrice || "") || "0";
         const fallbackBrand = formData.brand || "Apple";
         const storages = selectedStorages.length > 0 ? selectedStorages : ["128GB"];
@@ -599,6 +663,11 @@ export default function EditProductPage() {
           basePrice: fallbackBasePrice, // Keep as string for BigInt handling
           rating: parseFloat(formData.rating),
           reviewCount: parseInt(formData.reviewCount),
+          // Only include regionCode for iPhone 14+
+          regionCode: (formData.category === "iPhone" && 
+                      formData.series && 
+                      parseInt(formData.series.replace("iPhone ", "")) >= 14) 
+                      ? formData.regionCode : null,
 
           // Set defaults for optional promotion fields
           promotionGeneral:
@@ -633,11 +702,16 @@ export default function EditProductPage() {
         });
 
         if (response.ok) {
+          // 🟢 SUCCESS: Product saved successfully
+          const result = await response.json();
+          console.log("Product saved successfully:", result);
+          
           alert(
             editingProduct
-              ? "Sản phẩm đã được cập nhật!"
-              : "Sản phẩm đã được tạo!"
+              ? "Sản phẩm đã được cập nhật thành công!"
+              : "Sản phẩm đã được tạo thành công!"
           );
+          
           // ✅ CLEANUP: Clear staging images and thumbnail after successful submit
           setStagingImages({});
           if (stagingThumbnail?.preview) {
@@ -653,8 +727,17 @@ export default function EditProductPage() {
           resetForm();
           loadProducts();
         } else {
+          // 🔴 ERROR: Log detailed error info
           const error = await response.json();
-          alert(`Lỗi: ${error.error || "Không thể lưu sản phẩm"}`);
+          console.error("Error saving product:", {
+            status: response.status,
+            error: error,
+            productData: productData
+          });
+          
+          // Show more detailed error message
+          const errorMessage = error.details || error.error || "Không thể lưu sản phẩm";
+          alert(`Lỗi khi ${editingProduct ? 'cập nhật' : 'tạo'} sản phẩm:\n${errorMessage}\n\nVui lòng kiểm tra console để xem chi tiết.`);
         }
       } catch (error) {
         console.error("Error submitting form:", error);
@@ -778,9 +861,57 @@ export default function EditProductPage() {
           </div>
         </div>
 
+        {/* 🔍 Search and Sort Bar */}
+        <div className="bg-white rounded-2xl p-4 mb-6 shadow-sm border border-gray-100">
+          <div className="flex flex-col sm:flex-row gap-4">
+            {/* Search Input */}
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Tìm kiếm sản phẩm theo tên, danh mục, thương hiệu..."
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+            
+            {/* Sort Options */}
+            <div className="flex gap-2">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="date">Ngày tạo</option>
+                <option value="name">Tên sản phẩm</option>
+                <option value="price">Giá</option>
+                <option value="featured">Nổi bật</option>
+              </select>
+              
+              <button
+                onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+                className="px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                title={sortOrder === "asc" ? "Tăng dần" : "Giảm dần"}
+              >
+                {sortOrder === "asc" ? "↑" : "↓"}
+              </button>
+            </div>
+          </div>
+          
+          {/* Results count */}
+          {searchQuery && (
+            <div className="mt-3 text-sm text-gray-600">
+              Tìm thấy {filteredAndSortedProducts.length} sản phẩm
+            </div>
+          )}
+        </div>
+
         {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {products.length === 0 ? (
+          {filteredAndSortedProducts.length === 0 ? (
             <div className="col-span-full text-center py-12">
               <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
               <h3 className="text-xl font-medium text-gray-900 mb-2">
@@ -800,7 +931,7 @@ export default function EditProductPage() {
               </button>
             </div>
           ) : (
-            products.map((product) => (
+            filteredAndSortedProducts.map((product) => (
               <motion.div
                 key={product.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -822,6 +953,7 @@ export default function EditProductPage() {
                 <div className="p-4">
                   <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2">
                     {product.productName}
+                    {(product as any).regionCode && ` (${(product as any).regionCode})`}
                   </h3>
                   <p className="text-sm text-gray-600 mb-2">{product.brand}</p>
                   <p className="text-lg font-bold text-blue-600 mb-3">
@@ -1042,8 +1174,8 @@ export default function EditProductPage() {
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           >
                             <option value="">Chọn mã vùng</option>
-                            <option value="VN/A">VN/A (Việt Nam - Giá cao hơn)</option>
-                            <option value="LL/A">LL/A (Mỹ - Giá rẻ hơn)</option>
+                            <option value="VN/A">VN/A (Việt Nam)</option>
+                            <option value="LL/A">LL/A (Mỹ)</option>
                             <option value="ZP/A">ZP/A (Hong Kong)</option>
                             <option value="CH/A">CH/A (Trung Quốc)</option>
                             <option value="J/A">J/A (Nhật Bản)</option>
