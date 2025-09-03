@@ -26,6 +26,7 @@ export async function GET(
           orderBy: [{ storage: "asc" }, { color: "asc" }],
         },
         colors: true,
+        regionPrices: true, // Include region prices
       },
     });
 

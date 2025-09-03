@@ -58,6 +58,12 @@ interface ProductVariant {
   quantity: number;
 }
 
+interface RegionPrice {
+  id: string;
+  regionCode: string;
+  price: string;
+}
+
 interface Product {
   id: string;
   productName: string;
@@ -79,6 +85,8 @@ interface Product {
   inStock: boolean;
   variants: ProductVariant[];
   colors: ProductColor[]; // ✅ Add colors array
+  regionCode?: string; // Product's default region code
+  regionPrices?: RegionPrice[]; // Prices per region
 }
 
 interface ProductColor {
@@ -430,43 +438,45 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
 
               {/* Price */}
               <div className="border-t border-b border-gray-200 py-4">
-                {product.discount ? (
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-4">
-                      <span className="text-3xl font-bold text-red-600">
-                        {calculateDiscountedPrice(
-                          selectedVariant?.price || product.basePrice,
-                          product.discount
+                {(() => {
+                  // Lấy giá theo mã vùng nếu có
+                  // Use getRegionPrice to get price based on selected region
+                  let displayPrice = getRegionPrice() || selectedVariant?.price || product.basePrice;
+                  
+                  return product.discount ? (
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-4">
+                        <span className="text-3xl font-bold text-red-600">
+                          {calculateDiscountedPrice(
+                            displayPrice,
+                            product.discount
+                          ).toLocaleString()}
+                          đ
+                        </span>
+                        <span className="text-lg text-gray-400 line-through">
+                          {Number(displayPrice).toLocaleString()}
+                          đ
+                        </span>
+                      </div>
+                      <p className="text-sm text-green-600 font-medium">
+                        Tiết kiệm{" "}
+                        {(
+                          Number(displayPrice) -
+                          calculateDiscountedPrice(
+                            displayPrice,
+                            product.discount
+                          )
                         ).toLocaleString()}
                         đ
-                      </span>
-                      <span className="text-lg text-gray-400 line-through">
-                        {Number(
-                          selectedVariant?.price || product.basePrice
-                        ).toLocaleString()}
-                        đ
-                      </span>
+                      </p>
                     </div>
-                    <p className="text-sm text-green-600 font-medium">
-                      Tiết kiệm{" "}
-                      {(
-                        Number(selectedVariant?.price || product.basePrice) -
-                        calculateDiscountedPrice(
-                          selectedVariant?.price || product.basePrice,
-                          product.discount
-                        )
-                      ).toLocaleString()}
+                  ) : (
+                    <span className="text-3xl font-bold text-gray-900">
+                      {Number(displayPrice).toLocaleString()}
                       đ
-                    </p>
-                  </div>
-                ) : (
-                  <span className="text-3xl font-bold text-gray-900">
-                    {Number(
-                      selectedVariant?.price || product.basePrice
-                    ).toLocaleString()}
-                    đ
-                  </span>
-                )}
+                    </span>
+                  );
+                })()}
               </div>
 
               {/* Variants Selection - Keep independent */}
@@ -521,66 +531,50 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
                 </div>
 
                 {/* Region Code Selection - NEW */}
-                {(product as any).regionPrices && (product as any).regionPrices.length > 0 && (
+                {product.regionPrices && product.regionPrices.length > 0 && (
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-3">
                       Phiên bản (Mã vùng)
                     </h3>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                      {/* Default region from product */}
-                      {(product as any).regionCode && (
-                        <button
-                          onClick={() => setSelectedRegion((product as any).regionCode)}
-                          className={`px-4 py-3 text-sm font-medium rounded-lg border-2 transition-colors ${
-                            selectedRegion === (product as any).regionCode
-                              ? "border-blue-500 bg-blue-50 text-blue-700"
-                              : "border-gray-200 hover:border-gray-300 text-gray-700"
-                          }`}
-                        >
-                          <div className="text-center">
-                            <div className="font-semibold">{(product as any).regionCode}</div>
-                            <div className="text-xs text-gray-500">
-                              {(product as any).regionCode === "VN/A" ? "Việt Nam" : 
-                               (product as any).regionCode === "LL/A" ? "Mỹ" :
-                               (product as any).regionCode === "ZP/A" ? "Hong Kong" :
-                               (product as any).regionCode === "CH/A" ? "Trung Quốc" :
-                               (product as any).regionCode === "J/A" ? "Nhật Bản" : ""}
-                            </div>
-                            {selectedVariant && (
-                              <div className="text-xs font-semibold text-blue-600 mt-1">
-                                {Number(selectedVariant.price).toLocaleString()}đ
+                      {/* Show all available regions with prices */}
+                      {product.regionPrices.map((rp) => {
+                        const regionNames: Record<string, string> = {
+                          "VN/A": "Việt Nam",
+                          "LL/A": "Mỹ",
+                          "ZP/A": "Hong Kong",
+                          "CH/A": "Trung Quốc",
+                          "J/A": "Nhật Bản"
+                        };
+                        const basePrice = Number(product.basePrice);
+                        const regionPrice = Number(rp.price);
+                        const priceDiff = regionPrice - basePrice;
+                        
+                        return (
+                          <button
+                            key={rp.regionCode}
+                            onClick={() => setSelectedRegion(rp.regionCode)}
+                            className={`px-3 py-2 text-sm rounded-lg border-2 transition-all ${
+                              selectedRegion === rp.regionCode
+                                ? "border-blue-500 bg-blue-50 text-blue-700"
+                                : "border-gray-200 hover:border-gray-300 text-gray-700"
+                            }`}
+                          >
+                            <div className="text-left">
+                              <div className="font-medium">{rp.regionCode}</div>
+                              <div className="text-xs text-gray-500">{regionNames[rp.regionCode] || ""}</div>
+                              <div className="text-xs mt-1 font-semibold">
+                                {regionPrice.toLocaleString("vi-VN")}đ
                               </div>
-                            )}
-                          </div>
-                        </button>
-                      )}
-                      
-                      {/* Additional regions from regionPrices */}
-                      {(product as any).regionPrices.map((rp: any) => (
-                        <button
-                          key={rp.regionCode}
-                          onClick={() => setSelectedRegion(rp.regionCode)}
-                          className={`px-4 py-3 text-sm font-medium rounded-lg border-2 transition-colors ${
-                            selectedRegion === rp.regionCode
-                              ? "border-blue-500 bg-blue-50 text-blue-700"
-                              : "border-gray-200 hover:border-gray-300 text-gray-700"
-                          }`}
-                        >
-                          <div className="text-center">
-                            <div className="font-semibold">{rp.regionCode}</div>
-                            <div className="text-xs text-gray-500">
-                              {rp.regionCode === "VN/A" ? "Việt Nam" : 
-                               rp.regionCode === "LL/A" ? "Mỹ" :
-                               rp.regionCode === "ZP/A" ? "Hong Kong" :
-                               rp.regionCode === "CH/A" ? "Trung Quốc" :
-                               rp.regionCode === "J/A" ? "Nhật Bản" : ""}
+                              {priceDiff !== 0 && (
+                                <div className={`text-xs ${priceDiff < 0 ? "text-green-600" : "text-red-600"}`}>
+                                  {priceDiff < 0 ? "↓" : "↑"} {Math.abs(priceDiff).toLocaleString("vi-VN")}đ
+                                </div>
+                              )}
                             </div>
-                            <div className="text-xs font-semibold text-blue-600 mt-1">
-                              {Number(rp.price).toLocaleString()}đ
-                            </div>
-                          </div>
-                        </button>
-                      ))}
+                          </button>
+                        );
+                      })}
                     </div>
                     <p className="text-xs text-gray-500 mt-2">
                       * Bạn có thể thiết lập giá khác nhau cho từng mã vùng. Nếu không thiết lập, sẽ sử dụng giá cơ bản.

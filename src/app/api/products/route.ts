@@ -144,6 +144,12 @@ export async function POST(request: NextRequest) {
       colors = [],
       // Tag for filtering
       tag,
+      // Region code
+      regionCode,
+      series,
+      iphoneModel,
+      technicalSpecs,
+      regionPrices = [],
     } = await request.json();
 
     // Validate required fields (thumbnail is optional now)
@@ -208,6 +214,10 @@ export async function POST(request: NextRequest) {
         condition,
         slug,
         tag: tag || productName, // Default to productName if no tag provided
+        regionCode: regionCode || null,
+        series: series || null,
+        iphoneModel: iphoneModel || null,
+        technicalSpecs: technicalSpecs || null,
         basePrice: basePriceValue,
         currency,
         discount,
@@ -223,10 +233,17 @@ export async function POST(request: NextRequest) {
         inStock,
         variants: { create: processedVariants },
         colors: { create: processedColors },
+        regionPrices: regionPrices && regionPrices.length > 0 ? {
+          create: regionPrices.map((rp: any) => ({
+            regionCode: rp.regionCode,
+            price: BigInt(onlyDigits(rp.price || "0"))
+          }))
+        } : undefined,
       },
       include: {
         variants: true,
         colors: true,
+        regionPrices: true,
       },
     });
 
@@ -278,6 +295,11 @@ export async function PUT(request: NextRequest) {
     delete productData.id;
     delete productData.variants;
     delete productData.colors;
+    
+    // Remove regionPrices if it's an empty array to avoid Prisma validation error
+    if (Array.isArray(productData.regionPrices) && productData.regionPrices.length === 0) {
+      delete productData.regionPrices;
+    }
 
     if (!id) {
       return NextResponse.json({ error: "Thiếu ID sản phẩm" }, { status: 400 });
@@ -355,10 +377,21 @@ export async function PUT(request: NextRequest) {
           deleteMany: {},
           create: processedColors,
         },
+        // Handle region prices update
+        ...(productData.regionPrices !== undefined && {
+          regionPrices: {
+            deleteMany: {}, // Delete all existing region prices
+            create: productData.regionPrices?.map((rp: any) => ({
+              regionCode: rp.regionCode,
+              price: BigInt(onlyDigits(rp.price || "0"))
+            })) || []
+          }
+        }),
       },
       include: {
         variants: true,
         colors: true,
+        regionPrices: true,
       },
     });
 
@@ -430,6 +463,7 @@ export async function DELETE(request: NextRequest) {
       include: {
         variants: true,
         colors: true,
+        regionPrices: true,
       },
     });
 

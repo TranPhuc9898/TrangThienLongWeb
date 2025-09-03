@@ -165,6 +165,11 @@ export default function EditProductPage() {
     // Generate product name from model and condition
     const generateProductName = (model: string, condition: string) => {
       if (!model) return "";
+      // Nếu máy mới 100% hoặc New, chỉ hiển thị tên model
+      if (condition === "100%" || condition === "New") {
+        return model;
+      }
+      // Nếu không phải máy mới, thêm condition vào tên
       return `${model} ${condition}`;
     };
     
@@ -202,6 +207,11 @@ export default function EditProductPage() {
     // Generate product name from model and condition
     const generateProductName = (model: string, condition: string) => {
       if (!model) return "";
+      // Nếu máy mới 100% hoặc New, chỉ hiển thị tên model
+      if (condition === "100%" || condition === "New") {
+        return model;
+      }
+      // Nếu không phải máy mới, thêm condition vào tên
       return `${model} ${condition}`;
     };
     
@@ -687,7 +697,7 @@ export default function EditProductPage() {
         // Điền fallback cho các trường bắt buộc nếu trống
         const fallbackName = formData.productName || "Sản phẩm mới";
         const fallbackCategory = formData.category || "iPhone";
-        // 🔴 FIX: Không hardcode iPhone 14 Pro, dùng thumbnail hiện tại hoặc để trống
+        // 🔴 FIX: Sử dụng hình thumbnail đã upload hoặc hiện tại, KHÔNG hardcode
         const fallbackThumb = newThumbnailUrl || formData.thumbnail || "";
         const fallbackBasePrice = parseDigits(formData.basePrice || "") || "0";
         const fallbackBrand = formData.brand || "Apple";
@@ -743,13 +753,27 @@ export default function EditProductPage() {
             `${formData.productName} chính hãng, bảo hành 12 tháng tại các trung tâm bảo hành ủy quyền. Miễn phí giao hàng toàn quốc.`,
 
           variants, // Use generated variants from matrix
-          colors: Object.entries({
-            ...colorGalleries,
-            ...newUploadedGalleries,
-          }).map(([color, images]) => ({
-            color,
-            images: (Array.isArray(images) ? images : []).slice(0, 5),
-          })),
+          // Fix: Preserve existing colors when no new images are uploaded
+          colors: editingProduct?.colors && editingProduct.colors.length > 0
+            ? Object.entries({
+                ...colorGalleries,
+                ...newUploadedGalleries,
+              }).length > 0
+              ? Object.entries({
+                  ...colorGalleries,
+                  ...newUploadedGalleries,
+                }).map(([color, images]) => ({
+                  color,
+                  images: (Array.isArray(images) ? images : []).slice(0, 5),
+                }))
+              : editingProduct.colors // Keep original colors if nothing new
+            : Object.entries({
+                ...colorGalleries,
+                ...newUploadedGalleries,
+              }).map(([color, images]) => ({
+                color,
+                images: (Array.isArray(images) ? images : []).slice(0, 5),
+              })),
         };
 
         const method = editingProduct ? "PUT" : "POST";
