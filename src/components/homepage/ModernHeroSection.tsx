@@ -35,13 +35,13 @@ const ModernHeroSection = () => {
 
       <motion.div style={{ y, opacity }} className="relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
-          <div className="grid lg:grid-cols-2 gap-12 items-center min-h-screen">
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-4 items-center justify-center min-h-[80vh] lg:min-h-screen">
             {/* Left Content */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
-              className="text-center lg:text-left"
+              className="flex-1 max-w-xl text-center lg:text-left"
             >
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -123,9 +123,9 @@ const ModernHeroSection = () => {
               initial={{ opacity: 0, x: 50, rotateY: 25 }}
               animate={{ opacity: 1, x: 0, rotateY: 0 }}
               transition={{ duration: 1, delay: 0.4 }}
-              className="relative"
+              className="flex-1 flex items-center justify-center"
             >
-              <div className="relative">
+              <div className="relative flex items-center justify-center">
                 {/* Main iPhone */}
                 <motion.div
                   animate={{
@@ -140,13 +140,50 @@ const ModernHeroSection = () => {
                   }}
                   className="relative z-20"
                 >
-                  <Image
-                    src="/images/iphone14.png"
-                    alt="iPhone 15 Pro Max"
-                    width={400}
-                    height={600}
-                    className="mx-auto drop-shadow-2xl"
-                  />
+                  <div className="relative">
+                    <Image
+                      src="/images/iphone13.png"
+                      alt="iPhone 15 Pro Max"
+                      width={320}
+                      height={480}
+                      className="object-contain filter drop-shadow-[0_20px_50px_rgba(147,51,234,0.3)]"
+                      priority
+                    />
+                    
+                    {/* Floating badges around phone */}
+                    <motion.div
+                      animate={{
+                        y: [0, -10, 0],
+                        x: [0, 5, 0],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
+                      className="absolute top-4 right-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg z-30"
+                    >
+                      A17 Pro
+                      <span className="text-[10px] ml-1 opacity-90">Fastest Chip</span>
+                    </motion.div>
+                    
+                    <motion.div
+                      animate={{
+                        y: [0, 10, 0],
+                        x: [0, -5, 0],
+                      }}
+                      transition={{
+                        duration: 2.5,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: 0.5,
+                      }}
+                      className="absolute bottom-8 left-2 bg-gradient-to-r from-pink-500 to-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg z-30"
+                    >
+                      48MP
+                      <span className="text-[10px] ml-1 opacity-90">Pro Camera</span>
+                    </motion.div>
+                  </div>
 
                   {/* Glow Effect */}
                   <motion.div
@@ -159,7 +196,6 @@ const ModernHeroSection = () => {
                       repeat: Infinity,
                       ease: "easeInOut",
                     }}
-                    className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 blur-3xl transform scale-110"
                   />
                 </motion.div>
 
