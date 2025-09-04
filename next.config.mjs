@@ -6,9 +6,8 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === "production",
   },
   
-  // Experimental optimizations for better performance
+  // Package optimizations only (removed optimizeCss to fix build error)
   experimental: {
-    optimizeCss: true,
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons', 'framer-motion'],
   },
   
