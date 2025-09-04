@@ -909,11 +909,13 @@ const TechnicalSpecs: React.FC<{ productName: string }> = ({ productName }) => {
       </div>
       
       {/* Related Products Section */}
-      <RelatedProducts 
-        currentProduct={product}
-        category={product.category}
-        limit={8}
-      />
+      {product && (
+        <RelatedProducts 
+          currentProduct={product}
+          category={product.category}
+          limit={8}
+        />
+      )}
     </div>
   );
 };
