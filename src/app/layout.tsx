@@ -93,11 +93,38 @@ export default function RootLayout({
         <link rel="shortcut icon" href="/images/ttl.png" type="image/png" />
         <link rel="apple-touch-icon" href="/images/ttl.png" />
         
+        {/* PWA Manifest */}
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#007AFF" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="Trang Mobile" />
+        
         {/* Google Analytics */}
         <GoogleAnalytics measurementId="G-YK6M5RXB08" />
         
         {/* Google Search Console Verification */}
         <meta name="google-site-verification" content="oiyqMkeepUIMruDLqqFG9qd3jcmvkJs5OXu70Q3YN5c" />
+        
+        {/* Service Worker Registration */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js').then(
+                    function(registration) {
+                      console.log('ServiceWorker registration successful');
+                    },
+                    function(err) {
+                      console.log('ServiceWorker registration failed: ', err);
+                    }
+                  );
+                });
+              }
+            `,
+          }}
+        />
       </head>
       <body className={inter.className}>
         <OrganizationSchema />
