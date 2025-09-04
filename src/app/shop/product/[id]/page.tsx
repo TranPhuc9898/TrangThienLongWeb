@@ -3,14 +3,11 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { notFound, useRouter } from "next/navigation";
+import Script from "next/script";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Star,
   ShoppingCart,
-  Heart,
-  Share2,
-  Check,
-  X,
   Package,
   Truck,
   Shield,
@@ -25,7 +22,6 @@ import {
 
 // Import iPhone specifications database
 import { 
-  IPHONE_SPECS_DATABASE, 
   getSpecsByModel, 
   getAvailableModels
 } from '@/constants/iphone-specs';
@@ -239,15 +235,6 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
     return colors;
   };
 
-  const calculateDiscountedPrice = (basePrice: string | number, discount?: string) => {
-    if (!discount) return Number(basePrice);
-
-    const discountMatch = discount.match(/-(\d+)%/);
-    const discountPercent = discountMatch ? parseInt(discountMatch[1]) : 0;
-    const price = Number(basePrice);
-    return Math.round(price - (price * discountPercent) / 100);
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -258,8 +245,142 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
 
   if (!product) return notFound();
 
+  // Generate structured data for SEO
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": product.productName,
+    "description": product.description || `${product.productName} chính hãng tại TrangMobile. Bảo hành chính hãng, trả góp 0%, giao hàng toàn quốc.`,
+    "image": getCurrentColorImages().length > 0 ? getCurrentColorImages() : [product.thumbnail],
+    "brand": {
+      "@type": "Brand",
+      "name": "Apple"
+    },
+    "sku": product.id,
+    "offers": {
+      "@type": "Offer",
+      "url": `https://trangmobile.com/shop/product/${product.id}`,
+      "priceCurrency": "VND",
+      "price": selectedVariant ? Number(getRegionPrice() || selectedVariant.price) : Number(product.basePrice),
+      "priceValidUntil": new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
+      "availability": "https://schema.org/InStock",
+      "seller": {
+        "@type": "Organization",
+        "name": "TrangMobile"
+      },
+      "itemCondition": "https://schema.org/NewCondition"
+    },
+    "aggregateRating": product.rating ? {
+      "@type": "AggregateRating",
+      "ratingValue": product.rating.toString(),
+      "reviewCount": product.reviewCount?.toString() || "0",
+      "bestRating": "5",
+      "worstRating": "1"
+    } : undefined,
+    "review": [],
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Dung lượng",
+        "value": getStorageOptions().join(", ")
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Màu sắc",
+        "value": getColorOptions().join(", ")
+      }
+    ]
+  };
+
+  // Organization Schema
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "TrangMobile",
+    "alternateName": "Trang Mobile",
+    "url": "https://trangmobile.com",
+    "logo": "https://trangmobile.com/logo.png",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+84-385-795-791",
+      "contactType": "customer service",
+      "areaServed": "VN",
+      "availableLanguage": "Vietnamese"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "15i Trần Phú",
+      "addressLocality": "Quận 5",
+      "addressRegion": "TP.HCM",
+      "postalCode": "70000",
+      "addressCountry": "VN"
+    },
+    "sameAs": [
+      "https://facebook.com/trangmobile",
+      "https://zalo.me/84385795791"
+    ],
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        "opens": "08:00",
+        "closes": "21:00"
+      }
+    ]
+  };
+
+  // BreadcrumbList Schema
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Trang chủ",
+        "item": "https://trangmobile.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": product.category?.toLowerCase().includes("iphone") ? "iPhone" : "Sản phẩm",
+        "item": `https://trangmobile.com/${product.category?.toLowerCase().includes("iphone") ? "iphone" : "shop"}`
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": product.productName,
+        "item": `https://trangmobile.com/shop/product/${product.id}`
+      }
+    ]
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <>
+      {/* Structured Data for SEO */}
+      <Script
+        id="product-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData)
+        }}
+      />
+      <Script
+        id="organization-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(organizationSchema)
+        }}
+      />
+      <Script
+        id="breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema)
+        }}
+      />
+      
+      <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-between gap-4 mb-5 sm:mb-9">
           <Breadcrumb>
@@ -301,8 +422,9 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
               <div className="aspect-square rounded-lg overflow-hidden bg-gray-50">
                 <img
                   src={activeImage}
-                  alt={product.productName}
+                  alt={`${product.productName} ${selectedStorage} ${selectedColor} - Hình ảnh sản phẩm chính hãng tại TrangMobile`}
                   className="w-full h-full object-contain"
+                  loading="lazy"
                 />
               </div>
 
@@ -322,8 +444,9 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
                         >
                           <img
                             src={image}
-                            alt={`${product.productName} ${index + 1}`}
+                            alt={`${product.productName} ${selectedColor} - Hình ${index + 1} - TrangMobile`}
                             className="w-full h-full object-contain"
+                            loading="lazy"
                           />
                         </button>
                       </CarouselItem>
@@ -502,14 +625,14 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
 
           {/* Product Description */}
           {product.description && (
-            <div className="border-t border-gray-200 p-6 lg:p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+            <section className="border-t border-gray-200 p-6 lg:p-8">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
                 Mô tả sản phẩm
-              </h3>
+              </h2>
               <div className="prose max-w-none text-gray-700">
                 <p>{product.description}</p>
               </div>
-            </div>
+            </section>
           )}
 
           {/* Technical Specifications - Only for iPhone products */}
@@ -532,6 +655,7 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
         )}
       </div>
     </div>
+    </>
   );
 };
 
@@ -554,16 +678,16 @@ const TechnicalSpecs: React.FC<{ productName: string }> = ({ productName }) => {
   }
 
   return (
-    <div className="border-t border-gray-200 p-6 lg:p-8">
+    <section className="border-t border-gray-200 p-6 lg:p-8" aria-label="Thông số kỹ thuật">
       <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl p-6 border border-blue-200">
         <div className="flex items-center gap-3 mb-6">
           <div className="p-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg">
             <Smartphone className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h3 className="text-xl font-bold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
+            <h2 className="text-xl font-bold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
               📱 Thông Số Kỹ Thuật
-            </h3>
+            </h2>
             <p className="text-sm text-gray-600">
               {matchedModel} - Dữ liệu từ cơ sở dữ liệu kỹ thuật chính thức
             </p>
@@ -575,7 +699,7 @@ const TechnicalSpecs: React.FC<{ productName: string }> = ({ productName }) => {
           <div className="space-y-4">
             <div className="flex items-center gap-2 mb-3">
               <Monitor className="w-5 h-5 text-blue-600" />
-              <h4 className="font-semibold text-blue-800">Màn Hình</h4>
+              <h3 className="font-semibold text-blue-800">Màn Hình</h3>
             </div>
             <div className="space-y-2 pl-7">
               <div className="flex justify-between">
@@ -605,7 +729,7 @@ const TechnicalSpecs: React.FC<{ productName: string }> = ({ productName }) => {
           <div className="space-y-4">
             <div className="flex items-center gap-2 mb-3">
               <Camera className="w-5 h-5 text-green-600" />
-              <h4 className="font-semibold text-green-800">Camera</h4>
+              <h3 className="font-semibold text-green-800">Camera</h3>
             </div>
             <div className="space-y-2 pl-7">
               <div className="flex justify-between">
@@ -637,7 +761,7 @@ const TechnicalSpecs: React.FC<{ productName: string }> = ({ productName }) => {
           <div className="space-y-4">
             <div className="flex items-center gap-2 mb-3">
               <Zap className="w-5 h-5 text-purple-600" />
-              <h4 className="font-semibold text-purple-800">Hiệu Năng</h4>
+              <h3 className="font-semibold text-purple-800">Hiệu Năng</h3>
             </div>
             <div className="space-y-2 pl-7">
               <div className="flex justify-between">
@@ -669,7 +793,7 @@ const TechnicalSpecs: React.FC<{ productName: string }> = ({ productName }) => {
           <div className="space-y-4">
             <div className="flex items-center gap-2 mb-3">
               <Battery className="w-5 h-5 text-orange-600" />
-              <h4 className="font-semibold text-orange-800">Thiết Kế & Pin</h4>
+              <h3 className="font-semibold text-orange-800">Thiết Kế & Pin</h3>
             </div>
             <div className="space-y-2 pl-7">
               <div className="flex justify-between">
@@ -699,7 +823,7 @@ const TechnicalSpecs: React.FC<{ productName: string }> = ({ productName }) => {
           <div className="space-y-4 md:col-span-2">
             <div className="flex items-center gap-2 mb-3">
               <Wifi className="w-5 h-5 text-cyan-600" />
-              <h4 className="font-semibold text-cyan-800">Kết Nối & Hệ Điều Hành</h4>
+              <h3 className="font-semibold text-cyan-800">Kết Nối & Hệ Điều Hành</h3>
             </div>
             <div className="grid grid-cols-2 gap-4 pl-7">
               <div className="space-y-2">
@@ -738,7 +862,7 @@ const TechnicalSpecs: React.FC<{ productName: string }> = ({ productName }) => {
             <div className="bg-white/60 rounded-lg p-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <h5 className="font-semibold text-gray-800 mb-2">Màu sắc có sẵn:</h5>
+                  <h4 className="font-semibold text-gray-800 mb-2">Màu sắc có sẵn:</h4>
                   <div className="flex flex-wrap gap-2">
                     {specs.design.colors.map((color, index) => (
                       <span key={index} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">
@@ -748,7 +872,7 @@ const TechnicalSpecs: React.FC<{ productName: string }> = ({ productName }) => {
                   </div>
                 </div>
                 <div>
-                  <h5 className="font-semibold text-gray-800 mb-2">Tùy chọn dung lượng:</h5>
+                  <h4 className="font-semibold text-gray-800 mb-2">Tùy chọn dung lượng:</h4>
                   <div className="flex flex-wrap gap-2">
                     {specs.other.storage.map((storage, index) => (
                       <span key={index} className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
@@ -774,7 +898,7 @@ const TechnicalSpecs: React.FC<{ productName: string }> = ({ productName }) => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
