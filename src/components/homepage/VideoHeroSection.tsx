@@ -20,7 +20,6 @@ const VideoHeroSection = () => {
           muted
           playsInline
           poster="/images/iphone14.png"
-          fetchPriority="high"
           preload="metadata"
           className="absolute inset-0 w-full h-full object-cover object-center opacity-50"
         />

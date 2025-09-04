@@ -9,8 +9,7 @@ const nextConfig = {
   // Enhanced Package optimizations
   experimental: {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons', 'framer-motion'],
-    webVitalsAttribution: ['CLS', 'LCP', 'FCP', 'FID', 'TTFB', 'INP'],
-    optimizeCss: process.env.NODE_ENV === "production",
+    webVitalsAttribution: ['CLS', 'LCP', 'FCP', 'FID', 'TTFB', 'INP']
   },
   
   images: {
