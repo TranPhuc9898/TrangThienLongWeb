@@ -48,6 +48,11 @@
   }
 }
 
+/* Lightweight performance-optimized animations */
+.animate-fade-in {
+  animation: fadeIn 1s ease-out;
+}
+
 @keyframes slideInRight {
   from {
     opacity: 0;

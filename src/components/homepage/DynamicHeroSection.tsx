@@ -45,14 +45,14 @@ const DynamicHeroSection = () => {
             {
               id: "fallback-1",
               title: "Back to School Banner",
-              imageUrl: "/images/banner/backtoschool-02.png",
+              imageUrl: "/images/banner/backtoschool-02.webp",
               order: 1,
               active: true,
             },
             {
               id: "fallback-2",
               title: "Trả góp toàn quốc Banner",
-              imageUrl: "/images/banner/Trả góp toàn quốc-02.png",
+              imageUrl: "/images/banner/Trả góp toàn quốc-02.webp",
               order: 2,
               active: true,
             },
@@ -65,14 +65,14 @@ const DynamicHeroSection = () => {
           {
             id: "fallback-1",
             title: "Back to School Banner",
-            imageUrl: "/images/banner/backtoschool-02.png",
+            imageUrl: "/images/banner/backtoschool-02.webp",
             order: 1,
             active: true,
           },
           {
             id: "fallback-2",
             title: "Trả góp toàn quốc Banner",
-            imageUrl: "/images/banner/Trả góp toàn quốc-02.png",
+            imageUrl: "/images/banner/Trả góp toàn quốc-02.webp",
             order: 2,
             active: true,
           },
@@ -85,14 +85,14 @@ const DynamicHeroSection = () => {
         {
           id: "fallback-1",
           title: "Back to School Banner",
-          imageUrl: "/images/banner/backtoschool-02.png",
+          imageUrl: "/images/banner/backtoschool-02.webp",
           order: 1,
           active: true,
         },
         {
           id: "fallback-2",
           title: "Trả góp toàn quốc Banner",
-          imageUrl: "/images/banner/Trả góp toàn quốc-02.png",
+          imageUrl: "/images/banner/Trả góp toàn quốc-02.webp",
           order: 2,
           active: true,
         },
@@ -169,23 +169,30 @@ const DynamicHeroSection = () => {
             <div
               className="relative w-full h-[260px] sm:h-[360px] lg:h-[460px] bg-white"
               data-banner-slide={banner.id}
+              style={{
+                width: '100%',
+                height: 'auto',
+                aspectRatio: '16/9'
+              }}
             >
               {banner.link ? (
                 <a href={banner.link} target="_blank" rel="noopener noreferrer">
                   <Image
                     src={banner.imageUrl}
                     alt={banner.title}
-                    fill
-                    priority
-                    unoptimized={banner.imageUrl.startsWith("/uploads")}
-                    className="object-contain object-center select-none pointer-events-none"
-                    sizes="100vw"
+                    width={1920}
+                    height={1080}
+                    priority={banner.order <= 1}
+                    className="object-contain object-center select-none pointer-events-none w-full h-full"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 1920px"
+                    quality={85}
+                    placeholder="blur"
+                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
                     onError={(e) => {
                       console.error(
                         "🖼️ Banner image failed to load:",
                         banner.imageUrl
                       );
-                      // Hide broken image container
                       const target = e.target as HTMLImageElement;
                       const container = target.closest("[data-banner-slide]");
                       if (container) {
@@ -198,17 +205,19 @@ const DynamicHeroSection = () => {
                 <Image
                   src={banner.imageUrl}
                   alt={banner.title}
-                  fill
-                  priority
-                  unoptimized={banner.imageUrl.startsWith("/uploads")}
-                  className="object-contain object-center select-none pointer-events-none"
-                  sizes="100vw"
+                  width={1920}
+                  height={1080}
+                  priority={banner.order <= 1}
+                  className="object-contain object-center select-none pointer-events-none w-full h-full"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 1920px"
+                  quality={85}
+                  placeholder="blur"
+                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
                   onError={(e) => {
                     console.error(
                       "🖼️ Banner image failed to load:",
                       banner.imageUrl
                     );
-                    // Hide broken image container
                     const target = e.target as HTMLImageElement;
                     const container = target.closest("[data-banner-slide]");
                     if (container) {

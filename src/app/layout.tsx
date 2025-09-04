@@ -95,20 +95,24 @@ export default function RootLayout({
   return (
     <html lang="vi">
       <head>
-        {/* Preload critical resources */}
+        {/* Critical performance optimizations */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="preload" href="/_next/static/css/app/layout.css" as="style" />
-        <link rel="preload" href="/styles/globals.css" as="style" />
-        <link rel="preload" href="/styles/fonts/Satoshi-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
-        <link rel="preload" href="/styles/fonts/Satoshi-Medium.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
-        <link rel="preload" href="/styles/fonts/Satoshi-Bold.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+        
+        {/* Only preload critical above-fold images */}
         <link rel="preload" href="/images/ttl.png" as="image" />
-        <link rel="preload" href="/images/iphone14.png" as="image" />
-        <link rel="preload" href="/images/home-bg-2.png" as="image" />
-        <link rel="preload" href="/mp4/large_2x.mp4" as="video" />
-        <link rel="preload" href="/images/banner/backtoschool-02.png" as="image" />
-        <link rel="preload" href="/images/banner/Trả góp toàn quốc-02.png" as="image" />
+        <link rel="preload" href="/images/banner/backtoschool-02.webp" as="image" type="image/webp" />
+        
+        {/* Critical CSS inline to prevent render blocking */}
+        <style dangerouslySetInnerHTML={{
+          __html: `
+            .loading-skeleton { width: 100%; background-color: #f3f4f6; }
+            .banner-container { width: 100%; height: 300px; background: #f9fafb; }
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+          `
+        }} />
         
         <link rel="icon" href="/images/ttl.png" type="image/png" />
         <link rel="shortcut icon" href="/images/ttl.png" type="image/png" />

@@ -6,15 +6,23 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === "production",
   },
   
-  // Enhanced Package optimizations
+  // Enhanced Package optimizations - Aggressive bundle splitting
   experimental: {
-    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons', 'framer-motion'],
-    webVitalsAttribution: ['CLS', 'LCP', 'FCP', 'FID', 'TTFB', 'INP']
+    optimizePackageImports: [
+      'lucide-react', 
+      '@radix-ui/react-icons', 
+      'framer-motion',
+      'swiper',
+      '@reduxjs/toolkit',
+      'embla-carousel-react'
+    ],
+    webVitalsAttribution: ['CLS', 'LCP', 'FCP', 'FID', 'TTFB', 'INP'],
+    serverComponentsExternalPackages: ['sharp'],
   },
   
   images: {
     formats: ["image/webp", "image/avif"],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 31536000, // 1 year cache
     dangerouslyAllowSVG: true,
