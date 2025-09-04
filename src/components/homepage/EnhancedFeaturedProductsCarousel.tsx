@@ -128,9 +128,7 @@ const EnhancedFeaturedProductsCarousel: React.FC<
                           ? product.thumbnail 
                           : "/images/iphone14.png"
                       }
-                      alt={
-                        product.productName || product.title || "Product Image"
-                      }
+                      alt={`${product.productName || product.title} - ${product.condition || "Mới"} - ${product.storage || ""} ${product.color || ""}`.trim()}
                       fill
                       className="object-contain group-hover:scale-110 transition-transform duration-500"
                     />

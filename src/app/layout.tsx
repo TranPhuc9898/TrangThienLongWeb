@@ -15,6 +15,7 @@ import { AdminEditProvider } from "@/contexts/AdminEditContext";
 import ToastProvider from "@/components/ui/toast";
 import { FlyToCartProvider } from "@/components/ui/FlyToCart";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
+import WebVitalsReporter from "@/components/WebVitalsReporter";
 
 export const metadata: Metadata = {
   title:
@@ -135,6 +136,7 @@ export default function RootLayout({
           <Providers>
             <FlyToCartProvider>
               <ToastProvider>
+                <WebVitalsReporter />
                 <CleanShopDunkNavbar />
                 <main className="pt-14">{children}</main>
                 <Footer />
