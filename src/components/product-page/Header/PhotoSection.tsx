@@ -41,15 +41,11 @@ const PhotoSection = ({ data, selectedVariant }: PhotoSectionProps) => {
       });
     }
     
-    // Add variant images from colors if available
-    if (data.colors && data.colors.length > 0) {
-      data.colors.forEach(colorData => {
-        if (Array.isArray(colorData.images)) {
-          (colorData.images as string[]).forEach(img => {
-            if (!images.includes(img)) {
-              images.push(img);
-            }
-          });
+    // Add images from variants if available
+    if (data.variants && data.variants.length > 0) {
+      data.variants.forEach(variant => {
+        if (variant.image && !images.includes(variant.image)) {
+          images.push(variant.image);
         }
       });
     }

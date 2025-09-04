@@ -95,8 +95,8 @@ export function extractProductImages(product: any): Array<{
   const images: Array<{ url: string; title: string; caption?: string }> = [];
   
   // Main product images
-  if (product.images && Array.isArray(product.images)) {
-    product.images.forEach((img: string, index: number) => {
+  if (product.gallery && Array.isArray(product.gallery)) {
+    product.gallery.forEach((img: string, index: number) => {
       images.push({
         url: getAbsoluteImageUrl(img),
         title: `${product.productName || product.name} - Hình ${index + 1}`,

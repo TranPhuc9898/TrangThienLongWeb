@@ -83,7 +83,7 @@ function createProductItem(product: any, variant: any, baseUrl: string): string 
     ? `${product.productName || product.name} ${variant.storage}`
     : (product.productName || product.name);
   const price = variant ? variant.price : product.price;
-  const imageUrl = getAbsoluteImageUrl(product.images?.[0]);
+  const imageUrl = getAbsoluteImageUrl(product.gallery?.[0] || product.thumbnail);
   
   let item = '    <item>\n';
   
@@ -107,8 +107,8 @@ function createProductItem(product: any, variant: any, baseUrl: string): string 
   item += `      <g:product_type>${getCategoryType(product.category)}</g:product_type>\n`;
   
   // Additional images
-  if (product.images && product.images.length > 1) {
-    product.images.slice(1, 10).forEach((img: string) => {
+  if (product.gallery && product.gallery.length > 1) {
+    product.gallery.slice(1, 10).forEach((img: string) => {
       item += `      <g:additional_image_link>${getAbsoluteImageUrl(img)}</g:additional_image_link>\n`;
     });
   }
