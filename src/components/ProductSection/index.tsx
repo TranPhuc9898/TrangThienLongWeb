@@ -1,9 +1,20 @@
 /** @format */
 "use client";
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import Image from "next/image";
-import FeaturedProducts from "./components/FeaturedProducts";
-import ProductCarousel from "./components/ProductCarousel";
+import dynamic from "next/dynamic";
+
+// Lazy load heavy components
+const FeaturedProducts = dynamic(() => import("./components/FeaturedProducts"), {
+  loading: () => <div className="h-96 animate-pulse bg-gray-100 rounded-lg" />,
+  ssr: false
+});
+
+const ProductCarousel = dynamic(() => import("./components/ProductCarousel"), {
+  loading: () => <div className="h-64 animate-pulse bg-gray-100 rounded-lg" />,
+  ssr: false
+});
+
 // Removed mock data imports
 
 interface ProductSectionProps {
