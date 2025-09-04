@@ -34,10 +34,11 @@ import EditButton from "@/components/admin/EditButton";
 import { Product } from "@/types/product.types";
 import { Review } from "@/types/review.types";
 
-// Fetch products from API in client component
+// Fetch products from API in client component with caching
 function getProducts() {
   return fetch(`/api/products`, {
-    cache: "no-store",
+    cache: "force-cache",
+    next: { revalidate: 3600 }, // Revalidate every hour
   })
     .then((response) => {
       if (!response.ok) {

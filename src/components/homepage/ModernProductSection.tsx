@@ -55,6 +55,8 @@ export default function ModernProductSection({
                     src={product.thumbnail || product.gallery?.[0] || "/images/placeholder.jpg"}
                     alt={product.productName || product.title || "Product"}
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                    loading="lazy"
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>

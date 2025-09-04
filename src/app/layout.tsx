@@ -80,6 +80,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
   themeColor: "#000000",
 };
 
@@ -91,6 +95,21 @@ export default function RootLayout({
   return (
     <html lang="vi">
       <head>
+        {/* Preload critical resources */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preload" href="/_next/static/css/app/layout.css" as="style" />
+        <link rel="preload" href="/styles/globals.css" as="style" />
+        <link rel="preload" href="/styles/fonts/Satoshi-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="/styles/fonts/Satoshi-Medium.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="/styles/fonts/Satoshi-Bold.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="/images/ttl.png" as="image" />
+        <link rel="preload" href="/images/iphone14.png" as="image" />
+        <link rel="preload" href="/images/home-bg-2.png" as="image" />
+        <link rel="preload" href="/mp4/large_2x.mp4" as="video" />
+        <link rel="preload" href="/images/banner/backtoschool-02.png" as="image" />
+        <link rel="preload" href="/images/banner/Trả góp toàn quốc-02.png" as="image" />
+        
         <link rel="icon" href="/images/ttl.png" type="image/png" />
         <link rel="shortcut icon" href="/images/ttl.png" type="image/png" />
         <link rel="apple-touch-icon" href="/images/ttl.png" />
