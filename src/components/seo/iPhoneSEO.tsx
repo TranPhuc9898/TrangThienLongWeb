@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     description:
       "Khám phá bộ sưu tập iPhone mới nhất với giá cạnh tranh nhất. Từ iPhone 15 Pro Max đến iPhone 13, đầy đủ màu sắc và dung lượng.",
     type: "website",
-    url: "https://thientranglong.vn/iphone",
+    url: "https://trangmobile.com/iphone",
     images: [
       {
         url: "/images/iphone-collection-seo.jpg",
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://thientranglong.vn/iphone",
+    canonical: "https://trangmobile.com/iphone",
   },
   other: {
     "geo.region": "VN",
@@ -67,14 +67,14 @@ const iPhoneStructuredData = {
   name: "iPhone Collection - Trang Thiên Long Mobile",
   description:
     "Bộ sưu tập iPhone chính hãng đầy đủ từ iPhone 13 đến iPhone 15 Pro Max",
-  url: "https://thientranglong.vn/iphone",
+  url: "https://trangmobile.com/iphone",
   mainEntity: {
     "@type": "ItemList",
     numberOfItems: "20+",
     itemListElement: [
       {
         "@type": "Product",
-        "@id": "https://thientranglong.vn/iphone/iphone-15-pro-max",
+        "@id": "https://trangmobile.com/iphone/iphone-15-pro-max",
         name: "iPhone 15 Pro Max",
         category: "Smartphone",
         brand: {
@@ -98,21 +98,21 @@ const iPhoneStructuredData = {
         "@type": "ListItem",
         position: 1,
         name: "Trang chủ",
-        item: "https://thientranglong.vn",
+        item: "https://trangmobile.com",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "iPhone",
-        item: "https://thientranglong.vn/iphone",
+        item: "https://trangmobile.com/iphone",
       },
     ],
   },
   provider: {
     "@type": "Organization",
     name: "Trang Thiên Long Mobile",
-    url: "https://thientranglong.vn",
-    logo: "https://thientranglong.vn/images/ttl-logo.png",
+    url: "https://trangmobile.com",
+    logo: "https://trangmobile.com/images/ttl-logo.png",
   },
 };
 

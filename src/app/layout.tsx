@@ -14,6 +14,7 @@ import {
 import { AdminEditProvider } from "@/contexts/AdminEditContext";
 import ToastProvider from "@/components/ui/toast";
 import { FlyToCartProvider } from "@/components/ui/FlyToCart";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 
 export const metadata: Metadata = {
   title:
@@ -41,7 +42,7 @@ export const metadata: Metadata = {
     title: "Trang Thiên Long Mobile - Chuyên Apple Products",
     description:
       "Điện thoại iPhone, iPad, Apple Watch chính hãng với giá cạnh tranh nhất thị trường",
-    url: "https://thientranglong.vn",
+    url: "https://trangmobile.com",
     siteName: "Trang Thiên Long Mobile",
     images: [
       {
@@ -72,7 +73,7 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://thientranglong.vn",
+    canonical: "https://trangmobile.com",
   },
 };
 
@@ -91,6 +92,12 @@ export default function RootLayout({
         <link rel="icon" href="/images/ttl.png" type="image/png" />
         <link rel="shortcut icon" href="/images/ttl.png" type="image/png" />
         <link rel="apple-touch-icon" href="/images/ttl.png" />
+        
+        {/* Google Analytics */}
+        <GoogleAnalytics measurementId="G-YK6M5RXB08" />
+        
+        {/* Google Search Console Verification */}
+        <meta name="google-site-verification" content="oiyqMkeepUIMruDLqqFG9qd3jcmvkJs5OXu70Q3YN5c" />
       </head>
       <body className={inter.className}>
         <OrganizationSchema />

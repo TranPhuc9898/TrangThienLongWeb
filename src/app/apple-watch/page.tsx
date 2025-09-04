@@ -23,11 +23,11 @@ export const metadata: Metadata = {
     title: "Apple Watch Chính Hãng - Series 9, Ultra 2, SE | Trang Thiên Long",
     description:
       "Apple Watch với tính năng sức khỏe tiên tiến, thiết kế đẹp mắt, giá cạnh tranh",
-    url: "https://thientranglong.vn/apple-watch",
+    url: "https://trangmobile.com/apple-watch",
     images: ["/images/iphone14.png"],
   },
   alternates: {
-    canonical: "https://thientranglong.vn/apple-watch",
+    canonical: "https://trangmobile.com/apple-watch",
   },
 };
 

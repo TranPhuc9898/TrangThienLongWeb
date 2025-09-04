@@ -67,7 +67,7 @@ export async function generateMetadata({
       } chính hãng với giá ${formattedPrice}đ. ${
         product.condition || "99%"
       } chất lượng cao.`,
-      url: `https://thientranglong.vn/${product.slug || product.id}`,
+      url: `https://trangmobile.com/${product.slug || product.id}`,
       images: [
         {
           url: product.thumbnail || "/images/iphone14.png",
@@ -92,7 +92,7 @@ export async function generateMetadata({
       follow: true,
     },
     alternates: {
-      canonical: `https://thientranglong.vn/${product.slug || product.id}`,
+      canonical: `https://trangmobile.com/${product.slug || product.id}`,
     },
     other: {
       "product:price:amount": formattedPrice,

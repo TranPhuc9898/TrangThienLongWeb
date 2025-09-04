@@ -22,7 +22,7 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items }) => {
       "@type": "ListItem",
       position: index + 1,
       name: item.name,
-      item: `https://thientranglong.vn${item.href}`,
+      item: `https://trangmobile.com${item.href}`,
     })),
   };
 
@@ -123,7 +123,7 @@ export const ProductSchema: React.FC<ProductSchemaProps> = ({ product }) => {
     seller: {
       "@type": "Organization",
       name: "Trang Thiên Long Mobile",
-      url: "https://thientranglong.vn",
+      url: "https://trangmobile.com",
     },
     priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
       .toISOString()
@@ -171,7 +171,7 @@ export const ProductSchema: React.FC<ProductSchemaProps> = ({ product }) => {
           seller: {
             "@type": "Organization",
             name: "Trang Thiên Long Mobile",
-            url: "https://thientranglong.vn",
+            url: "https://trangmobile.com",
           },
           priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
             .toISOString()
@@ -208,7 +208,7 @@ export const ProductSchema: React.FC<ProductSchemaProps> = ({ product }) => {
     image: [
       product.thumbnail || "/images/iphone14.png",
       ...(product.gallery || []).map(
-        (img) => `https://thientranglong.vn${img}`
+        (img) => `https://trangmobile.com${img}`
       ),
     ].filter(Boolean),
     offers:
@@ -267,8 +267,8 @@ export const OrganizationSchema: React.FC = () => {
     "@type": "ElectronicsStore",
     name: "Trang Thiên Long Mobile",
     alternateName: "TTL Mobile",
-    url: "https://thientranglong.vn",
-    logo: "https://thientranglong.vn/images/ttl.png",
+    url: "https://trangmobile.com",
+    logo: "https://trangmobile.com/images/ttl.png",
     description:
       "Cửa hàng điện thoại iPhone, iPad, Apple Watch, AirPods, MacBook chính hãng với giá tốt nhất Việt Nam",
     address: {
@@ -276,11 +276,11 @@ export const OrganizationSchema: React.FC = () => {
       addressCountry: "VN",
       addressLocality: "Hồ Chí Minh",
       addressRegion: "TP.HCM",
-      streetAddress: "123 Nguyễn Văn Cừ, Quận 1",
+      streetAddress: "456 Lý Thường Kiệt, Quận 10",
       postalCode: "70000",
     },
-    telephone: "+84-xxx-xxx-xxx",
-    email: "info@thientranglong.vn",
+    telephone: "+84-90-123-4567",
+    email: "contact@trangmobile.com",
     sameAs: [
       "https://facebook.com/thientranglong",
       "https://instagram.com/thientranglong",
@@ -330,13 +330,13 @@ export const LocalBusinessSchema: React.FC = () => {
     "@context": "https://schema.org",
     "@type": "ElectronicsStore",
     name: "Trang Thiên Long Mobile",
-    "@id": "https://thientranglong.vn/#business",
-    url: "https://thientranglong.vn",
-    telephone: "+84-xxx-xxx-xxx",
+    "@id": "https://trangmobile.com/#business",
+    url: "https://trangmobile.com",
+    telephone: "+84-90-123-4567",
     address: {
       "@type": "PostalAddress",
-      streetAddress: "123 Nguyễn Văn Cừ",
-      addressLocality: "Quận 1",
+      streetAddress: "456 Lý Thường Kiệt",
+      addressLocality: "Quận 10",
       addressRegion: "TP.HCM",
       postalCode: "70000",
       addressCountry: "VN",
@@ -422,7 +422,7 @@ export const ImageSchema: React.FC<ImageSchemaProps> = ({
     "@type": "ImageObject",
     url: img.url.startsWith("http")
       ? img.url
-      : `https://thientranglong.vn${img.url}`,
+      : `https://trangmobile.com${img.url}`,
     name: img.alt,
     caption: img.caption || img.alt,
     description: img.caption || img.alt,
@@ -430,12 +430,12 @@ export const ImageSchema: React.FC<ImageSchemaProps> = ({
     height: img.height || 630,
     contentUrl: img.url.startsWith("http")
       ? img.url
-      : `https://thientranglong.vn${img.url}`,
+      : `https://trangmobile.com${img.url}`,
     thumbnail: {
       "@type": "ImageObject",
       url: img.url.startsWith("http")
         ? img.url
-        : `https://thientranglong.vn${img.url}`,
+        : `https://trangmobile.com${img.url}`,
       width: 300,
       height: 200,
     },
@@ -451,7 +451,7 @@ export const ImageSchema: React.FC<ImageSchemaProps> = ({
           "@type": "ImageObject",
           url: primaryImage.url.startsWith("http")
             ? primaryImage.url
-            : `https://thientranglong.vn${primaryImage.url}`,
+            : `https://trangmobile.com${primaryImage.url}`,
           name: primaryImage.alt,
           caption: primaryImage.caption || primaryImage.alt,
           width: primaryImage.width || 1200,
@@ -462,7 +462,7 @@ export const ImageSchema: React.FC<ImageSchemaProps> = ({
     provider: {
       "@type": "Organization",
       name: "Trang Thiên Long Mobile",
-      url: "https://thientranglong.vn",
+      url: "https://trangmobile.com",
     },
   };
 
@@ -481,7 +481,7 @@ export const WebsiteSchema: React.FC = () => {
     "@type": "WebSite",
     name: "Trang Thiên Long Mobile",
     alternateName: "TTL Mobile",
-    url: "https://thientranglong.vn",
+    url: "https://trangmobile.com",
     description:
       "Website bán iPhone, iPad, Apple Watch, AirPods, MacBook chính hãng giá rẻ nhất Việt Nam",
     publisher: {
@@ -490,7 +490,7 @@ export const WebsiteSchema: React.FC = () => {
     },
     potentialAction: {
       "@type": "SearchAction",
-      target: "https://thientranglong.vn/search?q={search_term_string}",
+      target: "https://trangmobile.com/search?q={search_term_string}",
       "query-input": "required name=search_term_string",
     },
     sameAs: [
@@ -516,7 +516,7 @@ export const ProductCollectionSchema: React.FC<{ products: Product[] }> = ({
     "@type": "CollectionPage",
     name: "iPhone Chính Hãng Giá Rẻ",
     description: "Bộ sưu tập iPhone chính hãng với giá tốt nhất thị trường",
-    url: "https://thientranglong.vn/iphone",
+    url: "https://trangmobile.com/iphone",
     mainEntity: {
       "@type": "ItemList",
       numberOfItems: products.length,
@@ -525,7 +525,7 @@ export const ProductCollectionSchema: React.FC<{ products: Product[] }> = ({
         position: index + 1,
         name: product.productName || product.title,
         description: product.description,
-        image: `https://thientranglong.vn${
+        image: `https://trangmobile.com${
           (product.gallery && product.gallery[0]) || "/images/iphone14.png"
         }`,
         offers: {

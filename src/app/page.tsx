@@ -124,45 +124,7 @@ export default function Home() {
   return (
     <>
       <FloatingToolbar />
-      {/* SEO Metadata */}
-      <Head>
-        <title>
-          Trang Thiên Long Mobile - iPhone, iPad, MacBook Chính Hãng Giá Tốt
-          Nhất
-        </title>
-        <meta
-          name="description"
-          content="⭐ Cửa hàng Apple uy tín hàng đầu Việt Nam ⭐ iPhone 15, iPad, MacBook, Apple Watch chính hãng ⭐ Giá tốt nhất ⭐ Bảo hành 12 tháng ⭐ Trả góp 0% ⭐ Giao hàng toàn quốc"
-        />
-        <meta
-          name="keywords"
-          content="iphone giá rẻ, ipad chính hãng, apple watch vietnam, airpods pro, macbook air m2, điện thoại cũ like new, trang thiên long mobile"
-        />
-        <meta
-          property="og:title"
-          content="Trang Thiên Long Mobile - Chuyên Apple Products"
-        />
-        <meta
-          property="og:description"
-          content="Điện thoại iPhone, iPad, Apple Watch chính hãng với giá cạnh tranh nhất thị trường. Bảo hành 12 tháng, trả góp 0%, giao hàng tận nơi."
-        />
-        <meta property="og:url" content="https://thientranglong.vn" />
-        <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="Trang Thiên Long Mobile" />
-        <meta property="og:image" content="/images/ttl.png" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Trang Thiên Long Mobile" />
-        <meta
-          name="twitter:description"
-          content="Apple Products chính hãng giá tốt nhất Việt Nam"
-        />
-        <meta name="twitter:image" content="/images/ttl.png" />
-        <link rel="canonical" href="https://thientranglong.vn" />
-        <meta name="robots" content="index, follow" />
-        <meta name="geo.region" content="VN" />
-        <meta name="geo.placename" content="Ho Chi Minh City" />
-        <meta name="geo.position" content="10.762622,106.660172" />
-      </Head>
+      {/* Removed duplicate Head component - SEO handled in layout.tsx and metadata export */}
 
       {/* MOBILE: Apple Thế Giới section first */}
       <div className="block lg:hidden">

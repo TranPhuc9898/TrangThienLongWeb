@@ -1,30 +1,61 @@
 User-agent: *
 Allow: /
+
+# Block admin and private areas
 Disallow: /admin-admin/
+Disallow: /admin/
 Disallow: /api/
 Disallow: /_next/
 Disallow: /cart
 Disallow: /thanh-toan
 
-# Block admin and private areas
-Disallow: /admin/
-Disallow: /admin-admin/
-
-# Block search and filter pages
+# Block search and filter pages to prevent duplicate content
 Disallow: /*?*
 Disallow: /*&*
-
-# Block duplicate content
 Disallow: /*.json$
 Disallow: /search
 
-# Allow important resources
+# IMPORTANT: Allow Google Shopping crawlers to access images
 Allow: /images/
 Allow: /uploads/
 Allow: /favicon.ico
 
-# Sitemap
-Sitemap: https://thientranglong.vn/sitemap.xml
+# Allow Next.js optimized images for Google Shopping Ads
+Allow: /_next/image*
+Allow: /_next/static/
 
-# Crawl delay for better performance
+# Allow important product pages
+Allow: /product/
+Allow: /iphone/
+Allow: /ipad/
+Allow: /apple-watch/
+Allow: /airpods/
+Allow: /macbook/
+
+# Special rules for Google Shopping Bot (Googlebot-Image)
+User-agent: Googlebot-Image
+Allow: /
+Allow: /images/
+Allow: /uploads/
+Allow: /_next/image*
+Allow: /_next/static/
+Crawl-delay: 0.5
+
+# Special rules for Google Shopping crawlers
+User-agent: Googlebot
+Allow: /
+Allow: /images/
+Allow: /uploads/
+Allow: /_next/image*
+Allow: /product/
+Crawl-delay: 0.5
+
+# Sitemaps for better discovery
+Sitemap: https://thientranglong.vn/sitemap.xml
+Sitemap: https://thientranglong.vn/image-sitemap.xml
+
+# General crawl delay for other bots
 Crawl-delay: 1
+
+# Host directive for canonical domain
+Host: https://thientranglong.vn

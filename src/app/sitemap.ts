@@ -22,7 +22,7 @@ async function getProductsForSitemap() {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://thientranglong.vn";
+  const baseUrl = "https://trangmobile.com";
 
   // Fetch real products from database
   const allProducts = await getProductsForSitemap();
