@@ -52,21 +52,21 @@ export default function ModernProductSection({
               <Link href={`/shop/product/${product.slug}`}>
                 <div className="relative aspect-square overflow-hidden">
                   <Image
-                    src={product.images?.[0] || "/images/placeholder.jpg"}
-                    alt={product.name}
+                    src={product.thumbnail || product.gallery?.[0] || "/images/placeholder.jpg"}
+                    alt={product.productName || product.title || "Product"}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
                 <div className="p-4">
                   <h3 className="font-semibold text-lg mb-2 line-clamp-2">
-                    {product.name}
+                    {product.productName || product.title}
                   </h3>
                   <div className="flex items-center justify-between">
                     <div className="text-xl font-bold text-apple-blue">
-                      {formatPrice(product.price)}
+                      {formatPrice(product.basePrice || product.price || 0)}
                     </div>
-                    {product.originalPrice && product.originalPrice > product.price && (
+                    {product.originalPrice && product.originalPrice > (product.basePrice || product.price || 0) && (
                       <div className="text-sm text-gray-500 line-through">
                         {formatPrice(product.originalPrice)}
                       </div>

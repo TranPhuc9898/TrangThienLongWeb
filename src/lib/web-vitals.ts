@@ -1,24 +1,24 @@
-import { getCLS, getFID, getFCP, getLCP, getTTFB } from 'web-vitals';
+import { onCLS, onINP, onFCP, onLCP, onTTFB } from 'web-vitals';
 
 export function initWebVitals() {
   if (typeof window !== 'undefined') {
-    getCLS((metric) => {
+    onCLS((metric) => {
       console.log('CLS:', metric);
     });
 
-    getFID((metric) => {
-      console.log('FID:', metric);
+    onINP((metric) => {
+      console.log('INP:', metric);
     });
 
-    getFCP((metric) => {
+    onFCP((metric) => {
       console.log('FCP:', metric);
     });
 
-    getLCP((metric) => {
+    onLCP((metric) => {
       console.log('LCP:', metric);
     });
 
-    getTTFB((metric) => {
+    onTTFB((metric) => {
       console.log('TTFB:', metric);
     });
   }

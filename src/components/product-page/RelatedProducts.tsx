@@ -95,16 +95,16 @@ export default function RelatedProducts({
                 <div className="aspect-square relative overflow-hidden bg-gray-50 rounded-t-lg">
                   <Image
                     src={product.thumbnail || "/placeholder.jpg"}
-                    alt={`${product.productName || product.title} - ${product.condition || ""} - ${product.storage || ""} ${product.color || ""}`.trim()}
+                    alt={`${product.productName || product.title} - ${product.condition || ""}`.trim()}
                     fill
                     className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
                     sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                     loading="lazy"
                   />
                   
-                  {product.discount && product.discount > 0 && (
+                  {product.discount && (
                     <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
-                      -{product.discount}%
+                      {product.discount}
                     </span>
                   )}
                 </div>
@@ -115,17 +115,18 @@ export default function RelatedProducts({
                     {product.productName || product.title}
                   </h3>
 
-                  {(product.storage || product.color) && (
+                  {/* Display variant info if available */}
+                  {product.variants && product.variants.length > 0 && (
                     <p className="text-xs text-gray-600 mb-2">
-                      {product.storage} {product.color && `• ${product.color}`}
+                      {product.variants.length} phiên bản
                     </p>
                   )}
 
                   <div itemProp="offers" itemScope itemType="https://schema.org/Offer">
                     <span className="text-lg font-bold text-red-600" itemProp="price">
-                      {formatPrice(product.price || product.currentPrice || 0)}
+                      {formatPrice(product.basePrice || product.price || 0)}
                     </span>
-                    {product.originalPrice && product.originalPrice > (product.price || 0) && (
+                    {product.originalPrice && product.originalPrice > (product.basePrice || product.price || 0) && (
                       <span className="text-xs text-gray-400 line-through ml-2">
                         {formatPrice(product.originalPrice)}
                       </span>

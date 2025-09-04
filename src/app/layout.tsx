@@ -18,6 +18,7 @@ import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import WebVitalsReporter from "@/components/WebVitalsReporter";
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://trangmobile.com'),
   title:
     "Trang Thiên Long Mobile - iPhone, iPad, MacBook Chính Hãng Giá Tốt Nhất",
   description:
