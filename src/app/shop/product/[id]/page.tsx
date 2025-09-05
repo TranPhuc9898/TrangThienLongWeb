@@ -46,6 +46,7 @@ import {
 } from "@/components/ui/carousel";
 import { useAppDispatch } from "@/lib/hooks/redux";
 import { addToCart } from "@/lib/features/carts/cartsSlice";
+import RelatedProducts from "@/components/product-page/RelatedProducts";
 
 interface ProductVariant {
   id: string;
@@ -906,6 +907,13 @@ const TechnicalSpecs: React.FC<{ productName: string }> = ({ productName }) => {
           </div>
         </div>
       </div>
+      
+      {/* Related Products Section */}
+      <RelatedProducts 
+        currentProduct={product}
+        category={product.category}
+        limit={8}
+      />
     </div>
   );
 };

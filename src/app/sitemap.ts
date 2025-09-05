@@ -1,6 +1,7 @@
 /** @format */
 
 import { MetadataRoute } from "next";
+import { blogPosts } from "@/lib/blog-data";
 
 // Fetch products from database for dynamic sitemap
 async function getProductsForSitemap() {
@@ -33,6 +34,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: product.updatedAt ? new Date(product.updatedAt) : new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.8,
+  }));
+
+  // Generate blog URLs
+  const blogUrls = blogPosts.map(post => ({
+    url: `${baseUrl}/blog/${post.slug}`,
+    lastModified: new Date(post.updatedAt),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
   }));
 
   return [
@@ -90,6 +99,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.6,
     },
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.9,
+    },
     ...productUrls,
+    ...blogUrls,
   ];
 }

@@ -1,0 +1,172 @@
+/* Performance optimizations for Core Web Vitals */
+
+/* Prevent layout shifts from fonts */
+@font-face {
+  font-family: 'Inter';
+  font-display: swap; /* Use fallback font while loading */
+  font-weight: 100 900;
+}
+
+/* Reserve space for images to prevent layout shift */
+img {
+  height: auto;
+  max-width: 100%;
+}
+
+/* Optimize animations for performance */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Prevent CLS from lazy loading */
+.skeleton-loader {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 25%,
+    #e0e0e0 50%,
+    #f0f0f0 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Mobile-first responsive utilities */
+.mobile-hidden {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .mobile-hidden {
+    display: block;
+  }
+  
+  .desktop-hidden {
+    display: none;
+  }
+}
+
+/* Optimize touch targets for mobile */
+button,
+a,
+input,
+select,
+textarea {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Prevent text size adjustment on mobile */
+html {
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Optimize scrolling performance */
+.scroll-container {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Hardware acceleration for transforms */
+.transform-gpu {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Prevent FOUC (Flash of Unstyled Content) */
+html {
+  visibility: visible;
+}
+
+/* Container queries for better responsive design */
+@container (min-width: 768px) {
+  .container-responsive {
+    padding: 2rem;
+  }
+}
+
+/* Aspect ratio boxes to prevent layout shifts */
+.aspect-square {
+  aspect-ratio: 1 / 1;
+}
+
+.aspect-video {
+  aspect-ratio: 16 / 9;
+}
+
+.aspect-product {
+  aspect-ratio: 3 / 4;
+}
+
+/* Optimize list rendering */
+.virtual-list {
+  contain: layout style;
+}
+
+/* GPU-accelerated animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Optimize mobile navigation */
+@media (max-width: 767px) {
+  /* Sticky positioning for better mobile UX */
+  .mobile-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  
+  /* Optimize mobile font sizes */
+  .text-mobile-base {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  /* Better touch scrolling */
+  .mobile-scroll-x {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  
+  .mobile-scroll-x::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

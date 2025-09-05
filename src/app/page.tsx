@@ -3,13 +3,30 @@
 "use client";
 
 import Head from "next/head";
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
+import dynamic from "next/dynamic";
 import "@/styles/swiper-custom.css";
-import ModernHeroSection from "@/components/homepage/ModernHeroSection";
-import DynamicHeroSection from "@/components/homepage/DynamicHeroSection";
-import VideoHeroSection from "@/components/homepage/VideoHeroSection";
-import EnhancedFeaturedProductsCarousel from "@/components/homepage/EnhancedFeaturedProductsCarousel";
-import ModernProductSection from "@/components/homepage/ModernProductSection";
+
+// Lazy load heavy components
+const DynamicHeroSection = dynamic(() => import("@/components/homepage/DynamicHeroSection"), {
+  loading: () => <div className="h-96 bg-gray-100 animate-pulse" />,
+  ssr: true
+});
+
+const VideoHeroSection = dynamic(() => import("@/components/homepage/VideoHeroSection"), {
+  loading: () => <div className="h-96 bg-gray-100 animate-pulse" />,
+  ssr: false // Video components usually don't need SSR
+});
+
+const EnhancedFeaturedProductsCarousel = dynamic(() => import("@/components/homepage/EnhancedFeaturedProductsCarousel"), {
+  loading: () => <div className="h-64 bg-gray-100 animate-pulse" />,
+  ssr: true
+});
+
+const ModernProductSection = dynamic(() => import("@/components/homepage/ModernProductSection"), {
+  loading: () => <div className="h-96 bg-gray-100 animate-pulse" />,
+  ssr: true
+});
 
 import FloatingToolbar from "../components/FloatingToolbar";
 import EditButton from "@/components/admin/EditButton";
@@ -126,44 +143,29 @@ export default function Home() {
       <FloatingToolbar />
       {/* Removed duplicate Head component - SEO handled in layout.tsx and metadata export */}
 
-      {/* MOBILE: Apple Thế Giới section first */}
-      <div className="block lg:hidden">
-        {/* 🎬 MOBILE: Video Hero Section with Apple World - Show first on mobile */}
-        <div className="relative">
-          <VideoHeroSection />
-          <EditButton
-            componentName="Video Hero"
-            onEdit={() => handleEditComponent("video-hero")}
-          />
-        </div>
+      {/* Hero Sections - Unified for all devices */}
+      <main role="main">
+        {/* Hidden H1 for SEO */}
+        <h1 className="sr-only">
+          Trang Thiên Long Mobile - iPhone, iPad, MacBook, Apple Watch Chính Hãng Giá Tốt Nhất Việt Nam
+        </h1>
 
-        {/* 📸 MOBILE: Banner Carousel */}
-        <DynamicHeroSection />
-      </div>
+        {/* Video Hero Section with Apple World */}
+        <section aria-labelledby="hero-video">
+          <div className="relative">
+            <VideoHeroSection />
+            <EditButton
+              componentName="Video Hero"
+              onEdit={() => handleEditComponent("video-hero")}
+            />
+          </div>
+        </section>
 
-      {/* DESKTOP: Original order */}
-      <div className="hidden lg:block">
-        {/* 🎯 DESKTOP: Modern Hero Section with 3D iPhone */}
-        <div className="relative">
-          <ModernHeroSection />
-          <EditButton
-            componentName="Modern Hero"
-            onEdit={() => handleEditComponent("modern-hero")}
-          />
-        </div>
-
-        {/* 📸 DESKTOP: Banner Carousel */}
-        <DynamicHeroSection />
-
-        {/* 🎬 DESKTOP: Video Hero Section with Apple World */}
-        <div className="relative">
-          <VideoHeroSection />
-          <EditButton
-            componentName="Video Hero"
-            onEdit={() => handleEditComponent("video-hero")}
-          />
-        </div>
-      </div>
+        {/* Banner Carousel */}
+        <section aria-labelledby="hero-carousel">
+          <DynamicHeroSection />
+        </section>
+      </main>
 
       {/* 🎠 NEW: Enhanced Carousel với ALL products */}
       <div className="relative">
