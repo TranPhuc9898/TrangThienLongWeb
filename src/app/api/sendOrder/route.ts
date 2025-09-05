@@ -28,6 +28,9 @@ export async function POST(req: NextRequest) {
     address,
     note,
     product,
+    cart,
+    totalPrice,
+    adjustedTotalPrice,
   } = body;
 
   // Kiểm tra các trường bắt buộc
@@ -37,8 +40,7 @@ export async function POST(req: NextRequest) {
     !province ||
     !district ||
     !ward ||
-    !address ||
-    !product
+    !address
   ) {
     return NextResponse.json(
       { message: "Thiếu thông tin bắt buộc" },
@@ -46,13 +48,8 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Kiểm tra các trường sản phẩm cần thiết
-  if (
-    !product.productName ||
-    product.title ||
-    !product.storage ||
-    !product.price
-  ) {
+  // Kiểm tra có sản phẩm trong giỏ hàng hoặc product đơn lẻ
+  if (!cart && !product) {
     return NextResponse.json(
       { message: "Thiếu thông tin sản phẩm" },
       { status: 400 }
@@ -70,7 +67,24 @@ export async function POST(req: NextRequest) {
 
   // Build compact message
   let productInfo = "";
-  if (product) {
+  
+  // Xử lý giỏ hàng (nhiều sản phẩm)
+  if (cart && cart.items && cart.items.length > 0) {
+    productInfo = `\n\n*📱 THÔNG TIN SẢN PHẨM:*`;
+    cart.items.forEach((item: any, index: number) => {
+      productInfo += `\n\n*Sản phẩm ${index + 1}:*`;
+      productInfo += `\n• Tên: ${item.name}`;
+      if (item.regionCode) productInfo += `\n• Mã vùng: ${item.regionCode}`;
+      if (item.condition) productInfo += `\n• Tình trạng: ${item.condition}`;
+      if (item.storage || item.attributes?.[0]) productInfo += `\n• Dung lượng: ${item.storage || item.attributes[0]}`;
+      if (item.color || item.attributes?.[1]) productInfo += `\n• Màu sắc: ${item.color || item.attributes[1]}`;
+      productInfo += `\n• Số lượng: ${item.quantity}`;
+      productInfo += `\n• Giá: ${item.price.toLocaleString()}đ`;
+    });
+    productInfo += `\n\n*💰 TỔNG TIỀN: ${Math.round(adjustedTotalPrice || totalPrice).toLocaleString()}đ*`;
+  }
+  // Xử lý sản phẩm đơn lẻ (giữ cho tương thích)
+  else if (product) {
     productInfo = `\n\n*📱 THÔNG TIN SẢN PHẨM:*\n*Tên:* ${
       product.productName || product.title
     }\n*Dung lượng:* ${

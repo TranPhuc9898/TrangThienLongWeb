@@ -200,52 +200,61 @@ const ShopDunkProductGrid: React.FC<ShopDunkProductGridProps> = ({
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="product-card bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100"
+                className="product-card bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 group"
               >
-                {/* Discount Badge */}
-                <div className="relative">
-                  {discountPercent > 0 && (
-                    <div className="absolute top-4 left-4 z-10">
-                      <span className="bg-red-500 text-white text-sm font-bold px-3 py-1 rounded-full">
-                        -{discountPercent}%
-                      </span>
-                    </div>
-                  )}
+                {/* Clickable Area for Product Details */}
+                <Link 
+                  href={`/${product.slug || `shop/product/${product.id}`}`}
+                  className="block cursor-pointer"
+                >
+                  {/* Discount Badge */}
+                  <div className="relative">
+                    {discountPercent > 0 && (
+                      <div className="absolute top-4 left-4 z-10">
+                        <span className="bg-red-500 text-white text-sm font-bold px-3 py-1 rounded-full">
+                          -{discountPercent}%
+                        </span>
+                      </div>
+                    )}
 
-                  {/* Product Image */}
-                  <div className="relative aspect-square p-8 bg-gray-50">
-                    <Image
-                      src={
-                        product.thumbnail && !product.thumbnail.includes('blob:') && !product.thumbnail.includes('imgi146') && !product.thumbnail.includes('.newsapped.') 
-                          ? product.thumbnail 
-                          : (product.gallery?.[0] || "/images/iphone14.png")
-                      }
-                      alt={product.productName || "Product"}
-                      fill
-                      className="object-contain hover:scale-105 transition-transform duration-300"
-                    />
+                    {/* Product Image */}
+                    <div className="relative aspect-square p-8 bg-gray-50 group-hover:bg-gray-100 transition-colors">
+                      <Image
+                        src={
+                          product.thumbnail && !product.thumbnail.includes('blob:') && !product.thumbnail.includes('imgi146') && !product.thumbnail.includes('.newsapped.') 
+                            ? product.thumbnail 
+                            : (product.gallery?.[0] || "/images/iphone14.png")
+                        }
+                        alt={product.productName || "Product"}
+                        fill
+                        className="object-contain group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
                   </div>
-                </div>
+                </Link>
 
                 {/* Product Info */}
                 <div className="p-6">
-                  {/* Brand */}
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-blue-600 text-sm font-medium">
-                      {product.brand}
-                    </span>
-                    <div className="flex items-center gap-1">
-                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      <span className="text-sm text-gray-600">
-                        {product.rating}
+                  {/* Clickable Title Area */}
+                  <Link href={`/${product.slug || `shop/product/${product.id}`}`}>
+                    {/* Brand */}
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-blue-600 text-sm font-medium">
+                        {product.brand}
                       </span>
+                      <div className="flex items-center gap-1">
+                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                        <span className="text-sm text-gray-600">
+                          {product.rating}
+                        </span>
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Product Title */}
-                  <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2">
-                    {product.productName}
-                  </h3>
+                    {/* Product Title */}
+                    <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2 hover:text-blue-600 transition-colors cursor-pointer">
+                      {product.productName}
+                    </h3>
+                  </Link>
 
                   {/* Product Condition Badge */}
                   {product.condition && (
@@ -278,13 +287,15 @@ const ShopDunkProductGrid: React.FC<ShopDunkProductGridProps> = ({
                       {storageOptions.map((storage, idx) => (
                         <button
                           key={storage}
-                          onClick={() =>
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
                             setSelectedStorage({
                               ...selectedStorage,
                               [product.id]: storage,
-                            })
-                          }
-                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                            });
+                          }}
+                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 relative z-10 ${
                             selectedStorage[product.id] === storage ||
                             (!selectedStorage[product.id] && idx === 0)
                               ? `${theme.selectedBg} ${theme.selectedText}`
@@ -329,10 +340,14 @@ const ShopDunkProductGrid: React.FC<ShopDunkProductGridProps> = ({
 
                   {/* Add to Cart Button */}
                   <motion.button
-                    onClick={(e) => handleAddToCart(product, e)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleAddToCart(product, e);
+                    }}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className={`w-full ${theme.buttonBg} ${theme.buttonHover} text-white font-semibold py-3 rounded-xl transition-all duration-300 flex items-center justify-center gap-2`}
+                    className={`w-full ${theme.buttonBg} ${theme.buttonHover} text-white font-semibold py-3 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 relative z-10`}
                   >
                     <ShoppingCart className="w-5 h-5" />
                     Thêm vào giỏ

@@ -1,17 +1,23 @@
 /** @format */
 
+"use client";
+
 import React from "react";
 import Rating from "../ui/Rating";
 import Image from "next/image";
 import Link from "next/link";
 import { Product } from "@/types/product.types";
 import QuickAddToCart from "../ui/QuickAddToCart";
+import { Eye } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type ProductCardProps = {
   data: Product;
 };
 
 const ProductCard = ({ data }: ProductCardProps) => {
+  const router = useRouter();
+
   return (
     <div
       data-product-card
@@ -40,13 +46,29 @@ const ProductCard = ({ data }: ProductCardProps) => {
             priority
           />
 
-          {/* Quick Add to Cart - Hiển thị khi hover */}
+          {/* Quick Actions - Hiển thị khi hover */}
           <div className="absolute bottom-2 left-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <QuickAddToCart
-              product={data}
-              className="w-full justify-center"
-              showQuantity={false}
-            />
+            <div className="flex gap-2">
+              {/* Nút xem chi tiết với icon con mắt */}
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  router.push(`/${data.slug}`);
+                }}
+                className="flex items-center justify-center bg-white hover:bg-gray-50 text-gray-700 p-2.5 rounded-lg shadow-md transition-all duration-200 hover:shadow-lg"
+                aria-label="Xem chi tiết sản phẩm"
+              >
+                <Eye className="h-5 w-5" />
+              </button>
+              
+              {/* Quick Add to Cart */}
+              <QuickAddToCart
+                product={data}
+                className="flex-1 justify-center"
+                showQuantity={false}
+              />
+            </div>
           </div>
         </div>
       </Link>

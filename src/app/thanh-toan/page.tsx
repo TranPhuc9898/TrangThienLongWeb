@@ -11,6 +11,8 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import Confetti from "react-confetti";
+import { useAppSelector } from "@/lib/hooks/redux";
+import { RootState } from "@/lib/store";
 
 const schema = z.object({
   fullName: z.string().min(2, "Họ và tên phải có ít nhất 2 ký tự"),
@@ -34,26 +36,14 @@ export default function ThanhToanPage() {
   const router = useRouter();
   const [districts, setDistricts] = useState<District[]>([]);
   const [wards, setWards] = useState<Ward[]>([]);
-  const [productData, setProductData] = useState<any>(null);
+  
+  // Lấy dữ liệu giỏ hàng từ Redux
+  const { cart, totalPrice, adjustedTotalPrice } = useAppSelector(
+    (state: RootState) => state.carts
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
-
-  // Get product data from URL params
-  useEffect(() => {
-    const productParam = searchParams.get("product");
-    if (productParam) {
-      try {
-        const parsed = JSON.parse(productParam);
-        setProductData(parsed);
-
-        // Clean URL by removing query params after getting product data
-        router.replace("/thanh-toan", { scroll: false });
-      } catch (error) {
-        console.error("Error parsing product data:", error);
-      }
-    }
-  }, [searchParams, router]);
 
   const {
     register,
@@ -132,7 +122,9 @@ export default function ThanhToanPage() {
 
       const orderData = {
         ...data,
-        product: productData, // Include product information
+        cart: cart, // Include cart information
+        totalPrice: totalPrice,
+        adjustedTotalPrice: adjustedTotalPrice
       };
 
       console.log("📦 Order data:", orderData);
@@ -349,7 +341,7 @@ export default function ThanhToanPage() {
                 type="submit"
                 className="bg-red-700 text-white font-bold py-3 px-8 rounded-lg hover:bg-red-800 transition disabled:opacity-50 relative overflow-hidden"
                 disabled={
-                  isSubmitting || isLoading || !isFormValid || !productData
+                  isSubmitting || isLoading || !isFormValid || !cart || cart.items.length === 0
                 }
                 whileHover={{ scale: !isSubmitting && isFormValid ? 1.05 : 1 }}
                 whileTap={{ scale: !isSubmitting && isFormValid ? 0.95 : 1 }}
@@ -389,7 +381,7 @@ export default function ThanhToanPage() {
                     </div>
                   ) : isLoading ? (
                     "ĐANG TẢI..."
-                  ) : !productData ? (
+                  ) : !cart || cart.items.length === 0 ? (
                     "CHƯA CÓ SẢN PHẨM"
                   ) : !isFormValid ? (
                     "VUI LÒNG ĐIỀN ĐỦ THÔNG TIN"
@@ -408,90 +400,91 @@ export default function ThanhToanPage() {
             THÔNG TIN SẢN PHẨM
           </h2>
 
-          {productData ? (
+          {cart && cart.items.length > 0 ? (
             <div className="space-y-6">
-              {/* Product Image */}
-              <div className="flex justify-center">
-                <div className="relative w-48 h-48 bg-gray-100 rounded-lg overflow-hidden">
-                  <Image
-                    src={productData.image}
-                    alt={productData.title}
-                    fill
-                    className="object-contain"
-                  />
-                </div>
+              {/* Danh sách sản phẩm trong giỏ hàng */}
+              <div className="space-y-4 max-h-96 overflow-y-auto">
+                {cart.items.map((item, index) => (
+                  <div key={`${item.id}-${index}`} className="flex gap-4 p-3 bg-gray-50 rounded-lg">
+                    <div className="relative w-20 h-20 flex-shrink-0">
+                      <Image
+                        src={item.srcUrl}
+                        alt={item.name}
+                        fill
+                        className="object-contain rounded-lg"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-sm text-gray-900">
+                        {item.name}
+                      </h4>
+                      <div className="text-xs text-gray-600 mt-1 space-y-0.5">
+                        {item.regionCode && (
+                          <p>Mã vùng: <span className="font-medium">{item.regionCode}</span></p>
+                        )}
+                        {item.condition && (
+                          <p>Tình trạng: <span className="font-medium">{item.condition}</span></p>
+                        )}
+                        {(item.storage || item.attributes?.[0]) && (
+                          <p>Dung lượng: <span className="font-medium">{item.storage || item.attributes[0]}</span></p>
+                        )}
+                        {(item.color || item.attributes?.[1]) && (
+                          <p>Màu sắc: <span className="font-medium">{item.color || item.attributes[1]}</span></p>
+                        )}
+                        <p>Số lượng: <span className="font-medium">{item.quantity}</span></p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      {item.discount.percentage > 0 || item.discount.amount > 0 ? (
+                        <>
+                          <p className="text-sm font-bold text-blue-600">
+                            {item.discount.percentage > 0 
+                              ? Math.round(item.price - (item.price * item.discount.percentage) / 100).toLocaleString("vi-VN")
+                              : (item.price - item.discount.amount).toLocaleString("vi-VN")}đ
+                          </p>
+                          <p className="text-xs text-gray-400 line-through">
+                            {item.price.toLocaleString("vi-VN")}đ
+                          </p>
+                        </>
+                      ) : (
+                        <p className="text-sm font-bold text-blue-600">
+                          {item.price.toLocaleString("vi-VN")}đ
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
 
-              {/* Product Details */}
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    {productData.title}
-                  </h3>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl font-bold text-red-600">
-                    {productData.price.toLocaleString()}đ
-                  </span>
-                  {productData.discount > 0 && (
-                    <>
-                      <span className="text-gray-400 line-through text-lg">
-                        {productData.originalPrice.toLocaleString()}đ
-                      </span>
-                      <span className="bg-red-100 text-red-600 text-xs font-bold px-2 py-1 rounded">
-                        -{productData.discount}%
-                      </span>
-                    </>
-                  )}
-                </div>
-
+              {/* Order Summary */}
+              <div className="border-t pt-4 mt-6">
+                <h4 className="font-semibold text-gray-900 mb-3">
+                  Tóm tắt đơn hàng
+                </h4>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="font-medium text-gray-600">
-                      Dung lượng:
-                    </span>
-                    <span className="font-semibold">{productData.storage}</span>
+                    <span>Tạm tính:</span>
+                    <span>{totalPrice.toLocaleString("vi-VN")}đ</span>
                   </div>
-
+                  {totalPrice !== adjustedTotalPrice && (
+                    <div className="flex justify-between text-green-600">
+                      <span>Giảm giá:</span>
+                      <span>-{(totalPrice - adjustedTotalPrice).toLocaleString("vi-VN")}đ</span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
-                    <span className="font-medium text-gray-600">
-                      Mã sản phẩm:
-                    </span>
-                    <span className="font-semibold">#{productData.id}</span>
+                    <span>Phí vận chuyển:</span>
+                    <span className="text-green-600">Miễn phí</span>
                   </div>
-
-                  <div className="flex justify-between">
-                    <span className="font-medium text-gray-600">
-                      Tình trạng:
-                    </span>
-                    <span className="text-green-600 font-semibold">
-                      Còn hàng
+                  <div className="border-t pt-2 flex justify-between font-bold text-lg">
+                    <span>Tổng cộng:</span>
+                    <span className="text-red-600">
+                      {Math.round(adjustedTotalPrice).toLocaleString("vi-VN")}đ
                     </span>
                   </div>
-                </div>
-
-                {/* Order Summary */}
-                <div className="border-t pt-4 mt-6">
-                  <h4 className="font-semibold text-gray-900 mb-3">
-                    Tóm tắt đơn hàng
-                  </h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span>Giá sản phẩm:</span>
-                      <span>{productData.price.toLocaleString()}đ</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Phí vận chuyển:</span>
-                      <span className="text-green-600">Miễn phí</span>
-                    </div>
-                    <div className="border-t pt-2 flex justify-between font-bold text-lg">
-                      <span>Tổng cộng:</span>
-                      <span className="text-red-600">
-                        {productData.price.toLocaleString()}đ
-                      </span>
-                    </div>
-                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    (Đã bao gồm VAT)
+                  </p>
                 </div>
               </div>
             </div>

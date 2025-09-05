@@ -31,6 +31,10 @@ export type CartItem = {
   attributes: string[];
   discount: Discount;
   quantity: number;
+  regionCode?: string; // VN/A hoặc Trung Quốc
+  condition?: string; // 99%, 100%, New, Refurbished
+  storage?: string; // 64GB, 128GB, 256GB, etc.
+  color?: string; // Màu sắc
 };
 
 export type Cart = {

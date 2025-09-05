@@ -38,12 +38,39 @@ const ProductCard = ({ data }: ProductCardProps) => {
       </Link>
       <div className="flex w-full self-stretch flex-col">
         <div className="flex items-center justify-between">
-          <Link
-            href={`/shop/product/${data.id}`}
-            className="text-black font-bold text-base xl:text-xl"
-          >
-            {data.name}
-          </Link>
+          <div className="flex-1">
+            <Link
+              href={`/shop/product/${data.id}`}
+              className="text-black font-bold text-base xl:text-xl hover:text-blue-600 transition-colors"
+            >
+              {data.name}
+            </Link>
+            {/* Hiển thị xuất xứ và tình trạng */}
+            <div className="flex gap-2 mt-1">
+              {data.regionCode && (
+                <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-800 border border-blue-200">
+                  {data.regionCode}
+                </span>
+              )}
+              {data.condition && (
+                <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full ${
+                  data.condition === "100%" || data.condition === "New"
+                    ? "bg-green-100 text-green-800 border border-green-200"
+                    : data.condition === "99%"
+                    ? "bg-blue-100 text-blue-800 border border-blue-200"
+                    : "bg-gray-100 text-gray-800 border border-gray-200"
+                }`}>
+                  {data.condition === "100%" || data.condition === "New" 
+                    ? "Máy mới 100%" 
+                    : data.condition === "99%" 
+                    ? "Like new 99%"
+                    : data.condition === "Refurbished"
+                    ? "Tân trang"
+                    : data.condition}
+                </span>
+              )}
+            </div>
+          </div>
           <Button
             variant="ghost"
             size="icon"
@@ -61,43 +88,71 @@ const ProductCard = ({ data }: ProductCardProps) => {
             <PiTrashFill className="text-xl md:text-2xl text-red-600" />
           </Button>
         </div>
-        <div className="-mt-1">
-          <span className="text-black text-xs md:text-sm mr-1">Size:</span>
-          <span className="text-black/60 text-xs md:text-sm">
-            {data.attributes[0]}
-          </span>
+        {/* Hiển thị thông tin chi tiết sản phẩm */}
+        <div className="space-y-1 mt-2">
+          {data.storage && (
+            <div className="flex items-center">
+              <span className="text-black text-xs md:text-sm mr-1 font-medium">Dung lượng:</span>
+              <span className="text-black/70 text-xs md:text-sm">
+                {data.storage}
+              </span>
+            </div>
+          )}
+          {data.color && (
+            <div className="flex items-center">
+              <span className="text-black text-xs md:text-sm mr-1 font-medium">Màu sắc:</span>
+              <span className="text-black/70 text-xs md:text-sm">
+                {data.color}
+              </span>
+            </div>
+          )}
+          {/* Fallback to attributes if no specific storage/color */}
+          {!data.storage && !data.color && data.attributes && data.attributes.length > 0 && (
+            <>
+              {data.attributes[0] && (
+                <div className="flex items-center">
+                  <span className="text-black text-xs md:text-sm mr-1 font-medium">Dung lượng:</span>
+                  <span className="text-black/70 text-xs md:text-sm">
+                    {data.attributes[0]}
+                  </span>
+                </div>
+              )}
+              {data.attributes[1] && (
+                <div className="flex items-center">
+                  <span className="text-black text-xs md:text-sm mr-1 font-medium">Màu sắc:</span>
+                  <span className="text-black/70 text-xs md:text-sm">
+                    {data.attributes[1]}
+                  </span>
+                </div>
+              )}
+            </>
+          )}
         </div>
-        <div className="mb-auto -mt-1.5">
-          <span className="text-black text-xs md:text-sm mr-1">Color:</span>
-          <span className="text-black/60 text-xs md:text-sm">
-            {data.attributes[1]}
-          </span>
-        </div>
-        <div className="flex items-center flex-wrap justify-between">
+        <div className="flex items-center flex-wrap justify-between mt-3">
           <div className="flex items-center space-x-[5px] xl:space-x-2.5">
             {data.discount.percentage > 0 ? (
-              <span className="font-bold text-black text-xl xl:text-2xl">
-                {`$${Math.round(
+              <span className="font-bold text-blue-600 text-2xl xl:text-3xl">
+                {`${Math.round(
                   data.price - (data.price * data.discount.percentage) / 100
-                )}`}
+                ).toLocaleString("vi-VN")}đ`}
               </span>
             ) : data.discount.amount > 0 ? (
-              <span className="font-bold text-black text-xl xl:text-2xl">
-                {`$${data.price - data.discount.amount}`}
+              <span className="font-bold text-blue-600 text-2xl xl:text-3xl">
+                {`${(data.price - data.discount.amount).toLocaleString("vi-VN")}đ`}
               </span>
             ) : (
-              <span className="font-bold text-black text-xl xl:text-2xl">
-                ${data.price}
+              <span className="font-bold text-blue-600 text-2xl xl:text-3xl">
+                {data.price.toLocaleString("vi-VN")}đ
               </span>
             )}
             {data.discount.percentage > 0 && (
               <span className="font-bold text-black/40 line-through text-xl xl:text-2xl">
-                ${data.price}
+                {data.price.toLocaleString("vi-VN")}đ
               </span>
             )}
             {data.discount.amount > 0 && (
               <span className="font-bold text-black/40 line-through text-xl xl:text-2xl">
-                ${data.price}
+                {data.price.toLocaleString("vi-VN")}đ
               </span>
             )}
             {data.discount.percentage > 0 ? (
@@ -107,7 +162,7 @@ const ProductCard = ({ data }: ProductCardProps) => {
             ) : (
               data.discount.amount > 0 && (
                 <span className="font-medium text-[10px] xl:text-xs py-1.5 px-3.5 rounded-full bg-[#FF3333]/10 text-[#FF3333]">
-                  {`-$${data.discount.amount}`}
+                  {`-${data.discount.amount.toLocaleString("vi-VN")}đ`}
                 </span>
               )
             )}
