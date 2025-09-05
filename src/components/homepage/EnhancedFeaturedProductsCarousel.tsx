@@ -128,10 +128,11 @@ const EnhancedFeaturedProductsCarousel: React.FC<
                           ? product.thumbnail 
                           : "/images/iphone14.png"
                       }
-                      alt={
-                        product.productName || product.title || "Product Image"
-                      }
+                      alt={`${product.productName || product.title} - ${product.condition || "Mới"}`.trim()}
                       fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 320px"
+                      loading={index < 3 ? "eager" : "lazy"}
+                      priority={index < 3}
                       className="object-contain group-hover:scale-110 transition-transform duration-500"
                     />
 

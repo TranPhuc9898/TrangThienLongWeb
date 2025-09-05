@@ -3,14 +3,11 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { notFound, useRouter } from "next/navigation";
+import Script from "next/script";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Star,
   ShoppingCart,
-  Heart,
-  Share2,
-  Check,
-  X,
   Package,
   Truck,
   Shield,
@@ -25,7 +22,6 @@ import {
 
 // Import iPhone specifications database
 import { 
-  IPHONE_SPECS_DATABASE, 
   getSpecsByModel, 
   getAvailableModels
 } from '@/constants/iphone-specs';
@@ -46,54 +42,36 @@ import {
 } from "@/components/ui/carousel";
 import { useAppDispatch } from "@/lib/hooks/redux";
 import { addToCart } from "@/lib/features/carts/cartsSlice";
+import RelatedProducts from "@/components/product-page/RelatedProducts";
+import { Product as BaseProduct, ProductVariant as BaseProductVariant } from "@/types/product.types";
 
-interface ProductVariant {
-  id: string;
-  storage: string;
-  color: string;
-  price: string;
-  image: string;
+// Extend the base types with our additional fields
+interface ProductVariant extends Omit<BaseProductVariant, 'price'> {
+  price: number | bigint;
   images?: string[];
-  inStock: boolean;
-  quantity: number;
 }
 
 interface RegionPrice {
   id: string;
   regionCode: string;
-  price: string;
-}
-
-interface Product {
-  id: string;
-  productName: string;
-  brand: string;
-  condition: string;
-  slug: string;
-  basePrice: string;
-  currency: string;
-  discount?: string;
-  thumbnail: string;
-  description?: string;
-  promotionGeneral?: string;
-  promotionStudent?: string;
-  installment?: string;
-  category: string;
-  rating: number;
-  reviewCount: number;
-  featured: boolean;
-  inStock: boolean;
-  variants: ProductVariant[];
-  colors: ProductColor[]; // ✅ Add colors array
-  regionCode?: string; // Product's default region code
-  regionPrices?: RegionPrice[]; // Prices per region
+  price: number | bigint;
 }
 
 interface ProductColor {
-  // ✅ Add interface
   id: string;
   color: string;
   images: string[]; // Array of 5 image URLs
+}
+
+// Extend the base Product type with our custom fields
+interface Product extends Omit<BaseProduct, 'variants' | 'colors'> {
+  productName: string;
+  basePrice: number | bigint;
+  currency: string;
+  variants: ProductVariant[];
+  colors: ProductColor[]; // Our custom colors structure for image galleries
+  regionCode?: string; // Product's default region code
+  regionPrices?: RegionPrice[]; // Prices per region
 }
 
 interface ProductDetailPageProps {
@@ -138,7 +116,7 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
       if (colorData?.images?.length && colorData.images.length > 0) {
         setActiveImage(colorData.images[0]);
       } else {
-        setActiveImage(firstVariant.image || product.thumbnail);
+        setActiveImage(String(firstVariant.image || product.thumbnail || ""));
       }
     }
   }, [product]);
@@ -257,15 +235,6 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
     return colors;
   };
 
-  const calculateDiscountedPrice = (basePrice: string | number, discount?: string) => {
-    if (!discount) return Number(basePrice);
-
-    const discountMatch = discount.match(/-(\d+)%/);
-    const discountPercent = discountMatch ? parseInt(discountMatch[1]) : 0;
-    const price = Number(basePrice);
-    return Math.round(price - (price * discountPercent) / 100);
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -276,8 +245,142 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
 
   if (!product) return notFound();
 
+  // Generate structured data for SEO
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": product.productName,
+    "description": product.description || `${product.productName} chính hãng tại TrangMobile. Bảo hành chính hãng, trả góp 0%, giao hàng toàn quốc.`,
+    "image": getCurrentColorImages().length > 0 ? getCurrentColorImages() : [product.thumbnail],
+    "brand": {
+      "@type": "Brand",
+      "name": "Apple"
+    },
+    "sku": product.id,
+    "offers": {
+      "@type": "Offer",
+      "url": `https://trangmobile.com/shop/product/${product.id}`,
+      "priceCurrency": "VND",
+      "price": selectedVariant ? Number(getRegionPrice() || selectedVariant.price) : Number(product.basePrice),
+      "priceValidUntil": new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
+      "availability": "https://schema.org/InStock",
+      "seller": {
+        "@type": "Organization",
+        "name": "TrangMobile"
+      },
+      "itemCondition": "https://schema.org/NewCondition"
+    },
+    "aggregateRating": product.rating ? {
+      "@type": "AggregateRating",
+      "ratingValue": product.rating.toString(),
+      "reviewCount": product.reviewCount?.toString() || "0",
+      "bestRating": "5",
+      "worstRating": "1"
+    } : undefined,
+    "review": [],
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Dung lượng",
+        "value": getStorageOptions().join(", ")
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Màu sắc",
+        "value": getColorOptions().join(", ")
+      }
+    ]
+  };
+
+  // Organization Schema
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "TrangMobile",
+    "alternateName": "Trang Mobile",
+    "url": "https://trangmobile.com",
+    "logo": "https://trangmobile.com/logo.png",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+84-385-795-791",
+      "contactType": "customer service",
+      "areaServed": "VN",
+      "availableLanguage": "Vietnamese"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "15i Trần Phú",
+      "addressLocality": "Quận 5",
+      "addressRegion": "TP.HCM",
+      "postalCode": "70000",
+      "addressCountry": "VN"
+    },
+    "sameAs": [
+      "https://facebook.com/trangmobile",
+      "https://zalo.me/84385795791"
+    ],
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        "opens": "08:00",
+        "closes": "21:00"
+      }
+    ]
+  };
+
+  // BreadcrumbList Schema
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Trang chủ",
+        "item": "https://trangmobile.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": product.category?.toLowerCase().includes("iphone") ? "iPhone" : "Sản phẩm",
+        "item": `https://trangmobile.com/${product.category?.toLowerCase().includes("iphone") ? "iphone" : "shop"}`
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": product.productName,
+        "item": `https://trangmobile.com/shop/product/${product.id}`
+      }
+    ]
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <>
+      {/* Structured Data for SEO */}
+      <Script
+        id="product-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData)
+        }}
+      />
+      <Script
+        id="organization-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(organizationSchema)
+        }}
+      />
+      <Script
+        id="breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema)
+        }}
+      />
+      
+      <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-between gap-4 mb-5 sm:mb-9">
           <Breadcrumb>
@@ -299,7 +402,7 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
                   >
                     {product.category?.toLowerCase().includes("iphone")
                       ? "iPhone"
-                      : "Shop"}
+                      : "Sản phẩm"}
                   </Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
@@ -311,125 +414,70 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
           </Breadcrumb>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 lg:p-8">
-            {/* Product Image */}
+            {/* Gallery Section */}
             <div className="space-y-4">
-              <div className="relative aspect-square bg-gray-50 rounded-2xl overflow-hidden">
+              {/* Main Image */}
+              <div className="aspect-square rounded-lg overflow-hidden bg-gray-50">
                 <img
-                  src={
-                    activeImage || selectedVariant?.image || product.thumbnail
-                  }
-                  alt={`${product.productName} ${selectedVariant?.color || ""}`}
-                  className="w-full h-full object-contain p-8"
+                  src={activeImage}
+                  alt={`${product.productName} ${selectedStorage} ${selectedColor} - Hình ảnh sản phẩm chính hãng tại TrangMobile`}
+                  className="w-full h-full object-contain"
+                  loading="lazy"
                 />
-                {product.discount && (
-                  <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                    {product.discount}
-                  </div>
-                )}
-                {product.condition && (
-                  <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                    {product.condition}
-                  </div>
-                )}
               </div>
 
-              {/* Thumbnails as carousel - FIXED: Only for photo viewing */}
-              {/* ✅ FIXED: Gallery shows current color's images */}
-              {getCurrentColorImages().length > 0 && (
+              {/* Thumbnail Carousel */}
+              {getCurrentColorImages().length > 1 && (
                 <Carousel className="w-full">
                   <CarouselContent>
-                    {getCurrentColorImages().map((imageUrl, idx) => (
-                      <CarouselItem
-                        key={`color-image-${idx}`}
-                        className="basis-1/4 sm:basis-1/6"
-                      >
+                    {getCurrentColorImages().map((image, index) => (
+                      <CarouselItem key={index} className="basis-1/4">
                         <button
-                          onClick={() => setActiveImage(imageUrl)} // ✅ Only change active image
-                          className={`relative aspect-square bg-gray-50 rounded-lg overflow-hidden border-2 ${
-                            activeImage === imageUrl
-                              ? "border-blue-500"
+                          onClick={() => setActiveImage(image)}
+                          className={`aspect-square rounded-lg overflow-hidden border-2 ${
+                            activeImage === image
+                              ? "border-blue-600"
                               : "border-gray-200"
                           }`}
                         >
                           <img
-                            src={imageUrl}
-                            alt={`${selectedColor} view ${idx + 1}`}
-                            className="w-full h-full object-contain p-2"
+                            src={image}
+                            alt={`${product.productName} ${selectedColor} - Hình ${index + 1} - TrangMobile`}
+                            className="w-full h-full object-contain"
+                            loading="lazy"
                           />
                         </button>
                       </CarouselItem>
                     ))}
                   </CarouselContent>
-                  <div className="flex justify-end gap-2 mt-2">
-                    <CarouselPrevious className="h-8 w-8" />
-                    <CarouselNext className="h-8 w-8" />
-                  </div>
+                  <CarouselPrevious />
+                  <CarouselNext />
                 </Carousel>
               )}
-
-              {/* ✅ REMOVED: Variant preview section - not needed anymore */}
             </div>
 
-            {/* Product Details */}
+            {/* Product Info Section */}
             <div className="space-y-6">
-              {/* Header */}
               <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
-                    {product.brand}
-                  </span>
-                  {product.featured && (
-                    <span className="text-sm font-medium text-yellow-600 bg-yellow-50 px-3 py-1 rounded-full">
-                      Featured
-                    </span>
-                  )}
-                </div>
-
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">
                   {product.productName}
-                  {(product as any).regionCode && ` (${(product as any).regionCode})`}
                 </h1>
-
-                {/* Product Condition Badge */}
-                {product.condition && (
-                  <div className="mb-3">
-                    <span 
-                      className={`inline-block px-3 py-1.5 text-sm font-medium rounded-full ${
-                        product.condition === "New" || product.condition === "100%" 
-                          ? "bg-green-100 text-green-800 border border-green-200"
-                          : product.condition === "99%" 
-                          ? "bg-blue-100 text-blue-800 border border-blue-200"
-                          : product.condition === "Refurbished"
-                          ? "bg-gray-100 text-gray-800 border border-gray-200"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      {product.condition === "New" || product.condition === "100%" 
-                        ? "🆕 Máy mới 100%" 
-                        : product.condition === "99%" 
-                        ? "✨ Like new 99%"
-                        : product.condition === "Refurbished"
-                        ? "♻️ Máy tân trang"
-                        : product.condition}
-                    </span>
-                  </div>
-                )}
-
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="flex items-center gap-1">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center">
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
-                        className={`w-5 h-5 ${
+                        size={18}
+                        className={
                           i < Math.floor(product.rating)
-                            ? "text-yellow-400 fill-yellow-400"
-                            : "text-gray-300"
-                        }`}
+                            ? "fill-yellow-400 text-yellow-400"
+                            : "fill-gray-200 text-gray-200"
+                        }
                       />
                     ))}
-                    <span className="text-sm text-gray-600 ml-2">
+                    <span className="ml-2 text-sm text-gray-600">
                       {product.rating} ({product.reviewCount} đánh giá)
                     </span>
                   </div>
@@ -437,224 +485,154 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
               </div>
 
               {/* Price */}
-              <div className="border-t border-b border-gray-200 py-4">
-                {(() => {
-                  // Lấy giá theo mã vùng nếu có
-                  // Use getRegionPrice to get price based on selected region
-                  let displayPrice = getRegionPrice() || selectedVariant?.price || product.basePrice;
-                  
-                  return product.discount ? (
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-4">
-                        <span className="text-3xl font-bold text-red-600">
-                          {calculateDiscountedPrice(
-                            displayPrice,
-                            product.discount
-                          ).toLocaleString()}
-                          đ
-                        </span>
-                        <span className="text-lg text-gray-400 line-through">
-                          {Number(displayPrice).toLocaleString()}
-                          đ
-                        </span>
-                      </div>
-                      <p className="text-sm text-green-600 font-medium">
-                        Tiết kiệm{" "}
-                        {(
-                          Number(displayPrice) -
-                          calculateDiscountedPrice(
-                            displayPrice,
-                            product.discount
-                          )
-                        ).toLocaleString()}
-                        đ
-                      </p>
-                    </div>
-                  ) : (
-                    <span className="text-3xl font-bold text-gray-900">
-                      {Number(displayPrice).toLocaleString()}
-                      đ
+              <div className="space-y-2">
+                <div className="flex items-baseline gap-3">
+                  <span className="text-3xl font-bold text-red-600">
+                    {selectedVariant
+                      ? `${Number(getRegionPrice() || selectedVariant.price).toLocaleString(
+                          "vi-VN"
+                        )}đ`
+                      : `${Number(product.basePrice).toLocaleString("vi-VN")}đ`}
+                  </span>
+                  {product.discount && (
+                    <span className="text-xl text-gray-400 line-through">
+                      {Number(product.basePrice).toLocaleString("vi-VN")}đ
                     </span>
-                  );
-                })()}
-              </div>
-
-              {/* Variants Selection - Keep independent */}
-              <div className="space-y-4">
-                {/* Storage Selection - INDEPENDENT */}
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                    Dung lượng
-                  </h3>
-                  <div className="grid grid-cols-4 gap-2">
-                    {getStorageOptions().map((storage) => (
-                      <button
-                        key={storage}
-                        onClick={() => setSelectedStorage(storage)} // ✅ Only way to change storage
-                        className={`px-4 py-3 text-sm font-medium rounded-lg border-2 transition-colors ${
-                          selectedStorage === storage
-                            ? "border-blue-500 bg-blue-50 text-blue-700"
-                            : "border-gray-200 hover:border-gray-300 text-gray-700"
-                        }`}
-                      >
-                        {storage}
-                      </button>
-                    ))}
-                  </div>
+                  )}
                 </div>
-
-                {/* Color Selection - INDEPENDENT */}
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                    Màu sắc
-                  </h3>
-                  <div className="space-y-2">
-                    {getColorOptions().map((color) => (
-                      <button
-                        key={color}
-                        onClick={() => setSelectedColor(color)} // ✅ Only way to change color
-                        className={`w-full px-4 py-3 text-left rounded-lg border-2 transition-colors ${
-                          selectedColor === color
-                            ? "border-blue-500 bg-blue-50 text-blue-700"
-                            : "border-gray-200 hover:border-gray-300 text-gray-700"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="font-medium">{color}</span>
-                          {selectedColor === color && (
-                            <Check className="w-5 h-5" />
-                          )}
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Region Code Selection - NEW */}
-                {product.regionPrices && product.regionPrices.length > 0 && (
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                      Phiên bản (Mã vùng)
-                    </h3>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                      {/* Show all available regions with prices */}
-                      {product.regionPrices.map((rp) => {
-                        const regionNames: Record<string, string> = {
-                          "VN/A": "Việt Nam",
-                          "LL/A": "Mỹ",
-                          "ZP/A": "Hong Kong",
-                          "CH/A": "Trung Quốc",
-                          "J/A": "Nhật Bản"
-                        };
-                        const basePrice = Number(product.basePrice);
-                        const regionPrice = Number(rp.price);
-                        const priceDiff = regionPrice - basePrice;
-                        
-                        return (
-                          <button
-                            key={rp.regionCode}
-                            onClick={() => setSelectedRegion(rp.regionCode)}
-                            className={`px-3 py-2 text-sm rounded-lg border-2 transition-all ${
-                              selectedRegion === rp.regionCode
-                                ? "border-blue-500 bg-blue-50 text-blue-700"
-                                : "border-gray-200 hover:border-gray-300 text-gray-700"
-                            }`}
-                          >
-                            <div className="text-left">
-                              <div className="font-medium">{rp.regionCode}</div>
-                              <div className="text-xs text-gray-500">{regionNames[rp.regionCode] || ""}</div>
-                              <div className="text-xs mt-1 font-semibold">
-                                {regionPrice.toLocaleString("vi-VN")}đ
-                              </div>
-                              {priceDiff !== 0 && (
-                                <div className={`text-xs ${priceDiff < 0 ? "text-green-600" : "text-red-600"}`}>
-                                  {priceDiff < 0 ? "↓" : "↑"} {Math.abs(priceDiff).toLocaleString("vi-VN")}đ
-                                </div>
-                              )}
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                    <p className="text-xs text-gray-500 mt-2">
-                      * Bạn có thể thiết lập giá khác nhau cho từng mã vùng. Nếu không thiết lập, sẽ sử dụng giá cơ bản.
-                    </p>
-                  </div>
+                {product.discount && (
+                  <span className="inline-block bg-red-100 text-red-700 px-2 py-1 rounded-md text-sm">
+                    {product.discount}
+                  </span>
                 )}
               </div>
 
-              {/* Promotions */}
-              <PromotionBox product={product} />
-
-              {/* Installment */}
-              {product.installment && (
-                <div className="bg-blue-50 rounded-lg p-4">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                    <CreditCard className="w-5 h-5" />
-                    Trả góp 0%
-                  </h3>
-                  <p className="text-sm text-gray-700">{product.installment}</p>
+              {/* Region Selection */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Mã vùng
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {["VN/A", "LL/A", "ZA/A", "CH/A", "ZP/A"].map((region) => (
+                    <button
+                      key={region}
+                      onClick={() => setSelectedRegion(region)}
+                      className={`px-4 py-2 rounded-md border ${
+                        selectedRegion === region
+                          ? "border-blue-600 bg-blue-50 text-blue-600"
+                          : "border-gray-300 text-gray-700 hover:border-gray-400"
+                      }`}
+                    >
+                      {region}
+                    </button>
+                  ))}
                 </div>
-              )}
+              </div>
+
+              {/* Storage Selection */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Dung lượng
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {getStorageOptions().map((storage) => (
+                    <button
+                      key={storage}
+                      onClick={() => setSelectedStorage(storage)}
+                      className={`px-4 py-2 rounded-md border ${
+                        selectedStorage === storage
+                          ? "border-blue-600 bg-blue-50 text-blue-600"
+                          : "border-gray-300 text-gray-700 hover:border-gray-400"
+                      }`}
+                    >
+                      {storage}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Color Selection */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Màu sắc
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {getColorOptions().map((color) => (
+                    <button
+                      key={color}
+                      onClick={() => setSelectedColor(color)}
+                      className={`px-4 py-2 rounded-md border ${
+                        selectedColor === color
+                          ? "border-blue-600 bg-blue-50 text-blue-600"
+                          : "border-gray-300 text-gray-700 hover:border-gray-400"
+                      }`}
+                    >
+                      {color}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
               {/* Action Buttons */}
-              <div className="space-y-3">
-                <div className="flex gap-3">
-                  <button
-                    onClick={handleAddToCart}
-                    disabled={!selectedVariant || !selectedVariant.inStock}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-4 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
-                  >
-                    <ShoppingCart className="w-5 h-5" />
-                    {selectedVariant?.inStock ? "Thêm vào giỏ" : "Hết hàng"}
-                  </button>
-                  <button className="p-4 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors">
-                    <Heart className="w-5 h-5" />
-                  </button>
-                  <button className="p-4 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors">
-                    <Share2 className="w-5 h-5" />
-                  </button>
-                </div>
-
+              <div className="flex gap-4">
                 <button
                   onClick={handleBuyNow}
-                  disabled={!selectedVariant || !selectedVariant.inStock}
-                  className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:from-gray-400 disabled:to-gray-400 text-white font-bold py-4 px-6 rounded-xl transition-colors"
+                  className="flex-1 bg-red-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-red-700 transition-colors"
                 >
                   Mua ngay
                 </button>
+                <button
+                  onClick={handleAddToCart}
+                  className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                >
+                  <ShoppingCart size={20} />
+                  Thêm vào giỏ
+                </button>
               </div>
 
-              {/* Features */}
-              <div className="border-t border-gray-200 pt-6">
-                <div className="grid grid-cols-3 gap-4 text-center">
-                  <div className="space-y-2">
-                    <Truck className="w-6 h-6 text-blue-600 mx-auto" />
-                    <p className="text-xs text-gray-600">Miễn phí giao hàng</p>
-                  </div>
-                  <div className="space-y-2">
-                    <Shield className="w-6 h-6 text-green-600 mx-auto" />
-                    <p className="text-xs text-gray-600">Bảo hành 12 tháng</p>
-                  </div>
-                  <div className="space-y-2">
-                    <Package className="w-6 h-6 text-purple-600 mx-auto" />
-                    <p className="text-xs text-gray-600">Đổi trả 7 ngày</p>
-                  </div>
+              {/* Benefits */}
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+                <div className="flex items-center gap-2">
+                  <Truck className="text-blue-600" size={20} />
+                  <span className="text-sm text-gray-700">
+                    Miễn phí vận chuyển
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Shield className="text-green-600" size={20} />
+                  <span className="text-sm text-gray-700">
+                    Bảo hành chính hãng
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Package className="text-purple-600" size={20} />
+                  <span className="text-sm text-gray-700">
+                    Đổi trả trong 7 ngày
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CreditCard className="text-orange-600" size={20} />
+                  <span className="text-sm text-gray-700">
+                    Trả góp 0% lãi suất
+                  </span>
                 </div>
               </div>
+
+              {/* Promotion Box */}
+              <PromotionBox product={product} />
             </div>
           </div>
 
-          {/* Description */}
+          {/* Product Description */}
           {product.description && (
-            <div className="border-t border-gray-200 p-6 lg:p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+            <section className="border-t border-gray-200 p-6 lg:p-8">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
                 Mô tả sản phẩm
-              </h3>
+              </h2>
               <div className="prose max-w-none text-gray-700">
                 <p>{product.description}</p>
               </div>
-            </div>
+            </section>
           )}
 
           {/* Technical Specifications - Only for iPhone products */}
@@ -662,8 +640,22 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
             <TechnicalSpecs productName={product.productName} />
           )}
         </div>
+        
+        {/* Related Products Section */}
+        {product && (
+          <RelatedProducts 
+            currentProduct={{
+              ...product,
+              colors: product.colors?.map(c => c.color) || [],
+              variants: product.variants as any
+            } as BaseProduct}
+            category={product.category}
+            limit={8}
+          />
+        )}
       </div>
     </div>
+    </>
   );
 };
 
@@ -686,16 +678,16 @@ const TechnicalSpecs: React.FC<{ productName: string }> = ({ productName }) => {
   }
 
   return (
-    <div className="border-t border-gray-200 p-6 lg:p-8">
+    <section className="border-t border-gray-200 p-6 lg:p-8" aria-label="Thông số kỹ thuật">
       <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl p-6 border border-blue-200">
         <div className="flex items-center gap-3 mb-6">
           <div className="p-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg">
             <Smartphone className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h3 className="text-xl font-bold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
+            <h2 className="text-xl font-bold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
               📱 Thông Số Kỹ Thuật
-            </h3>
+            </h2>
             <p className="text-sm text-gray-600">
               {matchedModel} - Dữ liệu từ cơ sở dữ liệu kỹ thuật chính thức
             </p>
@@ -707,7 +699,7 @@ const TechnicalSpecs: React.FC<{ productName: string }> = ({ productName }) => {
           <div className="space-y-4">
             <div className="flex items-center gap-2 mb-3">
               <Monitor className="w-5 h-5 text-blue-600" />
-              <h4 className="font-semibold text-blue-800">Màn Hình</h4>
+              <h3 className="font-semibold text-blue-800">Màn Hình</h3>
             </div>
             <div className="space-y-2 pl-7">
               <div className="flex justify-between">
@@ -737,7 +729,7 @@ const TechnicalSpecs: React.FC<{ productName: string }> = ({ productName }) => {
           <div className="space-y-4">
             <div className="flex items-center gap-2 mb-3">
               <Camera className="w-5 h-5 text-green-600" />
-              <h4 className="font-semibold text-green-800">Camera</h4>
+              <h3 className="font-semibold text-green-800">Camera</h3>
             </div>
             <div className="space-y-2 pl-7">
               <div className="flex justify-between">
@@ -769,7 +761,7 @@ const TechnicalSpecs: React.FC<{ productName: string }> = ({ productName }) => {
           <div className="space-y-4">
             <div className="flex items-center gap-2 mb-3">
               <Zap className="w-5 h-5 text-purple-600" />
-              <h4 className="font-semibold text-purple-800">Hiệu Năng</h4>
+              <h3 className="font-semibold text-purple-800">Hiệu Năng</h3>
             </div>
             <div className="space-y-2 pl-7">
               <div className="flex justify-between">
@@ -801,7 +793,7 @@ const TechnicalSpecs: React.FC<{ productName: string }> = ({ productName }) => {
           <div className="space-y-4">
             <div className="flex items-center gap-2 mb-3">
               <Battery className="w-5 h-5 text-orange-600" />
-              <h4 className="font-semibold text-orange-800">Thiết Kế & Pin</h4>
+              <h3 className="font-semibold text-orange-800">Thiết Kế & Pin</h3>
             </div>
             <div className="space-y-2 pl-7">
               <div className="flex justify-between">
@@ -831,7 +823,7 @@ const TechnicalSpecs: React.FC<{ productName: string }> = ({ productName }) => {
           <div className="space-y-4 md:col-span-2">
             <div className="flex items-center gap-2 mb-3">
               <Wifi className="w-5 h-5 text-cyan-600" />
-              <h4 className="font-semibold text-cyan-800">Kết Nối & Hệ Điều Hành</h4>
+              <h3 className="font-semibold text-cyan-800">Kết Nối & Hệ Điều Hành</h3>
             </div>
             <div className="grid grid-cols-2 gap-4 pl-7">
               <div className="space-y-2">
@@ -870,7 +862,7 @@ const TechnicalSpecs: React.FC<{ productName: string }> = ({ productName }) => {
             <div className="bg-white/60 rounded-lg p-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <h5 className="font-semibold text-gray-800 mb-2">Màu sắc có sẵn:</h5>
+                  <h4 className="font-semibold text-gray-800 mb-2">Màu sắc có sẵn:</h4>
                   <div className="flex flex-wrap gap-2">
                     {specs.design.colors.map((color, index) => (
                       <span key={index} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">
@@ -880,7 +872,7 @@ const TechnicalSpecs: React.FC<{ productName: string }> = ({ productName }) => {
                   </div>
                 </div>
                 <div>
-                  <h5 className="font-semibold text-gray-800 mb-2">Tùy chọn dung lượng:</h5>
+                  <h4 className="font-semibold text-gray-800 mb-2">Tùy chọn dung lượng:</h4>
                   <div className="flex flex-wrap gap-2">
                     {specs.other.storage.map((storage, index) => (
                       <span key={index} className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
@@ -906,7 +898,7 @@ const TechnicalSpecs: React.FC<{ productName: string }> = ({ productName }) => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

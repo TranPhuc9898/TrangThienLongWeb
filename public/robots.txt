@@ -51,11 +51,11 @@ Allow: /product/
 Crawl-delay: 0.5
 
 # Sitemaps for better discovery
-Sitemap: https://thientranglong.vn/sitemap.xml
-Sitemap: https://thientranglong.vn/image-sitemap.xml
+Sitemap: https://trangmobile.com/sitemap.xml
+Sitemap: https://trangmobile.com/image-sitemap.xml
 
 # General crawl delay for other bots
 Crawl-delay: 1
 
 # Host directive for canonical domain
-Host: https://thientranglong.vn
+Host: https://trangmobile.com
