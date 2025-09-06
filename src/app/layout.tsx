@@ -18,9 +18,9 @@ import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 
 export const metadata: Metadata = {
   title:
-    "iPhone 15 Pro Max 256GB Giá Tốt Nhất | Trang Thiên Long Mobile Chính Hãng",
+    "Trangmobile.com - iPhone, iPad, MacBook, Apple Watch chính hãng",
   description:
-    "Cửa hàng iPhone chính hãng uy tín số 1 Việt Nam. iPhone 15, iPad, MacBook, Apple Watch bảo hành 12 tháng, trả góp 0%, giao hàng 2h tại TP.HCM. Giá tốt nhất thị trường.",
+    "Siêu thị iPhone, iPad, MacBook, Apple Watch chính hãng. Bảo hành 12 tháng, trả góp 0%, giao hàng 2h tại TP.HCM. iPhone 15 Pro Max giá tốt nhất thị trường.",
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
@@ -33,17 +33,17 @@ export const metadata: Metadata = {
   },
   keywords: "iPhone giá rẻ, iPad chính hãng, Apple Watch Vietnam, AirPods Pro, MacBook Air M2, điện thoại cũ like new, Trang Thiên Long Mobile, iPhone 15 Pro Max 256GB, mua iPhone trả góp 0%, cửa hàng iPhone uy tín TP.HCM",
   openGraph: {
-    title: "iPhone 15 Pro Max 256GB Giá Tốt Nhất | Trang Thiên Long Mobile",
+    title: "Trangmobile.com - iPhone, iPad, MacBook, Apple Watch chính hãng",
     description:
-      "Cửa hàng iPhone chính hãng uy tín số 1 Việt Nam. Bảo hành 12 tháng, trả góp 0%, giao hàng 2h tại TP.HCM",
+      "Siêu thị iPhone, iPad, MacBook, Apple Watch chính hãng. Bảo hành 12 tháng, trả góp 0%, giao hàng 2h tại TP.HCM",
     url: "https://trangmobile.com",
-    siteName: "Trang Thiên Long Mobile",
+    siteName: "Trangmobile.com",
     images: [
       {
         url: "https://trangmobile.com/images/ttl-og.jpg",
         width: 1200,
         height: 630,
-        alt: "TrangMobile.com - Cửa hàng iPhone chính hãng TP.HCM",
+        alt: "Trangmobile.com - Cửa hàng iPhone chính hãng TP.HCM",
         type: "image/jpeg",
       },
     ],
@@ -53,11 +53,11 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "iPhone 15 Pro Max 256GB Giá Tốt Nhất | Trang Thiên Long Mobile",
-    description: "Cửa hàng iPhone chính hãng uy tín số 1 Việt Nam. Bảo hành 12 tháng, trả góp 0%",
+    title: "Trangmobile.com - iPhone, iPad, MacBook, Apple Watch chính hãng",
+    description: "Siêu thị iPhone, iPad, MacBook chính hãng. Bảo hành 12 tháng, trả góp 0%",
     images: [{
       url: "https://trangmobile.com/images/ttl-og.jpg",
-      alt: "TrangMobile.com - iPhone chính hãng",
+      alt: "Trangmobile.com - iPhone chính hãng",
     }],
     site: "@trangthienlong",
     creator: "@trangthienlong",
@@ -81,12 +81,12 @@ export const metadata: Metadata = {
   },
   authors: [
     {
-      name: "TrangMobile.com",
+      name: "Trangmobile.com",
       url: "https://trangmobile.com",
     },
   ],
-  creator: "TrangMobile.com",
-  publisher: "TrangMobile.com",
+  creator: "Trangmobile.com",
+  publisher: "Trangmobile.com",
   formatDetection: {
     telephone: true,
     date: false,
