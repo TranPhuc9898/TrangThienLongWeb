@@ -8,14 +8,18 @@ import "@/styles/swiper-custom.css";
 import ModernHeroSection from "@/components/homepage/ModernHeroSection";
 import DynamicHeroSection from "@/components/homepage/DynamicHeroSection";
 import VideoHeroSection from "@/components/homepage/VideoHeroSection";
-import EnhancedFeaturedProductsCarousel from "@/components/homepage/EnhancedFeaturedProductsCarousel";
+import DealHotHomNaySection from "@/components/homepage/DealHotHomNaySection";
 import ModernProductSection from "@/components/homepage/ModernProductSection";
 
 import FloatingToolbar from "../components/FloatingToolbar";
 import EditButton from "@/components/admin/EditButton";
+import { 
+  WebsiteSchema, 
+  ProductCollectionSchema,
+  FAQSchema 
+} from "@/components/seo/SEOComponents";
 
 import { Product } from "@/types/product.types";
-import { Review } from "@/types/review.types";
 
 // Fetch products from API in client component
 function getProducts() {
@@ -34,27 +38,23 @@ function getProducts() {
     });
 }
 
-const reviewsData: Review[] = [
+// FAQ Data for SEO
+const faqData = [
   {
-    id: 1,
-    user: "Nguyễn Văn A",
-    content: "Sản phẩm chất lượng, giao hàng nhanh!",
-    rating: 5,
-    date: "2024-01-15",
+    question: "iPhone 15 Pro Max 256GB giá bao nhiều?",
+    answer: "iPhone 15 Pro Max 256GB tại TrangMobile.com có giá từ 29.990.000đ, hỗ trợ trả góp 0% lãi suất.",
   },
   {
-    id: 2,
-    user: "Trần Thị B",
-    content: "iPhone mới 99%, giống như mới tinh!",
-    rating: 5,
-    date: "2024-01-16",
+    question: "Có bảo hành chính hãng không?",
+    answer: "Tất cả sản phẩm iPhone, iPad tại TrangMobile.com đều được bảo hành chính hãng 12 tháng toàn quốc.",
   },
   {
-    id: 3,
-    user: "Lê Văn C",
-    content: "Dịch vụ tốt, nhân viên tư vấn nhiệt tình",
-    rating: 5,
-    date: "2024-01-17",
+    question: "Giao hàng trong bao lâu?",
+    answer: "TrangMobile.com giao hàng trong 2h tại TP.HCM, miễn phí ship toàn quốc cho đơn hàng trên 500k.",
+  },
+  {
+    question: "Có hỗ trợ trả góp 0% không?",
+    answer: "Có, TrangMobile.com hỗ trợ trả góp 0% lãi suất qua thẻ tín dụng và các công ty tài chính uy tín.",
   },
 ];
 
@@ -86,11 +86,6 @@ export default function Home() {
     );
   }
 
-  // Create dynamic data from real products
-  const newArrivalsData: Product[] = allProducts.slice(0, 2);
-  const topSellingData: Product[] = allProducts.slice(1, 3);
-  const relatedProductData: Product[] = allProducts;
-
   // Filter products by category
   const iphoneProducts = allProducts
     .filter((p: Product) => p.category?.toLowerCase().includes("iphone"))
@@ -108,14 +103,14 @@ export default function Home() {
     p.category?.toLowerCase().includes("mac")
   );
 
-  // Combined all products for sections that need mixed data
+  // Get featured products for SEO schema
   const featuredProducts = [
     ...iphoneProducts,
     ...ipadProducts,
     ...watchProducts,
     ...airpodsProducts,
     ...macProducts,
-  ];
+  ].slice(0, 10);
   const handleEditComponent = (componentName: string) => {
     // Open admin dashboard for component editing
     window.open(`/admin-admin/dashboard?edit=${componentName}`, "_blank");
@@ -123,6 +118,13 @@ export default function Home() {
 
   return (
     <>
+      {/* 🎯 PERFECT SEO STRUCTURED DATA */}
+      <WebsiteSchema />
+      <FAQSchema faqs={faqData} />
+      {featuredProducts.length > 0 && (
+        <ProductCollectionSchema products={featuredProducts} />
+      )}
+
       <FloatingToolbar />
       {/* Removed duplicate Head component - SEO handled in layout.tsx and metadata export */}
 
@@ -165,12 +167,12 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 🎠 NEW: Enhanced Carousel với ALL products */}
+      {/* 🔥 NEW: Deal Hot Hôm Nay Section */}
       <div className="relative">
-        <EnhancedFeaturedProductsCarousel products={featuredProducts} />
+        <DealHotHomNaySection />
         <EditButton
-          componentName="Featured Carousel"
-          onEdit={() => handleEditComponent("featured-carousel")}
+          componentName="Deal Hot Hôm Nay"
+          onEdit={() => handleEditComponent("deal-hot-hom-nay")}
         />
       </div>
 

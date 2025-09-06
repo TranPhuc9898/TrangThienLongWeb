@@ -1,14 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Performance Optimizations
+  // 🚀 PERFECT SEO PERFORMANCE OPTIMIZATIONS
   images: {
-    formats: ["image/webp", "image/avif"],
+    formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     remotePatterns: [
       {
         protocol: "https",
         hostname: "trangmobile.com",
+        pathname: "/**",
       },
       {
         protocol: "https",
@@ -17,17 +18,25 @@ const nextConfig = {
       {
         protocol: "http",
         hostname: "localhost",
+        port: "3000",
       },
     ],
-    // ✅ ENABLED: Image optimization for better performance and SEO
-    // unoptimized: false, // Default is false, so we don't need this line
+    minimumCacheTTL: 31536000, // 1 year cache
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 
-  // SEO & Performance
+  // 🎯 MAXIMUM SEO & PERFORMANCE
   compress: true,
   poweredByHeader: false,
+  generateEtags: false,
+  
+  // Simple bundle optimization  
+  experimental: {
+    optimizePackageImports: ['lucide-react'],
+  },
 
-  // Headers for images only
+  // 🔥 PERFECT CACHING & SEO HEADERS
   async headers() {
     return [
       {
@@ -37,31 +46,71 @@ const nextConfig = {
             key: "Cache-Control",
             value: "public, max-age=31536000, immutable",
           },
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
         ],
       },
       {
         source: "/uploads/(.*)",
         headers: [
           {
-            key: "Cache-Control",
-            value: "public, max-age=86400",
+            key: "Cache-Control", 
+            value: "public, max-age=86400, s-maxage=604800",
+          },
+        ],
+      },
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "X-Frame-Options",
+            value: "DENY",
+          },
+          {
+            key: "X-Content-Type-Options", 
+            value: "nosniff",
+          },
+          {
+            key: "Referrer-Policy",
+            value: "origin-when-cross-origin",
+          },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=(self)",
           },
         ],
       },
     ];
   },
 
-  // Rewrites for SEO-friendly URLs
+  // 🎯 PERFECT SEO-FRIENDLY URLs
   async rewrites() {
     return [
       {
         source: "/iphone/:slug*",
         destination: "/shop/product/iphone/:slug*",
       },
+      {
+        source: "/iphone-15-pro-max-256gb-gia-tot",
+        destination: "/landing/iphone-15-pro-max-256gb",
+      },
+      {
+        source: "/mua-iphone-tra-gop-0-phan-tram", 
+        destination: "/landing/tra-gop-0-phan-tram",
+      },
+      {
+        source: "/so-sanh-iphone",
+        destination: "/tools/so-sanh-iphone",
+      },
     ];
   },
 
-  // Remove experimental features that cause build errors
+  // 🚀 SAFE BUILD OPTIMIZATION
+  swcMinify: true,
+  trailingSlash: false,
+  reactStrictMode: true,
 };
 
 export default nextConfig;

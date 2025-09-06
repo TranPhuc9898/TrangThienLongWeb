@@ -122,7 +122,7 @@ export const ProductSchema: React.FC<ProductSchemaProps> = ({ product }) => {
     itemCondition: "https://schema.org/NewCondition",
     seller: {
       "@type": "Organization",
-      name: "Trang Thiên Long Mobile",
+      name: "TrangMobile.com",
       url: "https://trangmobile.com",
     },
     priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
@@ -170,7 +170,7 @@ export const ProductSchema: React.FC<ProductSchemaProps> = ({ product }) => {
           itemCondition: "https://schema.org/NewCondition",
           seller: {
             "@type": "Organization",
-            name: "Trang Thiên Long Mobile",
+            name: "TrangMobile.com",
             url: "https://trangmobile.com",
           },
           priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
@@ -242,7 +242,7 @@ export const ProductSchema: React.FC<ProductSchemaProps> = ({ product }) => {
             },
             author: {
               "@type": "Person",
-              name: "Khách hàng Trang Thiên Long",
+              name: "Khách hàng TrangMobile.com",
             },
             reviewBody: `${
               product.productName || product.title
@@ -265,8 +265,8 @@ export const OrganizationSchema: React.FC = () => {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "ElectronicsStore",
-    name: "Trang Thiên Long Mobile",
-    alternateName: "TTL Mobile",
+    name: "TrangMobile.com",
+    alternateName: "TrangMobile",
     url: "https://trangmobile.com",
     logo: "https://trangmobile.com/images/ttl.png",
     description:
@@ -329,7 +329,7 @@ export const LocalBusinessSchema: React.FC = () => {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "ElectronicsStore",
-    name: "Trang Thiên Long Mobile",
+    name: "TrangMobile.com",
     "@id": "https://trangmobile.com/#business",
     url: "https://trangmobile.com",
     telephone: "+84-90-123-4567",
@@ -444,7 +444,7 @@ export const ImageSchema: React.FC<ImageSchemaProps> = ({
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "ImageGallery",
-    name: "Product Images - Trang Thiên Long Mobile",
+    name: "Product Images - TrangMobile.com",
     description: "High-quality product images showcasing Apple products",
     image: primaryImage
       ? {
@@ -461,7 +461,7 @@ export const ImageSchema: React.FC<ImageSchemaProps> = ({
     associatedMedia: imageObjects,
     provider: {
       "@type": "Organization",
-      name: "Trang Thiên Long Mobile",
+      name: "TrangMobile.com",
       url: "https://trangmobile.com",
     },
   };
@@ -479,14 +479,14 @@ export const WebsiteSchema: React.FC = () => {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "Trang Thiên Long Mobile",
-    alternateName: "TTL Mobile",
+    name: "TrangMobile.com",
+    alternateName: "TrangMobile",
     url: "https://trangmobile.com",
     description:
       "Website bán iPhone, iPad, Apple Watch, AirPods, MacBook chính hãng giá rẻ nhất Việt Nam",
     publisher: {
       "@type": "Organization",
-      name: "Trang Thiên Long Mobile",
+      name: "TrangMobile.com",
     },
     potentialAction: {
       "@type": "SearchAction",

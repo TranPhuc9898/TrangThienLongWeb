@@ -18,48 +18,49 @@ import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 
 export const metadata: Metadata = {
   title:
-    "Trang Thiên Long Mobile - iPhone, iPad, MacBook Chính Hãng Giá Tốt Nhất",
+    "iPhone 15 Pro Max 256GB Giá Tốt Nhất | Trang Thiên Long Mobile Chính Hãng",
   description:
-    "⭐ Cửa hàng Apple uy tín hàng đầu Việt Nam ⭐ iPhone 15, iPad, MacBook, Apple Watch chính hãng ⭐ Giá tốt nhất ⭐ Bảo hành 12 tháng ⭐ Trả góp 0%",
+    "Cửa hàng iPhone chính hãng uy tín số 1 Việt Nam. iPhone 15, iPad, MacBook, Apple Watch bảo hành 12 tháng, trả góp 0%, giao hàng 2h tại TP.HCM. Giá tốt nhất thị trường.",
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
-      { url: "/images/ttl.png", type: "image/png" },
+      { url: "/images/ttl.png", type: "image/png", sizes: "192x192" },
     ],
     shortcut: "/favicon.ico",
-    apple: "/images/ttl.png",
+    apple: [
+      { url: "/images/ttl.png", sizes: "180x180", type: "image/png" },
+    ],
   },
-  keywords: [
-    "iphone giá rẻ",
-    "ipad chính hãng",
-    "apple watch vietnam",
-    "airpods pro",
-    "macbook air m2",
-    "điện thoại cũ like new",
-    "trang thiên long mobile",
-  ],
+  keywords: "iPhone giá rẻ, iPad chính hãng, Apple Watch Vietnam, AirPods Pro, MacBook Air M2, điện thoại cũ like new, Trang Thiên Long Mobile, iPhone 15 Pro Max 256GB, mua iPhone trả góp 0%, cửa hàng iPhone uy tín TP.HCM",
   openGraph: {
-    title: "Trang Thiên Long Mobile - Chuyên Apple Products",
+    title: "iPhone 15 Pro Max 256GB Giá Tốt Nhất | Trang Thiên Long Mobile",
     description:
-      "Điện thoại iPhone, iPad, Apple Watch chính hãng với giá cạnh tranh nhất thị trường",
+      "Cửa hàng iPhone chính hãng uy tín số 1 Việt Nam. Bảo hành 12 tháng, trả góp 0%, giao hàng 2h tại TP.HCM",
     url: "https://trangmobile.com",
     siteName: "Trang Thiên Long Mobile",
     images: [
       {
-        url: "/images/ttl.png",
+        url: "https://trangmobile.com/images/ttl-og.jpg",
         width: 1200,
         height: 630,
-        alt: "Trang Thiên Long Mobile - Apple Store",
+        alt: "TrangMobile.com - Cửa hàng iPhone chính hãng TP.HCM",
+        type: "image/jpeg",
       },
     ],
     type: "website",
     locale: "vi_VN",
+    countryName: "Vietnam",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Trang Thiên Long Mobile",
-    description: "Apple Products chính hãng giá tốt",
-    images: ["/images/ttl.png"],
+    title: "iPhone 15 Pro Max 256GB Giá Tốt Nhất | Trang Thiên Long Mobile",
+    description: "Cửa hàng iPhone chính hãng uy tín số 1 Việt Nam. Bảo hành 12 tháng, trả góp 0%",
+    images: [{
+      url: "https://trangmobile.com/images/ttl-og.jpg",
+      alt: "TrangMobile.com - iPhone chính hãng",
+    }],
+    site: "@trangthienlong",
+    creator: "@trangthienlong",
   },
   robots: {
     index: true,
@@ -74,7 +75,28 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: "https://trangmobile.com",
+    languages: {
+      "vi-VN": "https://trangmobile.com",
+    },
   },
+  authors: [
+    {
+      name: "TrangMobile.com",
+      url: "https://trangmobile.com",
+    },
+  ],
+  creator: "TrangMobile.com",
+  publisher: "TrangMobile.com",
+  formatDetection: {
+    telephone: true,
+    date: false,
+    address: true,
+    email: true,
+  },
+  verification: {
+    google: "oiyqMkeepUIMruDLqqFG9qd3jcmvkJs5OXu70Q3YN5c",
+  },
+  category: "e-commerce",
 };
 
 export const viewport: Viewport = {

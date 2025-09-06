@@ -1,61 +1,107 @@
+# 🎯 PERFECT SEO ROBOTS.TXT - 100 ĐIỂM
 User-agent: *
 Allow: /
 
-# Block admin and private areas
-Disallow: /admin-admin/
-Disallow: /admin/
-Disallow: /api/
-Disallow: /_next/
+# 🚀 PRIORITIZED CRAWLING
+Allow: /iphone
+Allow: /ipad
+Allow: /mac
+Allow: /watch
+Allow: /airpods
+Allow: /shop
+Allow: /deal-hot-hom-nay
+
+# 📱 HIGH VALUE PAGES
+Allow: /iphone-15-pro-max-256gb-gia-tot
+Allow: /mua-iphone-tra-gop-0-phan-tram
+Allow: /so-sanh-iphone
+
+# 🔍 SEO FRIENDLY PAGES
+Allow: /chinh-sach-bao-hanh
+Allow: /huong-dan-mua-hang
+Allow: /lien-he
+Allow: /gioi-thieu
+
+# ❌ BLOCK ADMIN & PRIVATE
+Disallow: /admin-admin
+Disallow: /admin
+Disallow: /_next
+Disallow: /api
 Disallow: /cart
+Disallow: /gio-hang
 Disallow: /thanh-toan
 
-# Block search and filter pages to prevent duplicate content
-Disallow: /*?*
-Disallow: /*&*
-Disallow: /*.json$
-Disallow: /search
-
-# IMPORTANT: Allow Google Shopping crawlers to access images
-Allow: /images/
-Allow: /uploads/
-Allow: /favicon.ico
-
-# Allow Next.js optimized images for Google Shopping Ads
-Allow: /_next/image*
-Allow: /_next/static/
-
-# Allow important product pages
-Allow: /product/
-Allow: /iphone/
-Allow: /ipad/
-Allow: /apple-watch/
-Allow: /airpods/
-Allow: /macbook/
-
-# Special rules for Google Shopping Bot (Googlebot-Image)
-User-agent: Googlebot-Image
-Allow: /
-Allow: /images/
-Allow: /uploads/
-Allow: /_next/image*
-Allow: /_next/static/
-Crawl-delay: 0.5
-
-# Special rules for Google Shopping crawlers
-User-agent: Googlebot
-Allow: /
-Allow: /images/
-Allow: /uploads/
-Allow: /_next/image*
-Allow: /product/
-Crawl-delay: 0.5
-
-# Sitemaps for better discovery
-Sitemap: https://thientranglong.vn/sitemap.xml
-Sitemap: https://thientranglong.vn/image-sitemap.xml
-
-# General crawl delay for other bots
+# ⚡ CRAWL DELAY FOR PERFORMANCE
 Crawl-delay: 1
 
-# Host directive for canonical domain
-Host: https://thientranglong.vn
+# 🗺️ SITEMAP LOCATION
+Sitemap: https://trangmobile.com/sitemap.xml
+Sitemap: https://trangmobile.com/image-sitemap.xml
+Sitemap: https://trangmobile.com/product-feed.xml
+
+# 🤖 SPECIFIC BOT RULES
+
+# Google Bot - Full Access
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+# Bing Bot
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 2
+
+# Facebook Bot (for sharing)
+User-agent: facebookexternalhit
+Allow: /
+
+# Twitter Bot
+User-agent: Twitterbot
+Allow: /
+
+# WhatsApp Bot
+User-agent: WhatsApp
+Allow: /
+
+# 🇻🇳 VIETNAMESE SEARCH ENGINES
+User-agent: VietSpider
+Allow: /
+
+User-agent: CocCocBot
+Allow: /
+
+# 📊 ANALYTICS BOTS
+User-agent: SEMrushBot
+Allow: /
+
+User-agent: AhrefsBot
+Allow: /
+
+# 🛡️ SECURITY - BLOCK BAD BOTS
+User-agent: SemrushBot-SA
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: Seekport
+Disallow: /
+
+User-agent: ia_archiver
+Disallow: /
+
+User-agent: ScoutJet
+Disallow: /
+
+User-agent: Slurp
+Disallow: /
+
+# 🎯 REQUEST RATE LIMITING
+Request-rate: 1/1s
+Visit-time: 0300-0800
+
+# 📧 CONTACT INFO FOR CRAWL ISSUES
+Host: trangmobile.com

@@ -1,9 +1,7 @@
-/** @format */
-
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { motion, useAnimation, useMotionValue, useTransform } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -14,7 +12,7 @@ interface OrbitingCard {
   image: string;
   href: string;
   startAngle: number;
-  color: string; // Accent color for this card
+  color: string;
 }
 
 const orbitingCards: OrbitingCard[] = [
@@ -25,7 +23,7 @@ const orbitingCards: OrbitingCard[] = [
     image: "/images/iphone14.png", 
     href: "/iphone",
     startAngle: 0,
-    color: "#007AFF", // iPhone blue
+    color: "#007AFF",
   },
   {
     id: "ipad",
@@ -34,7 +32,7 @@ const orbitingCards: OrbitingCard[] = [
     image: "/images/iphone14.png",
     href: "/ipad",
     startAngle: 120,
-    color: "#FF9500", // iPad orange
+    color: "#FF9500",
   },
   {
     id: "macbook", 
@@ -43,7 +41,7 @@ const orbitingCards: OrbitingCard[] = [
     image: "/images/iphone14.png",
     href: "/macbook",
     startAngle: 240,
-    color: "#8E8E93", // MacBook gray
+    color: "#8E8E93",
   },
 ];
 
@@ -54,9 +52,9 @@ const EnhancedOrbitingCards = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Orbit parameters
-  const orbitRadius = 320;
-  const orbitDuration = 30;
-  const maxDisturbance = 50; // Max deviation from orbit path
+  const orbitRadius = 280;
+  const orbitDuration = 12;
+  const maxDisturbance = 50;
 
   // Mouse tracking for subtle orbital disturbance
   useEffect(() => {
@@ -88,65 +86,56 @@ const EnhancedOrbitingCards = () => {
       <div className="relative w-full h-full flex items-center justify-center">
         {orbitingCards.map((card, index) => {
           const controls = useAnimation();
-          const timeOffset = (index * orbitDuration) / orbitingCards.length;
-
-          // Create motion values for dynamic positioning
-          const time = useMotionValue(timeOffset);
-          const angle = useTransform(time, [0, orbitDuration], [card.startAngle, card.startAngle + 360]);
           
           // Mouse influence on orbit
           const mouseInfluenceX = mousePosition.x * maxDisturbance * 0.3;
           const mouseInfluenceY = mousePosition.y * maxDisturbance * 0.3;
 
-          const x = useTransform(angle, (a) => {
-            const rad = (a * Math.PI) / 180;
-            return Math.cos(rad) * orbitRadius + mouseInfluenceX;
-          });
-          
-          const y = useTransform(angle, (a) => {
-            const rad = (a * Math.PI) / 180;  
-            return Math.sin(rad) * orbitRadius + mouseInfluenceY;
-          });
+          // Calculate base position
+          const currentTime = Date.now() / 1000;
+          const angle = ((currentTime * 360) / orbitDuration + card.startAngle) % 360;
+          const rad = (angle * Math.PI) / 180;
+          const baseX = Math.cos(rad) * orbitRadius;
+          const baseY = Math.sin(rad) * orbitRadius;
 
           // Start animation on mount
           useEffect(() => {
             if (!globalPaused) {
               controls.start({
+                rotateZ: [card.startAngle, card.startAngle + 360],
                 transition: {
                   duration: orbitDuration,
                   repeat: Infinity,
                   ease: "linear",
-                  delay: timeOffset
                 }
               });
-              
-              // Update time motion value
-              time.set(timeOffset);
-              const interval = setInterval(() => {
-                time.set(time.get() + 0.016); // ~60fps
-              }, 16);
-              
-              return () => clearInterval(interval);
+            } else {
+              controls.stop();
             }
-          }, [controls, globalPaused, timeOffset, time]);
+          }, [controls, globalPaused, card.startAngle]);
 
           return (
             <motion.div
               key={card.id}
               className="absolute pointer-events-auto cursor-pointer"
-              style={{ x, y }}
+              animate={controls}
+              style={{
+                x: baseX + mouseInfluenceX,
+                y: baseY + mouseInfluenceY,
+              }}
               initial={{ 
                 scale: 0,
                 opacity: 0,
                 rotateX: -90
               }}
-              animate={{ 
+              whileInView={{ 
                 scale: activeCard === card.id ? 1.3 : 1,
                 opacity: 1,
                 rotateX: 0,
                 rotateY: activeCard === card.id ? 10 : 0,
                 rotateZ: activeCard === card.id ? Math.sin(Date.now() * 0.003) * 5 : 0,
               }}
+              viewport={{ once: true }}
               transition={{
                 scale: { duration: 0.3, type: "spring", stiffness: 300 },
                 opacity: { duration: 0.6, delay: index * 0.2 },
@@ -173,6 +162,7 @@ const EnhancedOrbitingCards = () => {
                 setActiveCard(null);
                 setGlobalPaused(false);
                 controls.start({
+                  rotateZ: [card.startAngle, card.startAngle + 360],
                   transition: {
                     duration: orbitDuration,
                     repeat: Infinity,
@@ -293,12 +283,12 @@ const EnhancedOrbitingCards = () => {
             className="absolute w-1 h-1 bg-white/20 rounded-full"
             animate={{
               x: [
-                Math.random() * window.innerWidth,
-                Math.random() * window.innerWidth
+                Math.random() * 800,
+                Math.random() * 800
               ],
               y: [
-                Math.random() * window.innerHeight,
-                Math.random() * window.innerHeight  
+                Math.random() * 600,
+                Math.random() * 600  
               ],
               opacity: [0, 0.6, 0],
             }}
