@@ -38,38 +38,15 @@ const nextConfig = {
     scrollRestoration: true,
   },
   
-  // 🎯 WEBPACK BUNDLE OPTIMIZATIONS
-  webpack: (config, { dev, isServer }) => {
-    if (!dev && !isServer) {
+  // 🎯 LIGHTER WEBPACK CONFIG FOR LOW MEMORY
+  webpack: (config, { dev }) => {
+    if (!dev) {
+      // Lighter optimization for low memory servers
       config.optimization = {
         ...config.optimization,
         splitChunks: {
           chunks: 'all',
-          cacheGroups: {
-            default: {
-              minChunks: 2,
-              priority: -20,
-              reuseExistingChunk: true,
-            },
-            vendor: {
-              test: /[\\/]node_modules[\\/]/,
-              name: 'vendors',
-              priority: -10,
-              chunks: 'all',
-            },
-            common: {
-              name: 'common',
-              minChunks: 2,
-              chunks: 'all',
-              enforce: true,
-            },
-            framerMotion: {
-              test: /[\\/]node_modules[\\/]framer-motion[\\/]/,
-              name: 'framer-motion',
-              chunks: 'all',
-              enforce: true,
-            },
-          },
+          maxSize: 244000, // 244KB chunks
         },
       };
     }
