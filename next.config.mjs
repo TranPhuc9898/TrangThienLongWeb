@@ -31,9 +31,49 @@ const nextConfig = {
   poweredByHeader: false,
   generateEtags: false,
   
-  // Simple bundle optimization  
+  // 🚀 AGGRESSIVE BUNDLE OPTIMIZATION  
   experimental: {
-    optimizePackageImports: ['lucide-react'],
+    optimizePackageImports: ['lucide-react', 'framer-motion', '@radix-ui/react-icons'],
+    optimizeCss: false, // Prevent build errors
+    scrollRestoration: true,
+  },
+  
+  // 🎯 WEBPACK BUNDLE OPTIMIZATIONS
+  webpack: (config, { dev, isServer }) => {
+    if (!dev && !isServer) {
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          chunks: 'all',
+          cacheGroups: {
+            default: {
+              minChunks: 2,
+              priority: -20,
+              reuseExistingChunk: true,
+            },
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendors',
+              priority: -10,
+              chunks: 'all',
+            },
+            common: {
+              name: 'common',
+              minChunks: 2,
+              chunks: 'all',
+              enforce: true,
+            },
+            framerMotion: {
+              test: /[\\/]node_modules[\\/]framer-motion[\\/]/,
+              name: 'framer-motion',
+              chunks: 'all',
+              enforce: true,
+            },
+          },
+        },
+      };
+    }
+    return config;
   },
 
   // 🔥 PERFECT CACHING & SEO HEADERS

@@ -5,9 +5,21 @@
 import Head from "next/head";
 import { useState, useEffect } from "react";
 import "@/styles/swiper-custom.css";
-import ModernHeroSection from "@/components/homepage/ModernHeroSection";
+import dynamic from 'next/dynamic';
+import { initPerformanceOptimizations } from '@/lib/performance';
+
+// Lazy load heavy components for better performance
+const ModernHeroSection = dynamic(() => import("@/components/homepage/ModernHeroSection"), {
+  loading: () => <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900" />,
+  ssr: false
+});
+
+const VideoHeroSection = dynamic(() => import("@/components/homepage/VideoHeroSection"), {
+  loading: () => <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-5 h-96 bg-gray-100 rounded-2xl" />,
+  ssr: false
+});
+
 import DynamicHeroSection from "@/components/homepage/DynamicHeroSection";
-import VideoHeroSection from "@/components/homepage/VideoHeroSection";
 import DealHotHomNaySection from "@/components/homepage/DealHotHomNaySection";
 import ModernProductSection from "@/components/homepage/ModernProductSection";
 
@@ -64,8 +76,11 @@ export default function Home() {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch products from API
+  // Fetch products from API and initialize performance optimizations
   useEffect(() => {
+    // Initialize performance optimizations first
+    initPerformanceOptimizations();
+    
     getProducts()
       .then((products) => {
         setAllProducts(products);

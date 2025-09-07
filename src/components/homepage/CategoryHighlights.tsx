@@ -148,6 +148,7 @@ const CategoryHighlights = () => {
                     alt="iPhone"
                     width={200}
                     height={300}
+                    loading="lazy"
                     className="drop-shadow-2xl"
                   />
                 </motion.div>
@@ -184,6 +185,7 @@ const CategoryHighlights = () => {
                     alt="iPad"
                     width={120}
                     height={160}
+                    loading="lazy"
                     className="drop-shadow-2xl"
                   />
                 </div>

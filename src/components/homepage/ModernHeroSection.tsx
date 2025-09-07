@@ -146,8 +146,9 @@ const ModernHeroSection = () => {
                       alt="iPhone 15 Pro Max"
                       width={320}
                       height={480}
-                      className="object-contain filter drop-shadow-[0_20px_50px_rgba(147,51,234,0.3)]"
                       priority
+                      fetchPriority="high"
+                      className="object-contain filter drop-shadow-[0_20px_50px_rgba(147,51,234,0.3)]"
                     />
                     
                     {/* Floating badges around phone */}

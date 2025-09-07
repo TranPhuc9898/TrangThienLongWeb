@@ -43,6 +43,7 @@ const HeroSection = () => {
               src="/images/banner/Trả góp toàn quốc-02.png"
               alt="Trả góp toàn quốc Banner"
               fill
+              loading="lazy"
               className="object-cover object-center select-none pointer-events-none"
               sizes="100vw"
             />

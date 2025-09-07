@@ -20,6 +20,7 @@ const VideoHeroSection = () => {
           muted
           playsInline
           poster="/images/iphone14.png"
+          preload="metadata"
           className="absolute inset-0 w-full h-full object-cover object-center opacity-50"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20" />

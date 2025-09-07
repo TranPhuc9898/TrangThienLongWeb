@@ -375,6 +375,7 @@ const ShopDunkProductGrid: React.FC<ShopDunkProductGridProps> = ({
                 src="/images/iphone14.png"
                 alt="Featured Product"
                 fill
+                loading="lazy"
                 className="object-contain"
               />
               <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
