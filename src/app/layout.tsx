@@ -15,6 +15,7 @@ import { AdminEditProvider } from "@/contexts/AdminEditContext";
 import ToastProvider from "@/components/ui/toast";
 import { FlyToCartProvider } from "@/components/ui/FlyToCart";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
+import GoogleAds from "@/components/analytics/GoogleAds";
 import { WebVitals } from "@/components/performance/WebVitals";
 
 export const metadata: Metadata = {
@@ -118,7 +119,10 @@ export default function RootLayout({
         
         {/* Google Analytics */}
         <GoogleAnalytics measurementId="G-YK6M5RXB08" />
-        
+
+        {/* Google Ads */}
+        <GoogleAds conversionId="AW-785944712" />
+
         {/* Google Search Console Verification */}
         <meta name="google-site-verification" content="oiyqMkeepUIMruDLqqFG9qd3jcmvkJs5OXu70Q3YN5c" />
       </head>
