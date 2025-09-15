@@ -95,7 +95,7 @@ const Footer = () => {
                     aria-label="Đã thông báo Bộ Công Thương"
                   >
                     <Image
-                      src="https://trangthienlong.com.vn/wp-content/uploads/2025/01/bo-cong-thuong.png"
+                      src="/images/bo-cong-thuong.png"
                       alt="Đã thông báo Bộ Công Thương - Website đã được đăng ký với Bộ Công Thương Việt Nam"
                       width={150}
                       height={57}
@@ -111,7 +111,7 @@ const Footer = () => {
                     aria-label="DMCA.com Protection Status"
                   >
                     <Image
-                      src="https://images.dmca.com/Badges/dmca_protected_sml_120c.png?ID=6f76663c-2dc1-4ae7-87ea-ebee849f73b4"
+                      src="/images/dmca-protected.png"
                       alt="DMCA.com Protection Status - Website được bảo vệ bản quyền bởi DMCA"
                       width={121}
                       height={24}

@@ -17,6 +17,7 @@ import { FlyToCartProvider } from "@/components/ui/FlyToCart";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import GoogleAds from "@/components/analytics/GoogleAds";
 import { WebVitals } from "@/components/performance/WebVitals";
+import ContactFloatingButtons from "@/components/layout/ContactFloatingButtons";
 
 export const metadata: Metadata = {
   title:
@@ -139,6 +140,7 @@ export default function RootLayout({
                 <CleanShopDunkNavbar />
                 <main className="pt-14">{children}</main>
                 <Footer />
+                <ContactFloatingButtons />
               </ToastProvider>
             </FlyToCartProvider>
           </Providers>
