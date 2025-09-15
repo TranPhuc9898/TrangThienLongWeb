@@ -2192,16 +2192,13 @@ export const IPHONE_SPECS_DATABASE: Record<string, iPhoneSpec> = {
       faceID: true,
       storage: ["256GB", "512GB", "1TB", "2TB"]
     }
-  }
-};
-
-// Helper function to get specs by model
+  },
 export const getSpecsByModel = (model: string): iPhoneSpec | null => {
   return IPHONE_SPECS_DATABASE[model] || null;
 };
 
 // Get available iPhone models
-export const getAvailableModels = (): string[] => {
+export const export const export const getAvailableModels = (): string[] => {
   // Sắp xếp theo thứ tự đúng: iPhone 8 -> 17 Pro Max
   const orderedModels = [
     // iPhone 8 series
@@ -2258,7 +2255,7 @@ export const getAvailableModels = (): string[] => {
   
   // Chỉ trả về những model có trong database
   return orderedModels.filter(model => model in IPHONE_SPECS_DATABASE);
-};
+};;;;
 
 // Format specs for display
 export const formatSpecsForDisplay = (specs: iPhoneSpec) => {

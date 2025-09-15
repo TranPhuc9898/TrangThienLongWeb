@@ -37,17 +37,35 @@ interface SeriesPageProps {
 
 // Series mapping để convert URL slug thành search term
 const seriesMapping: Record<string, string> = {
-  "iphone-17-pro-max-series": "iPhone 17 Pro Max",
-  "iphone-17-pro-series": "iPhone 17 Pro",
-  "iphone-16-pro-max-series": "iPhone 16 Pro Max",
-  "iphone-16-pro-series": "iPhone 16 Pro",
-  "iphone-16-series": "iPhone 16",
-  "iphone-15-pro-max-series": "iPhone 15 Pro Max",
-  "iphone-15-pro-series": "iPhone 15 Pro",
-  "iphone-15-series": "iPhone 15",
-  "iphone-14-pro-max-series": "iPhone 14 Pro Max",
-  "iphone-14-series": "iPhone 14",
-  "iphone-13-series": "iPhone 13",
+  // iPhone 17 series
+  "iphone-17-pro-max": "iPhone 17 Pro Max",
+  "iphone-17-pro": "iPhone 17 Pro", 
+  "iphone-17-air": "iPhone 17 Air",
+  "iphone-17": "iPhone 17",
+  
+  // iPhone 16 series
+  "iphone-16-pro-max": "iPhone 16 Pro Max",
+  "iphone-16-pro": "iPhone 16 Pro",
+  "iphone-16-plus": "iPhone 16 Plus", 
+  "iphone-16": "iPhone 16",
+  
+  // iPhone 15 series
+  "iphone-15-pro-max": "iPhone 15 Pro Max",
+  "iphone-15-pro": "iPhone 15 Pro",
+  "iphone-15-plus": "iPhone 15 Plus",
+  "iphone-15": "iPhone 15",
+  
+  // iPhone 14 series
+  "iphone-14-pro-max": "iPhone 14 Pro Max",
+  "iphone-14-pro": "iPhone 14 Pro",
+  "iphone-14-plus": "iPhone 14 Plus",
+  "iphone-14": "iPhone 14",
+  
+  // iPhone 13 series
+  "iphone-13-pro-max": "iPhone 13 Pro Max",
+  "iphone-13-pro": "iPhone 13 Pro",
+  "iphone-13-mini": "iPhone 13 mini",
+  "iphone-13": "iPhone 13",
 };
 
 export default function SeriesPage({ params }: SeriesPageProps) {
@@ -58,34 +76,37 @@ export default function SeriesPage({ params }: SeriesPageProps) {
 
   const seriesName = seriesMapping[params.series];
 
-  if (!seriesName) {
-    notFound();
-  }
+  // Debug logging
+  console.log('URL params.series:', params.series);
+  console.log('Mapped seriesName:', seriesName);
+  console.log('Available mappings:', Object.keys(seriesMapping));
 
-  // Fetch products theo series
+  // Temporarily disable notFound for debugging
+  // if (!seriesName) {
+  //   notFound();
+  // }
+
+  // Fetch products theo iphoneModel field chính xác
   useEffect(() => {
     const fetchSeriesProducts = async () => {
       try {
-        const response = await fetch("/api/products");
-        const data = await response.json();
-
-        // ✅ Filter by tag field (ACCURATE)
-        const filteredProducts = data.filter((p: Product) => {
-          const tag = p.tag || "";
-          const category = p.category || "";
-          const productName = p.productName || p.title || "";
-
-          return (
-            category.toLowerCase().includes("iphone") &&
-            (tag === seriesName ||
-              tag.toLowerCase().includes(seriesName.toLowerCase()) ||
-              productName.toLowerCase().includes(seriesName.toLowerCase()))
-          );
+        // Sử dụng by-model API để tìm theo iphoneModel field
+        const searchParams = new URLSearchParams({
+          model: seriesName,
+          limit: '50'
         });
 
-        setProducts(filteredProducts);
+        const response = await fetch(`/api/products/by-model?${searchParams}`);
+        const data = await response.json();
+
+        if (data.products) {
+          setProducts(data.products);
+        } else {
+          setProducts([]);
+        }
       } catch (error) {
         console.error("Error fetching series products:", error);
+        setProducts([]);
       } finally {
         setLoading(false);
       }

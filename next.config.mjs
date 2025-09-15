@@ -105,16 +105,17 @@ const nextConfig = {
   // 🎯 PERFECT SEO-FRIENDLY URLs
   async rewrites() {
     return [
-      {
-        source: "/iphone/:slug*",
-        destination: "/shop/product/iphone/:slug*",
-      },
+      // Commented out to use /iphone/[series] dynamic route instead
+      // {
+      //   source: "/iphone/:slug*",
+      //   destination: "/shop/product/iphone/:slug*",
+      // },
       {
         source: "/iphone-15-pro-max-256gb-gia-tot",
         destination: "/landing/iphone-15-pro-max-256gb",
       },
       {
-        source: "/mua-iphone-tra-gop-0-phan-tram", 
+        source: "/mua-iphone-tra-gop-0-phan-tram",
         destination: "/landing/tra-gop-0-phan-tram",
       },
       {

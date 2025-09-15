@@ -15,9 +15,120 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Build search conditions (SQLite doesn't support mode: 'insensitive')
+    // Smart search conditions for exact series matching
     const searchConditions: any = {
-      OR: [
+      OR: [],
+      inStock: true // Only show in-stock products
+    };
+
+    // Exact series matching logic
+    const queryLower = query.toLowerCase().trim();
+    
+    if (queryLower.includes('pro max')) {
+      // Only match "Pro Max" models, exclude regular "Pro"
+      searchConditions.OR.push(
+        {
+          productName: {
+            contains: query
+          },
+          series: {
+            contains: 'Pro Max'
+          }
+        },
+        {
+          productName: {
+            contains: 'Pro Max'
+          }
+        }
+      );
+    } else if (queryLower.includes('air')) {
+      // Only match "Air" models
+      searchConditions.OR.push(
+        {
+          productName: {
+            contains: query
+          },
+          series: {
+            contains: 'Air'
+          }
+        },
+        {
+          productName: {
+            contains: 'Air'
+          }
+        }
+      );
+    } else if (queryLower.includes('plus')) {
+      // Only match "Plus" models
+      searchConditions.OR.push(
+        {
+          productName: {
+            contains: query
+          },
+          series: {
+            contains: 'Plus'
+          }
+        },
+        {
+          productName: {
+            contains: 'Plus'
+          }
+        }
+      );
+    } else if (queryLower.includes('mini')) {
+      // Only match "mini" models
+      searchConditions.OR.push(
+        {
+          productName: {
+            contains: query
+          },
+          series: {
+            contains: 'mini'
+          }
+        },
+        {
+          productName: {
+            contains: 'mini'
+          }
+        }
+      );
+    } else if (queryLower.includes('pro') && !queryLower.includes('pro max')) {
+      // Only match "Pro" models, exclude "Pro Max"
+      searchConditions.OR.push(
+        {
+          AND: [
+            {
+              productName: {
+                contains: query
+              }
+            },
+            {
+              productName: {
+                not: {
+                  contains: 'Pro Max'
+                }
+              }
+            },
+            {
+              OR: [
+                {
+                  series: {
+                    contains: 'Pro'
+                  }
+                },
+                {
+                  productName: {
+                    contains: 'Pro'
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      );
+    } else {
+      // Default search for base models and general queries
+      searchConditions.OR.push(
         {
           productName: {
             contains: query
@@ -38,9 +149,8 @@ export async function GET(request: NextRequest) {
             contains: query
           }
         }
-      ],
-      inStock: true // Only show in-stock products
-    };
+      );
+    }
 
     // Add category filter if provided
     if (category && category !== 'all') {
@@ -118,7 +228,7 @@ export async function GET(request: NextRequest) {
       updatedAt: product.updatedAt.toISOString()
     }));
 
-    // Get search suggestions based on query
+    // Smart suggestions based on exact matching
     const suggestions = await prisma.product.findMany({
       where: {
         OR: [
@@ -141,7 +251,7 @@ export async function GET(request: NextRequest) {
         category: true
       },
       distinct: ['productName'],
-      take: 5
+      take: 8
     });
 
     // Get popular categories for suggestions
