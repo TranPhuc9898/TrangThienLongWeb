@@ -4,9 +4,9 @@ import React from "react";
 import Link from "next/link";
 
 const branches = [
-  { address: "15i Trần Phú, Q.5 (Chi Nhánh Chính)", time: "08:00AM - 10:00PM" },
-  { address: "87b Lê Văn Duyệt, Bình Thạnh", time: "09:30AM - 08:30PM" },
-  { address: "02 Hồ Văn Leo, Biên Hòa", time: "08:00AM - 08:00PM" },
+  { address: "15I Trần Phú, phường Chợ Quán, Quận 5, TP. HCM (Chi Nhánh Chính)", time: "08:00AM - 10:00PM" },
+  { address: "87b Lê Văn Duyệt, TP.Thủ Đức, TP.HCM", time: "09:30AM - 08:30PM" },
+  { address: "02 Hồ Văn Leo, TP.Biên Hòa, Đồng Nai", time: "08:00AM - 08:00PM" },
 ];
 
 const policies = [
@@ -49,7 +49,7 @@ const FooterLinksSection = () => (
         <li className="mt-10">
           <div className="flex items-center text-[#0A0A0A] text-[15px] font-medium">
             <span className="mr-2">📞</span>
-            <span className="font-bold text-[#D0260D]">0939.02.1234</span>
+            <span className="font-bold text-[#D0260D]">+84385795791</span>
             <span className="ml-2 text-black">(Trang - Cô Chủ Nhỏ)</span>
           </div>
         </li>
