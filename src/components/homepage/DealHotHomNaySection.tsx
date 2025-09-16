@@ -1,8 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Flame, Clock, Tag, Star, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import { ImageSkeleton } from "@/components/ui/loading-skeleton";
 
 // Top 4 hottest deals for homepage
 const topHotDeals = [
@@ -61,6 +63,16 @@ const topHotDeals = [
 ];
 
 export default function DealHotHomNaySection() {
+  const [imageLoading, setImageLoading] = useState<{[key: number]: boolean}>({});
+
+  const handleImageLoad = (dealId: number) => {
+    setImageLoading(prev => ({ ...prev, [dealId]: false }));
+  };
+
+  const handleImageLoadStart = (dealId: number) => {
+    setImageLoading(prev => ({ ...prev, [dealId]: true }));
+  };
+
   return (
     <section className="py-16 bg-gradient-to-br from-red-50 to-pink-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -94,16 +106,30 @@ export default function DealHotHomNaySection() {
             >
               {/* Image & Badges */}
               <div className="relative">
+                {imageLoading[deal.id] && (
+                  <ImageSkeleton className="absolute inset-0 w-full h-48 rounded-t-xl" />
+                )}
                 <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-10 animate-pulse">
                   {deal.badge}
                 </div>
                 <div className="absolute top-3 right-3 bg-black/80 text-white text-xs font-bold px-2 py-1 rounded-full">
                   -{deal.discount}%
                 </div>
-                <img
+                <Image
                   src={deal.image}
                   alt={deal.title}
-                  className="w-full h-48 object-contain bg-gray-50 group-hover:scale-105 transition-transform duration-300"
+                  width={400}
+                  height={300}
+                  className={`w-full h-48 object-contain bg-gray-50 group-hover:scale-105 transition-all duration-300 ${
+                    imageLoading[deal.id] ? 'opacity-0' : 'opacity-100'
+                  }`}
+                  loading="lazy"
+                  placeholder="blur"
+                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                  priority={false}
+                  onLoadStart={() => handleImageLoadStart(deal.id)}
+                  onLoad={() => handleImageLoad(deal.id)}
+                  onError={() => handleImageLoad(deal.id)}
                 />
                 <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm text-xs px-2 py-1 rounded-full flex items-center shadow-md">
                   <Clock className="w-3 h-3 mr-1 text-red-500" />

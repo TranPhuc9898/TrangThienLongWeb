@@ -105,10 +105,18 @@ const ShopDunkStyleNavbar = () => {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [isDropdownLoading, setIsDropdownLoading] = useState(false);
 
-  // ✅ SIMPLEST: Just toggle - NO useEffect, NO outside click
+  // ✅ OPTIMIZED: Add loading state for better UX
   const toggleDropdown = (label: string) => {
-    setActiveDropdown(activeDropdown === label ? null : label);
+    if (activeDropdown === label) {
+      setActiveDropdown(null);
+    } else {
+      setIsDropdownLoading(true);
+      setActiveDropdown(label);
+      // Simulate loading state for better perceived performance
+      setTimeout(() => setIsDropdownLoading(false), 100);
+    }
   };
 
   return (
@@ -167,7 +175,9 @@ const ShopDunkStyleNavbar = () => {
 
                 {/* Dropdown Menu */}
                 {item.hasDropdown && activeDropdown === item.label && (
-                  <div className="absolute top-full left-0 w-64 bg-white border border-gray-200 rounded-lg shadow-xl py-2 mt-1 z-50">
+                  <div className={`absolute top-full left-0 w-64 bg-white border border-gray-200 rounded-lg shadow-xl py-2 mt-1 z-50 transform transition-all duration-200 ease-out ${
+                    isDropdownLoading ? 'opacity-70 scale-95' : 'opacity-100 scale-100'
+                  }`}>
                     {item.dropdownItems?.map((dropdownItem, index) => (
                       <Link
                         key={index}
