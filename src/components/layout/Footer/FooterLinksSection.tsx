@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 
 const branches = [
-  { address: "15I Trần Phú, phường Chợ Quán, Quận 5, TP. HCM (Chi Nhánh Chính)", time: "08:00AM - 10:00PM" },
+  { address: "15I Trần Phú, phường Chợ Quán, TP. HCM (Chi Nhánh Chính)", time: "08:00AM - 10:00PM" },
   { address: "87b Lê Văn Duyệt, TP.Thủ Đức, TP.HCM", time: "09:30AM - 08:30PM" },
   { address: "02 Hồ Văn Leo, TP.Biên Hòa, Đồng Nai", time: "08:00AM - 08:00PM" },
 ];
