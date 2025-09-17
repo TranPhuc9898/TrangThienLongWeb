@@ -119,7 +119,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/images/ttl.png" />
         
         {/* Google Analytics */}
-        <GoogleAnalytics measurementId="G-YK6M5RXB08" />
+        <GoogleAnalytics measurementId="G-RTGK7W6NH0" />
 
         {/* Google Ads */}
         <GoogleAds conversionId="AW-785944712" />

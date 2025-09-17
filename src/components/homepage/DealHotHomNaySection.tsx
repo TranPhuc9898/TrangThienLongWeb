@@ -14,7 +14,7 @@ const topHotDeals = [
     originalPrice: 29990000,
     salePrice: 26990000,
     discount: 10,
-    image: "/images/iphone14.png",
+    image: "/images/iphone14.webp",
     badge: "Giảm 3 triệu",
     rating: 4.8,
     sold: 234,
@@ -27,7 +27,7 @@ const topHotDeals = [
     originalPrice: 6490000,
     salePrice: 5490000,
     discount: 15,
-    image: "/images/iphone14.png",
+    image: "/images/iphone14.webp",
     badge: "Giá sốc",
     rating: 4.8,
     sold: 312,
@@ -40,7 +40,7 @@ const topHotDeals = [
     originalPrice: 25990000,
     salePrice: 22990000,
     discount: 12,
-    image: "/images/iphone14.png",
+    image: "/images/iphone14.webp",
     badge: "Siêu hot",
     rating: 4.9,
     sold: 87,
@@ -53,7 +53,7 @@ const topHotDeals = [
     originalPrice: 24990000,
     salePrice: 21990000,
     discount: 12,
-    image: "/images/iphone13.png",
+    image: "/images/iphone13.webp",
     badge: "Hết hàng sớm",
     rating: 4.7,
     sold: 445,
@@ -64,13 +64,31 @@ const topHotDeals = [
 
 export default function DealHotHomNaySection() {
   const [imageLoading, setImageLoading] = useState<{[key: number]: boolean}>({});
+  const [imageError, setImageError] = useState<{[key: number]: boolean}>({});
 
   const handleImageLoad = (dealId: number) => {
     setImageLoading(prev => ({ ...prev, [dealId]: false }));
+    setImageError(prev => ({ ...prev, [dealId]: false }));
   };
 
   const handleImageLoadStart = (dealId: number) => {
     setImageLoading(prev => ({ ...prev, [dealId]: true }));
+
+    // 🚀 TIMEOUT AFTER 2 SECONDS - NO MORE INFINITE LOADING!
+    setTimeout(() => {
+      setImageLoading(prev => {
+        if (prev[dealId]) {
+          setImageError(prevErr => ({ ...prevErr, [dealId]: true }));
+          return { ...prev, [dealId]: false };
+        }
+        return prev;
+      });
+    }, 2000);
+  };
+
+  const handleImageError = (dealId: number) => {
+    setImageLoading(prev => ({ ...prev, [dealId]: false }));
+    setImageError(prev => ({ ...prev, [dealId]: true }));
   };
 
   return (
@@ -109,6 +127,11 @@ export default function DealHotHomNaySection() {
                 {imageLoading[deal.id] && (
                   <ImageSkeleton className="absolute inset-0 w-full h-48 rounded-t-xl" />
                 )}
+                {imageError[deal.id] && (
+                  <div className="absolute inset-0 w-full h-48 bg-gray-100 flex items-center justify-center text-gray-400 text-sm">
+                    🖼️ Đang tải ảnh...
+                  </div>
+                )}
                 <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-10 animate-pulse">
                   {deal.badge}
                 </div>
@@ -121,15 +144,15 @@ export default function DealHotHomNaySection() {
                   width={400}
                   height={300}
                   className={`w-full h-48 object-contain bg-gray-50 group-hover:scale-105 transition-all duration-300 ${
-                    imageLoading[deal.id] ? 'opacity-0' : 'opacity-100'
+                    imageLoading[deal.id] || imageError[deal.id] ? 'opacity-0' : 'opacity-100'
                   }`}
-                  loading="lazy"
+                  loading="eager"
                   placeholder="blur"
-                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-                  priority={false}
+                  blurDataURL="data:image/webp;base64,UklGRh4AAABXRUJQVlA4TBEAAAAvAAAAAAfQ//73v/+BiOh/AAA="
+                  priority={true}
                   onLoadStart={() => handleImageLoadStart(deal.id)}
                   onLoad={() => handleImageLoad(deal.id)}
-                  onError={() => handleImageLoad(deal.id)}
+                  onError={() => handleImageError(deal.id)}
                 />
                 <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm text-xs px-2 py-1 rounded-full flex items-center shadow-md">
                   <Clock className="w-3 h-3 mr-1 text-red-500" />
