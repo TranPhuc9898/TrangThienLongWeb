@@ -2,9 +2,9 @@ import { Metadata } from "next";
 
 // 🎯 iPhone-specific SEO optimization - Updated to Next.js 13+ metadata API
 export const metadata: Metadata = {
-  title: "iPhone Chính Hãng - Giá Tốt Nhất | Trang Thiên Long Mobile",
+  title: "iPhone Chính Hãng - Giá Tốt Nhất | TrangMobile",
   description:
-    "🍎 Mua iPhone chính hãng giá tốt nhất tại Trang Thiên Long Mobile. iPhone 15, iPhone 14, iPhone 13 Pro Max đầy đủ màu sắc, dung lượng. Bảo hành 12 tháng, trả góp 0%, giao hàng miễn phí.",
+    "🍎 Mua iPhone chính hãng giá tốt nhất tại TrangMobile. iPhone 15, iPhone 14, iPhone 13 Pro Max đầy đủ màu sắc, dung lượng. Bảo hành 12 tháng, trả góp 0%, giao hàng miễn phí.",
   keywords: [
     "iphone chinh hang",
     "iphone gia re",
@@ -27,14 +27,14 @@ export const metadata: Metadata = {
         url: "/images/iphone-collection-seo.jpg",
         width: 1200,
         height: 630,
-        alt: "iPhone Collection - Trang Thiên Long Mobile",
+        alt: "iPhone Collection - TrangMobile",
       },
     ],
-    siteName: "Trang Thiên Long Mobile",
+    siteName: "TrangMobile",
   },
   twitter: {
     card: "summary_large_image",
-    title: "iPhone Chính Hãng - Trang Thiên Long Mobile",
+    title: "iPhone Chính Hãng - TrangMobile",
     description: "iPhone 15, iPhone 14 Pro Max chính hãng với giá tốt nhất",
     images: ["/images/iphone-collection-seo.jpg"],
     creator: "@thientranglong",
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
 const iPhoneStructuredData = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
-  name: "iPhone Collection - Trang Thiên Long Mobile",
+  name: "iPhone Collection - TrangMobile",
   description:
     "Bộ sưu tập iPhone chính hãng đầy đủ từ iPhone 13 đến iPhone 15 Pro Max",
   url: "https://trangmobile.com/iphone",
@@ -110,7 +110,7 @@ const iPhoneStructuredData = {
   },
   provider: {
     "@type": "Organization",
-    name: "Trang Thiên Long Mobile",
+    name: "TrangMobile",
     url: "https://trangmobile.com",
     logo: "https://trangmobile.com/images/ttl-logo.png",
   },

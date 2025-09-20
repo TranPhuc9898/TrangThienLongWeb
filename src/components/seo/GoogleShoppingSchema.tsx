@@ -35,7 +35,7 @@ export const GoogleShoppingProductSchema: React.FC<GoogleShoppingProductSchemaPr
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.productName || product.title || "Product",
-    description: product.description || `${product.productName || product.title || "Product"} chính hãng, giá tốt nhất tại Trang Thiên Long Mobile`,
+    description: product.description || `${product.productName || product.title || "Product"} chính hãng, giá tốt nhất tại TrangMobile`,
     image: [getAbsoluteUrl(productImage)],
     brand: {
       "@type": "Brand",
@@ -54,7 +54,7 @@ export const GoogleShoppingProductSchema: React.FC<GoogleShoppingProductSchemaPr
       itemCondition: `https://schema.org/${condition}`,
       seller: {
         "@type": "Organization",
-        name: "Trang Thiên Long Mobile"
+        name: "TrangMobile"
       },
       shippingDetails: {
         "@type": "OfferShippingDetails",

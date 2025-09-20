@@ -27,7 +27,7 @@ const HeroSection = () => {
         <SwiperSlide>
           <div className="relative w-full h-[36vw] max-h-[420px] min-h-[200px]">
             <Image
-              src="/images/banner/backtoschool-02.png"
+              src="/images/banner/backtoschool-02.webp"
               alt="Back to School Banner"
               fill
               priority
@@ -40,7 +40,7 @@ const HeroSection = () => {
         <SwiperSlide>
           <div className="relative w-full h-[36vw] max-h-[420px] min-h-[200px]">
             <Image
-              src="/images/banner/Trả góp toàn quốc-02.png"
+              src="/images/banner/Trả góp toàn quốc-02.webp"
               alt="Trả góp toàn quốc Banner"
               fill
               loading="lazy"

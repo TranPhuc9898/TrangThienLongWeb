@@ -35,7 +35,7 @@ import { Product } from "@/types/product.types";
 
 // Fetch products from API in client component
 function getProducts() {
-  return fetch(`/api/products`, {
+  return fetch(`/api/products?limit=50`, { // Get enough products for homepage
     cache: "no-store",
   })
     .then((response) => {
@@ -43,6 +43,10 @@ function getProducts() {
         throw new Error("Failed to fetch products");
       }
       return response.json();
+    })
+    .then((data) => {
+      // API now returns {products: [], pagination: {}} instead of direct array
+      return data.products || [];
     })
     .catch((error) => {
       console.error("Error fetching products:", error);

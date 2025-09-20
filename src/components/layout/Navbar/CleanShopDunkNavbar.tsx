@@ -260,7 +260,7 @@ const CleanShopDunkNavbar = () => {
               <Link href="/" className="block">
                 <Image
                   src="/images/ttl.png"
-                  alt="Trang Thiên Long"
+                  alt="TrangMobile"
                   width={100}
                   height={30}
                   className="h-7 w-auto"

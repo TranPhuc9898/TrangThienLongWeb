@@ -6,7 +6,7 @@ import { MetadataRoute } from "next";
 async function getProductsForSitemap() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-    const response = await fetch(`${baseUrl}/api/products`, {
+    const response = await fetch(`${baseUrl}/api/products?limit=1000`, {
       cache: "no-store",
     });
 
@@ -14,7 +14,8 @@ async function getProductsForSitemap() {
       return [];
     }
 
-    return await response.json();
+    const data = await response.json();
+    return data.products || [];
   } catch (error) {
     console.error("Error fetching products for sitemap:", error);
     return [];

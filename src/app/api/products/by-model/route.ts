@@ -14,7 +14,9 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const model = searchParams.get('model');
-    const limit = parseInt(searchParams.get('limit') || '50');
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '12'); // Giảm từ 50 xuống 12 cho mobile
+    const offset = (page - 1) * limit;
 
     if (!model) {
       return NextResponse.json({
@@ -27,7 +29,17 @@ export async function GET(request: NextRequest) {
     // Test database connection
     await prisma.$connect();
 
-    // Tìm products theo iphoneModel field chính xác
+    // Đếm tổng số products để tính pagination
+    const totalCount = await prisma.product.count({
+      where: {
+        iphoneModel: {
+          equals: model
+        },
+        inStock: true
+      }
+    });
+
+    // Tìm products theo iphoneModel field chính xác với pagination
     const products = await prisma.product.findMany({
       where: {
         iphoneModel: {
@@ -53,18 +65,31 @@ export async function GET(request: NextRequest) {
         { rating: 'desc' },
         { createdAt: 'desc' }
       ],
+      skip: offset,
       take: limit
     });
 
     // Serialize BigInt values
     const serializedProducts = serializeBigInt(products);
 
+    const totalPages = Math.ceil(totalCount / limit);
+    const hasNextPage = page < totalPages;
+    const hasPrevPage = page > 1;
+
     return NextResponse.json({
       products: serializedProducts,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalCount,
+        limit,
+        hasNextPage,
+        hasPrevPage
+      },
       total: serializedProducts.length,
       model,
       message: serializedProducts.length > 0
-        ? `Tìm thấy ${serializedProducts.length} sản phẩm ${model}`
+        ? `Trang ${page}/${totalPages} - ${serializedProducts.length} sản phẩm ${model}`
         : `Không tìm thấy sản phẩm ${model} nào`
     });
 

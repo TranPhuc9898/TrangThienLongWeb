@@ -128,7 +128,7 @@ const ShopDunkStyleNavbar = () => {
             <Link href="/" className="flex-shrink-0">
               <Image
                 src="/images/ttl.png"
-                alt="Trang Thiên Long Mobile"
+                alt="TrangMobile"
                 width={140}
                 height={45}
                 className="h-8 lg:h-10 w-auto"

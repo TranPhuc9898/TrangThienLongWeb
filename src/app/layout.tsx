@@ -34,7 +34,7 @@ export const metadata: Metadata = {
       { url: "/images/ttl.png", sizes: "180x180", type: "image/png" },
     ],
   },
-  keywords: "iPhone giá rẻ, iPad chính hãng, Apple Watch Vietnam, AirPods Pro, MacBook Air M2, điện thoại cũ like new, Trang Thiên Long Mobile, iPhone 15 Pro Max 256GB, mua iPhone trả góp 0%, cửa hàng iPhone uy tín TP.HCM",
+  keywords: "iPhone giá rẻ, iPad chính hãng, Apple Watch Vietnam, AirPods Pro, MacBook Air M2, điện thoại cũ like new, TrangMobile, iPhone 15 Pro Max 256GB, mua iPhone trả góp 0%, cửa hàng iPhone uy tín TP.HCM",
   openGraph: {
     title: "Trangmobile.com - iPhone, iPad, MacBook, Apple Watch chính hãng",
     description:

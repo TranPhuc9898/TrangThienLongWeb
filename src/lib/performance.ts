@@ -3,19 +3,20 @@
 // Preload critical resources
 export const preloadCriticalResources = () => {
   if (typeof window !== 'undefined') {
-    // Preload critical images
+    // Preload critical images (WebP format for better performance)
     const criticalImages = [
       '/images/iphone13.png',
-      '/images/banner/backtoschool-02.png',
+      '/images/banner/backtoschool-02.webp',
       '/images/ttl.png'
     ];
     
-    criticalImages.forEach(src => {
+    criticalImages.forEach((src, index) => {
       const link = document.createElement('link');
       link.rel = 'preload';
       link.href = src;
       link.as = 'image';
-      link.fetchPriority = 'high';
+      // Only first image gets high priority, others get auto priority
+      link.fetchPriority = index === 0 ? 'high' : 'auto';
       document.head.appendChild(link);
     });
 

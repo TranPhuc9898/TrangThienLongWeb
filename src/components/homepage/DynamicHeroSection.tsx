@@ -45,14 +45,14 @@ const DynamicHeroSection = () => {
             {
               id: "fallback-1",
               title: "Back to School Banner",
-              imageUrl: "/images/banner/backtoschool-02.png",
+              imageUrl: "/images/banner/backtoschool-02.webp",
               order: 1,
               active: true,
             },
             {
               id: "fallback-2",
               title: "Trả góp toàn quốc Banner",
-              imageUrl: "/images/banner/Trả góp toàn quốc-02.png",
+              imageUrl: "/images/banner/Trả góp toàn quốc-02.webp",
               order: 2,
               active: true,
             },
@@ -65,14 +65,14 @@ const DynamicHeroSection = () => {
           {
             id: "fallback-1",
             title: "Back to School Banner",
-            imageUrl: "/images/banner/backtoschool-02.png",
+            imageUrl: "/images/banner/backtoschool-02.webp",
             order: 1,
             active: true,
           },
           {
             id: "fallback-2",
             title: "Trả góp toàn quốc Banner",
-            imageUrl: "/images/banner/Trả góp toàn quốc-02.png",
+            imageUrl: "/images/banner/Trả góp toàn quốc-02.webp",
             order: 2,
             active: true,
           },

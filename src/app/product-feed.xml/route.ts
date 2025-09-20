@@ -4,16 +4,17 @@ import { getAbsoluteImageUrl, generateGTIN, generateSKU } from '@/lib/imageUtils
 async function getProducts() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://trangmobile.com';
-    const response = await fetch(`${baseUrl}/api/products`, {
+    const response = await fetch(`${baseUrl}/api/products?limit=1000`, {
       cache: 'no-store'
     });
-    
+
     if (!response.ok) {
       console.error('Failed to fetch products for feed');
       return [];
     }
-    
-    return await response.json();
+
+    const data = await response.json();
+    return data.products || [];
   } catch (error) {
     console.error('Error fetching products for feed:', error);
     return [];

@@ -33,27 +33,56 @@ export default function iPhonePage() {
   const [selectedSeries, setSelectedSeries] = useState<string>("all");
   const [viewMode, setViewMode] = useState<"grid" | "comparison">("grid");
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState<any>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
-  // Fetch products on component mount
+  // Detect mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Fetch products with pagination
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
       try {
-        const response = await fetch("/api/products");
+        const searchParams = new URLSearchParams({
+          page: currentPage.toString(),
+          limit: isMobile ? '8' : '12', // Mobile: 8, Desktop: 12
+          category: 'iphone' // Filter iPhone products
+        });
+
+        const response = await fetch(`/api/products?${searchParams}`);
         const data = await response.json();
-        const iphoneProducts = data.filter((p: Product) =>
-          p.category?.toLowerCase().includes("iphone")
-        );
-        setAllProducts(iphoneProducts);
-        setFilteredProducts(iphoneProducts); // Initialize filtered products
+
+        if (data.products) {
+          setAllProducts(data.products);
+          setFilteredProducts(data.products);
+          setPagination(data.pagination);
+        } else {
+          setAllProducts([]);
+          setFilteredProducts([]);
+          setPagination(null);
+        }
       } catch (error) {
         console.error("Error fetching iPhone products:", error);
+        setAllProducts([]);
+        setFilteredProducts([]);
+        setPagination(null);
       } finally {
         setLoading(false);
       }
     };
 
     fetchProducts();
-  }, []);
+  }, [currentPage, isMobile]);
 
   // Determine iPhone series from a product name
   function extractSeriesFromName(name: string): string {
@@ -80,7 +109,11 @@ export default function iPhonePage() {
   }, [filteredProducts]);
 
   const seriesOptions = [
-    { id: "all", name: "Tất Cả iPhone", count: filteredProducts.length },
+    {
+      id: "all",
+      name: "Tất Cả iPhone",
+      count: pagination ? pagination.totalCount : filteredProducts.length
+    },
     ...Object.entries(groupedProducts).map(([series, products]) => ({
       id: series.toLowerCase().replace(/\s+/g, "-"),
       name: series,
@@ -196,8 +229,12 @@ export default function iPhonePage() {
             >
               {viewMode === "grid" ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {displayedProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} />
+                  {displayedProducts.map((product, index) => (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      priority={index < (isMobile ? 2 : 4)} // Priority loading cho 2-4 ảnh đầu
+                    />
                   ))}
                 </div>
               ) : (
@@ -217,6 +254,64 @@ export default function iPhonePage() {
               <p className="text-gray-500">
                 Vui lòng chọn dòng iPhone khác hoặc liên hệ với chúng tôi.
               </p>
+            </div>
+          )}
+
+          {/* Pagination */}
+          {pagination && pagination.totalPages > 1 && (
+            <div className="flex justify-center items-center gap-4 mt-12">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={!pagination.hasPrevPage}
+                className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                  pagination.hasPrevPage
+                    ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                }`}
+              >
+                Trang trước
+              </button>
+
+              <div className="flex items-center gap-2">
+                {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                  let pageNum;
+                  if (pagination.totalPages <= 5) {
+                    pageNum = i + 1;
+                  } else if (pagination.currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (pagination.currentPage >= pagination.totalPages - 2) {
+                    pageNum = pagination.totalPages - 4 + i;
+                  } else {
+                    pageNum = pagination.currentPage - 2 + i;
+                  }
+
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => setCurrentPage(pageNum)}
+                      className={`w-12 h-12 rounded-lg font-medium transition-colors ${
+                        pageNum === pagination.currentPage
+                          ? 'bg-indigo-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(pagination.totalPages, prev + 1))}
+                disabled={!pagination.hasNextPage}
+                className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                  pagination.hasNextPage
+                    ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                }`}
+              >
+                Trang sau
+              </button>
             </div>
           )}
         </div>
@@ -284,7 +379,7 @@ export default function iPhonePage() {
 }
 
 // 🎴 Modern Product Card Component
-const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
+const ProductCard: React.FC<{ product: Product; priority?: boolean }> = ({ product, priority = false }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [selectedStorage, setSelectedStorage] = useState<string>("");
 
@@ -338,9 +433,15 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
             src={product.thumbnail || "/images/iphone14.png"}
             alt={product.productName || product.title || "iPhone"}
             fill
+            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
             className={`object-contain transition-transform duration-300 ${
               isHovered ? "scale-110" : "scale-100"
             }`}
+            loading={priority ? "eager" : "lazy"}
+            priority={priority}
+            quality={85}
+            placeholder="blur"
+            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjMyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzlmYTJhNyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkxvYWRpbmcuLi48L3RleHQ+Cjwvc3ZnPg=="
           />
         </div>
 

@@ -51,13 +51,37 @@ async function generateSlug(
   return slug;
 }
 
-// GET - Lấy tất cả sản phẩm với variants
-export async function GET() {
+// GET - Lấy sản phẩm với pagination và filtering
+export async function GET(request: NextRequest) {
   try {
     // Test database connection first
     await prisma.$connect();
-    
+
+    const searchParams = request.nextUrl.searchParams;
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '12'); // Default 12 cho desktop
+    const category = searchParams.get('category'); // Filter by category
+    const offset = (page - 1) * limit;
+
+    // Build where clause
+    const whereClause: any = {
+      inStock: true // Chỉ lấy sản phẩm còn hàng
+    };
+
+    if (category) {
+      whereClause.category = {
+        contains: category,
+        mode: 'insensitive'
+      };
+    }
+
+    // Count total products for pagination
+    const totalCount = await prisma.product.count({
+      where: whereClause
+    });
+
     const products = await prisma.product.findMany({
+      where: whereClause,
       include: {
         variants: {
           orderBy: [{ storage: "asc" }, { color: "asc" }],
@@ -67,12 +91,28 @@ export async function GET() {
       orderBy: {
         createdAt: "desc",
       },
+      skip: offset,
+      take: limit
     });
 
     // Ensure proper serialization
     const serializedProducts = serializeBigInt(products);
-    
-    return NextResponse.json(serializedProducts, {
+
+    const totalPages = Math.ceil(totalCount / limit);
+    const hasNextPage = page < totalPages;
+    const hasPrevPage = page > 1;
+
+    return NextResponse.json({
+      products: serializedProducts,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalCount,
+        limit,
+        hasNextPage,
+        hasPrevPage
+      }
+    }, {
       headers: {
         'Content-Type': 'application/json',
       },
