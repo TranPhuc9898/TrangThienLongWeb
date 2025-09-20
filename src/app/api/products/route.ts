@@ -69,10 +69,23 @@ export async function GET(request: NextRequest) {
     };
 
     if (category) {
-      whereClause.category = {
-        contains: category,
-        mode: 'insensitive'
-      };
+      whereClause.OR = [
+        {
+          category: {
+            contains: category
+          }
+        },
+        {
+          productName: {
+            contains: category
+          }
+        },
+        {
+          iphoneModel: {
+            contains: category
+          }
+        }
+      ];
     }
 
     // Count total products for pagination

@@ -56,7 +56,7 @@ export default function iPhonePage() {
         const searchParams = new URLSearchParams({
           page: currentPage.toString(),
           limit: isMobile ? '8' : '12', // Mobile: 8, Desktop: 12
-          category: 'iphone' // Filter iPhone products
+          category: 'iPhone' // Filter iPhone products (uppercase to match database)
         });
 
         const response = await fetch(`/api/products?${searchParams}`);
@@ -257,11 +257,15 @@ export default function iPhonePage() {
             </div>
           )}
 
+
           {/* Pagination */}
           {pagination && pagination.totalPages > 1 && (
             <div className="flex justify-center items-center gap-4 mt-12">
               <button
-                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                onClick={() => {
+                  setCurrentPage(prev => Math.max(1, prev - 1));
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
                 disabled={!pagination.hasPrevPage}
                 className={`px-6 py-3 rounded-lg font-medium transition-colors ${
                   pagination.hasPrevPage
@@ -288,7 +292,10 @@ export default function iPhonePage() {
                   return (
                     <button
                       key={pageNum}
-                      onClick={() => setCurrentPage(pageNum)}
+                      onClick={() => {
+                        setCurrentPage(pageNum);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
                       className={`w-12 h-12 rounded-lg font-medium transition-colors ${
                         pageNum === pagination.currentPage
                           ? 'bg-indigo-600 text-white'
@@ -302,7 +309,10 @@ export default function iPhonePage() {
               </div>
 
               <button
-                onClick={() => setCurrentPage(prev => Math.min(pagination.totalPages, prev + 1))}
+                onClick={() => {
+                  setCurrentPage(prev => Math.min(pagination.totalPages, prev + 1));
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
                 disabled={!pagination.hasNextPage}
                 className={`px-6 py-3 rounded-lg font-medium transition-colors ${
                   pagination.hasNextPage
