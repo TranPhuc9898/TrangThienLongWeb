@@ -392,6 +392,9 @@ export default function iPhonePage() {
 const ProductCard: React.FC<{ product: Product; priority?: boolean }> = ({ product, priority = false }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [selectedStorage, setSelectedStorage] = useState<string>("");
+  const [isVisible, setIsVisible] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const cardRef = React.useRef<HTMLDivElement>(null);
 
   const storageOptions = product.variants?.map((v) => v.storage) || [];
   const uniqueStorages = Array.from(new Set(storageOptions));
@@ -417,8 +420,37 @@ const ProductCard: React.FC<{ product: Product; priority?: boolean }> = ({ produ
     percent > 0 ? Math.round(basePrice * (1 - percent / 100)) : basePrice;
   const hasDiscount = percent > 0;
 
+  // Intersection Observer for lazy loading
+  React.useEffect(() => {
+    // Priority images load immediately
+    if (priority) {
+      setIsVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '100px' // Start loading 100px before visible
+      }
+    );
+
+    if (cardRef.current) {
+      observer.observe(cardRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [priority]);
+
   return (
     <motion.div
+      ref={cardRef}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
       whileHover={{ y: -5 }}
@@ -439,20 +471,29 @@ const ProductCard: React.FC<{ product: Product; priority?: boolean }> = ({ produ
         </div>
 
         <div className="relative w-full h-full">
-          <Image
-            src={product.thumbnail || "/images/iphone14.png"}
-            alt={product.productName || product.title || "iPhone"}
-            fill
-            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
-            className={`object-contain transition-transform duration-300 ${
-              isHovered ? "scale-110" : "scale-100"
-            }`}
-            loading={priority ? "eager" : "lazy"}
-            priority={priority}
-            quality={85}
-            placeholder="blur"
-            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjMyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzlmYTJhNyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkxvYWRpbmcuLi48L3RleHQ+Cjwvc3ZnPg=="
-          />
+          {!isVisible ? (
+            // Skeleton placeholder
+            <div className="w-full h-full bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-lg">
+              <div className="flex items-center justify-center h-full">
+                <div className="text-gray-400 text-sm">Loading...</div>
+              </div>
+            </div>
+          ) : (
+            <Image
+              src={product.thumbnail || "/images/iphone14.png"}
+              alt={product.productName || product.title || "iPhone"}
+              fill
+              sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+              className={`object-contain transition-all duration-300 ${
+                isHovered ? "scale-110" : "scale-100"
+              } ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+              loading="lazy"
+              quality={85}
+              onLoad={() => setImageLoaded(true)}
+              placeholder="blur"
+              blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjMyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzlmYTJhNyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkxvYWRpbmcuLi48L3RleHQ+Cjwvc3ZnPg=="
+            />
+          )}
         </div>
 
         <motion.div
