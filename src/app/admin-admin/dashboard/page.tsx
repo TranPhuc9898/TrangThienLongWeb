@@ -54,7 +54,9 @@ export default function AdminDashboard() {
       // Load products
       const productsResponse = await fetch("/api/products");
       if (productsResponse.ok) {
-        const products = await productsResponse.json();
+        const data = await productsResponse.json();
+        // Fix: API returns { products: array, pagination: object }
+        const products = data.products || [];
         setStats((prev) => ({
           ...prev,
           products: {
