@@ -40,8 +40,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get base URL from request
-    const baseUrl = `${request.nextUrl.protocol}//${request.nextUrl.host}`;
+    // Use production domain instead of localhost
+    const baseUrl = "https://trangmobile.com";
 
     // Fetch all products from database
     const products = await prisma.product.findMany({
