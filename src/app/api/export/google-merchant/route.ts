@@ -22,7 +22,10 @@ function formatPrice(price: bigint): string {
 function getFullImageUrl(imagePath: string, baseUrl: string): string {
   if (!imagePath) return "";
   if (imagePath.startsWith("http")) return imagePath;
-  return `${baseUrl}${imagePath}`;
+
+  // Ensure leading slash for proper URL construction
+  const cleanPath = imagePath.startsWith("/") ? imagePath : `/${imagePath}`;
+  return `${baseUrl}${cleanPath}`;
 }
 
 // Helper function to get product link
@@ -75,7 +78,7 @@ export async function GET(request: NextRequest) {
             id: variantId,
             title: variantTitle,
             description: product.description || product.productName,
-            availability: (product.inStock && variant.inStock) ? "in stock" : "out of stock",
+            availability: (product.inStock && variant.inStock) ? "in_stock" : "out_of_stock",
             link: getProductLink(product.slug, baseUrl),
             image_link: getFullImageUrl(variant.image || product.thumbnail || "", baseUrl),
             price: formatPrice(variant.price || product.basePrice),
@@ -92,7 +95,7 @@ export async function GET(request: NextRequest) {
           id: productId,
           title: product.productName,
           description: product.description || product.productName,
-          availability: product.inStock ? "in stock" : "out of stock",
+          availability: product.inStock ? "in_stock" : "out_of_stock",
           link: getProductLink(product.slug, baseUrl),
           image_link: getFullImageUrl(product.thumbnail || "", baseUrl),
           price: formatPrice(product.basePrice),
