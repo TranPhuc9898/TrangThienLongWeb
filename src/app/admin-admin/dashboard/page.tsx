@@ -15,6 +15,8 @@ import {
   Eye,
   Edit,
   ArrowRight,
+  Download,
+  FileSpreadsheet,
 } from "lucide-react";
 
 interface Stats {
@@ -43,6 +45,7 @@ export default function AdminDashboard() {
     recentActivity: [],
   });
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -107,6 +110,41 @@ export default function AdminDashboard() {
       console.error("Error loading dashboard data:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleMerchantExport = async () => {
+    setExporting(true);
+    try {
+      const response = await fetch("/api/export/google-merchant", {
+        method: "GET",
+      });
+
+      if (!response.ok) {
+        throw new Error("Export failed");
+      }
+
+      // Create blob from response
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      // Create download link
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `google-merchant-feed-${new Date().getTime()}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+
+      // Cleanup
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      alert("✅ Export thành công! File đã được tải xuống.");
+    } catch (error) {
+      console.error("Export error:", error);
+      alert("❌ Lỗi export! Vui lòng thử lại.");
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -295,6 +333,31 @@ export default function AdminDashboard() {
               </div>
               <ArrowRight className="w-5 h-5 text-gray-400" />
             </Link>
+
+            <button
+              onClick={handleGoogleMerchantExport}
+              disabled={exporting}
+              className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full"
+            >
+              <div className="flex items-center">
+                <div className="p-2 bg-orange-100 rounded-lg mr-3">
+                  <FileSpreadsheet className="w-5 h-5 text-orange-600" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-900">
+                    {exporting ? "Đang Export..." : "Google Merchant Export"}
+                  </h4>
+                  <p className="text-sm text-gray-600">
+                    Tải file XLSX cho Google Merchant Center
+                  </p>
+                </div>
+              </div>
+              {exporting ? (
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-orange-600"></div>
+              ) : (
+                <Download className="w-5 h-5 text-gray-400" />
+              )}
+            </button>
           </div>
         </motion.div>
 
