@@ -84,8 +84,8 @@ export default function ThanhToanPage() {
 
   // Track begin checkout when page loads
   useEffect(() => {
-    if (cart && cart.length > 0) {
-      const cartItems = cart.map(item => ({
+    if (cart && cart.items && cart.items.length > 0) {
+      const cartItems = cart.items.map(item => ({
         id: String(item.id),
         name: item.name,
         price: item.price,
@@ -160,13 +160,13 @@ export default function ThanhToanPage() {
 
       // Track purchase conversion for Google Ads
       const orderId = `ORDER-${Date.now()}`;
-      const cartItems = cart.map(item => ({
+      const cartItems = cart && cart.items ? cart.items.map(item => ({
         id: String(item.id),
         name: item.name,
         price: item.price,
         quantity: item.quantity,
         category: 'Apple Products',
-      }));
+      })) : [];
       trackPurchase(orderId, adjustedTotalPrice, cartItems);
 
       // Show success message and confetti animation
