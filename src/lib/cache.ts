@@ -60,8 +60,9 @@ class SimpleCache {
       this.cache.delete(pattern);
       console.log(`🗑️ Invalidated cache: ${pattern}`);
     } else {
-      // Pattern matching
-      for (const key of this.cache.keys()) {
+      // Pattern matching - Convert iterator to array
+      const keys = Array.from(this.cache.keys());
+      for (const key of keys) {
         if (pattern.test(key)) {
           this.cache.delete(key);
           console.log(`🗑️ Invalidated cache: ${key}`);
@@ -85,7 +86,9 @@ class SimpleCache {
     const now = Date.now();
     let cleaned = 0;
 
-    for (const [key, entry] of this.cache.entries()) {
+    // Convert iterator to array
+    const entries = Array.from(this.cache.entries());
+    for (const [key, entry] of entries) {
       if (now - entry.timestamp > this.defaultTTL) {
         this.cache.delete(key);
         cleaned++;
