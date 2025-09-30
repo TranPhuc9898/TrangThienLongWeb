@@ -13,6 +13,7 @@ import { motion } from "framer-motion";
 import Confetti from "react-confetti";
 import { useAppSelector } from "@/lib/hooks/redux";
 import { RootState } from "@/lib/store";
+import { trackBeginCheckout, trackPurchase } from "@/lib/analytics";
 
 const schema = z.object({
   fullName: z.string().min(2, "Họ và tên phải có ít nhất 2 ký tự"),
@@ -81,6 +82,19 @@ export default function ThanhToanPage() {
     formValues.address
   );
 
+  // Track begin checkout when page loads
+  useEffect(() => {
+    if (cart && cart.length > 0) {
+      const cartItems = cart.map(item => ({
+        id: String(item.id),
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+      }));
+      trackBeginCheckout(cartItems, adjustedTotalPrice);
+    }
+  }, []); // Only run once on mount
+
   // Reset districts và wards khi chọn province mới
   useEffect(() => {
     if (locations && selectedProvince) {
@@ -143,6 +157,17 @@ export default function ThanhToanPage() {
       if (!response.ok || !result.success) {
         throw new Error(result.error || "Gửi đơn hàng thất bại");
       }
+
+      // Track purchase conversion for Google Ads
+      const orderId = `ORDER-${Date.now()}`;
+      const cartItems = cart.map(item => ({
+        id: String(item.id),
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        category: 'Apple Products',
+      }));
+      trackPurchase(orderId, adjustedTotalPrice, cartItems);
 
       // Show success message and confetti animation
       setSuccessMessage("🎉 Đặt hàng thành công! Đã gửi thông tin về Slack.");

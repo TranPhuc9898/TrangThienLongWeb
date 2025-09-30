@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/database";
+import { cache, CacheKeys } from "@/lib/cache";
 
 // Helper function to serialize BigInt values
 function serializeBigInt(obj: any): any {
@@ -10,36 +11,59 @@ function serializeBigInt(obj: any): any {
   );
 }
 
-// GET - Lấy single product với variants
+// GET - Lấy single product với variants (WITH CACHE)
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const product = await prisma.product.findFirst({
-      where: {
-        OR: [{ id: params.id }, { slug: params.id }],
+    // Generate cache key based on ID or slug
+    const cacheKey = params.id.includes('-')
+      ? CacheKeys.productBySlug(params.id)
+      : CacheKeys.productById(params.id);
+
+    // Use cache with 10 minute TTL for single products
+    const product = await cache.get(
+      cacheKey,
+      async () => {
+        const result = await prisma.product.findFirst({
+          where: {
+            OR: [{ id: params.id }, { slug: params.id }],
+          },
+          include: {
+            variants: {
+              where: { inStock: true },
+              orderBy: [{ storage: "asc" }, { color: "asc" }],
+            },
+            colors: true,
+            regionPrices: true,
+          },
+        });
+
+        if (!result) {
+          throw new Error("Product not found");
+        }
+
+        return serializeBigInt(result);
       },
-      include: {
-        variants: {
-          where: { inStock: true }, // Only get in-stock variants
-          orderBy: [{ storage: "asc" }, { color: "asc" }],
-        },
-        colors: true,
-        regionPrices: true, // Include region prices
+      10 * 60 * 1000 // 10 minutes
+    );
+
+    return NextResponse.json(product, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=1200',
       },
     });
+  } catch (error) {
+    console.error("Get single product error:", error);
 
-    if (!product) {
+    if (error instanceof Error && error.message === "Product not found") {
       return NextResponse.json(
         { error: "Không tìm thấy sản phẩm" },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(serializeBigInt(product));
-  } catch (error) {
-    console.error("Get single product error:", error);
     return NextResponse.json(
       { error: "Không thể lấy thông tin sản phẩm" },
       { status: 500 }

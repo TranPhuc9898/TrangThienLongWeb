@@ -46,6 +46,7 @@ import {
 } from "@/components/ui/carousel";
 import { useAppDispatch } from "@/lib/hooks/redux";
 import { addToCart } from "@/lib/features/carts/cartsSlice";
+import { trackProductView, trackAddToCart } from "@/lib/analytics";
 
 interface ProductVariant {
   id: string;
@@ -189,6 +190,15 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
       if (response.ok) {
         const data = await response.json();
         setProduct(data);
+
+        // Track product view for Google Ads
+        trackProductView({
+          id: data.id,
+          name: data.productName,
+          price: parseFloat(data.basePrice) || 0,
+          category: data.category,
+          brand: data.brand,
+        });
       } else if (response.status === 404) {
         notFound();
       }
@@ -205,18 +215,28 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
     const discountMatch = product.discount?.match(/-(\d+)%/);
     const discountPercent = discountMatch ? parseInt(discountMatch[1]) : 0;
     const regionPrice = getRegionPrice();
+    const finalPrice = Number(regionPrice || selectedVariant.price);
 
     dispatch(
       addToCart({
         id: Number(product.id),
         name: `${product.productName} ${selectedVariant.storage} ${selectedVariant.color} (${selectedRegion})`,
         srcUrl: selectedVariant.image,
-        price: Number(regionPrice || selectedVariant.price),
+        price: finalPrice,
         attributes: [selectedVariant.storage, selectedVariant.color, selectedRegion],
         discount: { amount: 0, percentage: discountPercent },
         quantity: 1,
       })
     );
+
+    // Track add to cart for Google Ads
+    trackAddToCart({
+      id: product.id,
+      name: product.productName,
+      price: finalPrice,
+      quantity: 1,
+      category: product.category,
+    });
 
     alert("Đã thêm vào giỏ hàng!");
   };

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
 import { prisma } from "@/lib/database";
+import { cache, CacheKeys, invalidateProductCaches } from "@/lib/cache";
 import fs from "fs";
 import path from "path";
 
@@ -51,103 +52,95 @@ async function generateSlug(
   return slug;
 }
 
-// GET - Lấy sản phẩm với pagination và filtering
+// GET - Lấy sản phẩm với pagination và filtering (WITH CACHE)
 export async function GET(request: NextRequest) {
   try {
-    // Test database connection first
-    await prisma.$connect();
-
     const searchParams = request.nextUrl.searchParams;
     const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '12'); // Default 12 cho desktop
-    const category = searchParams.get('category'); // Filter by category
-    const offset = (page - 1) * limit;
+    const limit = parseInt(searchParams.get('limit') || '12');
+    const category = searchParams.get('category');
 
-    // Build where clause
-    const whereClause: any = {
-      inStock: true // Chỉ lấy sản phẩm còn hàng
-    };
+    // Generate cache key
+    const cacheKey = CacheKeys.products(page, limit, category || undefined);
 
-    if (category) {
-      whereClause.OR = [
-        {
-          category: {
-            contains: category
-          }
-        },
-        {
-          productName: {
-            contains: category
-          }
-        },
-        {
-          iphoneModel: {
-            contains: category
-          }
+    // Use cache with 5 minute TTL
+    const result = await cache.get(
+      cacheKey,
+      async () => {
+        const offset = (page - 1) * limit;
+
+        // Build where clause
+        const whereClause: any = {
+          inStock: true
+        };
+
+        if (category) {
+          whereClause.OR = [
+            { category: { contains: category } },
+            { productName: { contains: category } },
+            { iphoneModel: { contains: category } }
+          ];
         }
-      ];
-    }
 
-    // Count total products for pagination
-    const totalCount = await prisma.product.count({
-      where: whereClause
-    });
+        // Count total products for pagination
+        const totalCount = await prisma.product.count({
+          where: whereClause
+        });
 
-    const products = await prisma.product.findMany({
-      where: whereClause,
-      include: {
-        variants: {
-          orderBy: [{ storage: "asc" }, { color: "asc" }],
-        },
-        colors: true,
+        const products = await prisma.product.findMany({
+          where: whereClause,
+          include: {
+            variants: {
+              orderBy: [{ storage: "asc" }, { color: "asc" }],
+            },
+            colors: true,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+          skip: offset,
+          take: limit
+        });
+
+        const serializedProducts = serializeBigInt(products);
+        const totalPages = Math.ceil(totalCount / limit);
+
+        return {
+          products: serializedProducts,
+          pagination: {
+            currentPage: page,
+            totalPages,
+            totalCount,
+            limit,
+            hasNextPage: page < totalPages,
+            hasPrevPage: page > 1
+          }
+        };
       },
-      orderBy: {
-        createdAt: "desc",
-      },
-      skip: offset,
-      take: limit
-    });
+      5 * 60 * 1000 // 5 minutes
+    );
 
-    // Ensure proper serialization
-    const serializedProducts = serializeBigInt(products);
-
-    const totalPages = Math.ceil(totalCount / limit);
-    const hasNextPage = page < totalPages;
-    const hasPrevPage = page > 1;
-
-    return NextResponse.json({
-      products: serializedProducts,
-      pagination: {
-        currentPage: page,
-        totalPages,
-        totalCount,
-        limit,
-        hasNextPage,
-        hasPrevPage
-      }
-    }, {
+    return NextResponse.json(result, {
       headers: {
         'Content-Type': 'application/json',
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
       },
     });
   } catch (error) {
     console.error("Get products error:", error);
-    
-    // More detailed error logging
+
     if (error instanceof Error) {
       console.error("Error message:", error.message);
       console.error("Error stack:", error.stack);
     }
-    
+
     return NextResponse.json(
-      { 
+      {
         error: "Không thể lấy danh sách sản phẩm",
         details: error instanceof Error ? error.message : String(error)
       },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
@@ -300,6 +293,9 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Invalidate cache when creating new product
+    invalidateProductCaches();
+
     return NextResponse.json(serializeBigInt(product));
   } catch (error) {
     console.error("Create product error:", error);
@@ -448,6 +444,9 @@ export async function PUT(request: NextRequest) {
       },
     });
 
+    // Invalidate cache when updating product
+    invalidateProductCaches();
+
     return NextResponse.json(serializeBigInt(product));
   } catch (error) {
     console.error("Update product error:", error);
@@ -567,6 +566,9 @@ export async function DELETE(request: NextRequest) {
     await prisma.product.delete({
       where: { id },
     });
+
+    // Invalidate cache when deleting product
+    invalidateProductCaches();
 
     return NextResponse.json({
       success: true,
