@@ -25,8 +25,17 @@ const guides = [
   { label: "Liên Hệ", url: "/lien-he" },
 ];
 
+const policiesEN = [
+  { label: "About Us", url: "/about" },
+  { label: "Contact", url: "/contact" },
+  { label: "Return Policy", url: "/return-policy" },
+  { label: "Refund Policy", url: "/refund-policy" },
+  { label: "Shipping Policy", url: "/shipping-policy" },
+  { label: "Privacy Policy", url: "/privacy-policy" },
+];
+
 const FooterLinksSection = () => (
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+  <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
     {/* Cột 1: Chi nhánh */}
     <div>
       <div className="font-bold text-[17px] uppercase mb-2 tracking-wide text-[#0A0A0A]">
@@ -88,6 +97,25 @@ const FooterLinksSection = () => (
       <div className="w-9 h-[2px] bg-[#e3e3e3] mb-3" />
       <ul>
         {guides.map((item, idx) => (
+          <li key={idx} className={idx !== 0 ? "mt-2" : ""}>
+            <Link
+              href={item.url}
+              className="text-[#D0260D] hover:underline text-[15px] font-medium"
+            >
+              {item.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+    {/* Cột 4: Policies (EN) */}
+    <div>
+      <div className="font-bold text-[17px] uppercase mb-2 tracking-wide text-[#0A0A0A]">
+        POLICIES (EN)
+      </div>
+      <div className="w-9 h-[2px] bg-[#e3e3e3] mb-3" />
+      <ul>
+        {policiesEN.map((item, idx) => (
           <li key={idx} className={idx !== 0 ? "mt-2" : ""}>
             <Link
               href={item.url}
